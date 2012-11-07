@@ -156,7 +156,7 @@ namespace Bicikelj.ViewModels
 			try
 			{
 				if (e != null)
-					Execute.OnUIThread(() => { MessageBox.Show(e.Message); });
+					events.Publish(new ErrorState(e, "could not calculate route"));
 				if (routeResponse == null)
 					return;
 
@@ -183,12 +183,12 @@ namespace Bicikelj.ViewModels
 					view.Map.SetView(LocationRect.CreateLocationRect(points));
 					NotifyOfPropertyChange(() => DistanceString);
 					NotifyOfPropertyChange(() => DurationString);
-					events.Publish(new BusyState(false));
+					events.Publish(BusyState.NotBusy());
 				});
 			}
 			finally
 			{
-				events.Publish(new BusyState(false));
+				events.Publish(BusyState.NotBusy());
 			}
 		}
 

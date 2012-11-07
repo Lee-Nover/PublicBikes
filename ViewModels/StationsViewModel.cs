@@ -109,7 +109,7 @@ namespace Bicikelj.ViewModels
 					Execute.OnUIThread(() =>
 					{	
 						FilterChanged();
-						events.Publish(new BusyState(false));
+						events.Publish(BusyState.NotBusy());
 					});
 				});
 			}
@@ -124,7 +124,7 @@ namespace Bicikelj.ViewModels
 					{
 						FilterChanged();
 					});
-					events.Publish(new BusyState(false));
+					events.Publish(BusyState.NotBusy());
 				});
 			}
 		}

@@ -26,5 +26,15 @@ namespace Bicikelj.Model
 			this.IsBusy = isBusy;
 			this.Message = message;
 		}
+
+		public static BusyState Busy(string message)
+		{
+			return new BusyState(true, message);
+		}
+
+		public static BusyState NotBusy()
+		{
+			return new BusyState(false);
+		}
 	}
 }

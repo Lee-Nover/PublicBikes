@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace Bicikelj.ViewModels
 {
-	public class MainViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<BusyState>
+	public class MainViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<BusyState>, IHandle<ErrorState>
 	{
 		private int busyCount = 0;
 		private bool isBusy;
@@ -64,6 +64,13 @@ namespace Bicikelj.ViewModels
 			StationsViewModel svm = item as StationsViewModel;
 			if (svm != null)
 				svm.UpdateStations();
+		}
+
+		public void Handle(ErrorState message)
+		{
+			Execute.OnUIThread(() => {
+				MessageBox.Show("uh-oh :(\n" + message.ToString());
+			});
 		}
 	}
 }

@@ -99,6 +99,7 @@
     <Compile Include="Model\BingMapsCredentials.cs" />
     <Compile Include="Model\BusyState.cs" />
     <Compile Include="Model\BingMaps.cs" />
+    <Compile Include="Model\ErrorState.cs" />
     <Compile Include="Model\GetCoordinate.cs" />
     <Compile Include="Model\DownloadUrl.cs" />
     <Compile Include="Model\LocationHelper.cs" />

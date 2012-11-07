@@ -78,7 +78,7 @@ namespace Bicikelj.ViewModels
 				stationList.GetStations((s, e) =>
 				{
 					if (e != null)
-						Execute.OnUIThread(() => { MessageBox.Show(e.Message); });
+						events.Publish(new ErrorState(e, "could not get stations"));
 					else if (s != null)
 						FindNearestStations(fromLocation, toLocation);
 				});
@@ -90,9 +90,9 @@ namespace Bicikelj.ViewModels
 
 		private void HandleAvailabilityError(object sender, ResultCompletionEventArgs e)
 		{
-			events.Publish(new BusyState(false));
+			events.Publish(BusyState.NotBusy());
 			if (e.Error != null)
-				Execute.OnUIThread(() => { MessageBox.Show(e.Error.Message); });
+				events.Publish(new ErrorState(e.Error, "could not get station availability"));
 		}
 
 		private void FindNearestStations(GeoCoordinate fromLocation, GeoCoordinate toLocation)
@@ -113,7 +113,7 @@ namespace Bicikelj.ViewModels
 								{
 									var navPoints = new GeoCoordinate[] { fromLocation, fromStation.Coordinate, toStation.Coordinate, toLocation };
 									RouteMap(navPoints);
-									events.Publish(new BusyState(false));
+									events.Publish(BusyState.NotBusy());
 								});
 							}
 							return freeResult;
@@ -135,7 +135,7 @@ namespace Bicikelj.ViewModels
 			try
 			{
 				if (e != null)
-					Execute.OnUIThread(() => { MessageBox.Show(e.Message); });
+					events.Publish(new ErrorState(e, "could not calculate route"));
 				if (routeResponse == null)
 					return;
 
@@ -192,12 +192,12 @@ namespace Bicikelj.ViewModels
 					view.Map.SetView(LocationRect.CreateLocationRect(points));
 					NotifyOfPropertyChange(() => DistanceString);
 					NotifyOfPropertyChange(() => DurationString);
-					events.Publish(new BusyState(false));
+					events.Publish(BusyState.NotBusy());
 				});
 			}
 			finally
 			{
-				events.Publish(new BusyState(false));
+				events.Publish(BusyState.NotBusy());
 			}
 		}
 
@@ -212,9 +212,12 @@ namespace Bicikelj.ViewModels
 			// todo get the address coordinates using bing maps
 			LocationHelper.FindLocation(address, CurrentLocation, (r, e) =>
 			{
-				if (e != null)
-					Execute.OnUIThread(() => { MessageBox.Show(e.Message); });
-				else if (r != null && r.Location != null)
+				if (e != null || r == null || r.Location == null)
+				{
+					events.Publish(BusyState.NotBusy());
+					events.Publish(new ErrorState(e, "could not find location"));
+				}
+				else
 					TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
 			});
 		}
@@ -224,8 +227,8 @@ namespace Bicikelj.ViewModels
 			GetCoordinate.Current((c, e) => {
 				if (e != null)
 				{
-					events.Publish(new BusyState(false));
-					Execute.OnUIThread(() => { MessageBox.Show(e.Message); });
+					events.Publish(BusyState.NotBusy());
+					events.Publish(new ErrorState(e, "could not get current location"));
 				}
 				else
 				{

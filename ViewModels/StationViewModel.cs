@@ -71,7 +71,7 @@ namespace Bicikelj.ViewModels
 			}
 			finally
 			{
-				Events.Publish(new BusyState(false));
+				Events.Publish(BusyState.NotBusy());
 			}
 		}
 

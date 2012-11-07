@@ -73,7 +73,7 @@ namespace Bicikelj.ViewModels
 				stationList.GetStations((s, e) =>
 				{
 					if (e != null)
-						Execute.OnUIThread(() => { MessageBox.Show(e.Message); });
+						events.Publish(new ErrorState(e, "could not get stations"));
 					else if (s != null)
 					{
 						var sNear = stationList.Stations.AsEnumerable();
@@ -105,16 +105,16 @@ namespace Bicikelj.ViewModels
 						vm.ViewRect = stationList.LocationRect;
 						StationViewModel svm = new StationViewModel(vm, am);
 						Bicikelj.NavigationExtension.NavigateTo(svm);
-						events.Publish(new BusyState(false));
+						events.Publish(BusyState.NotBusy());
 					});
 				}
 				return result;
 			},
 			(s1, r) =>
 			{
-				events.Publish(new BusyState(false));
+				events.Publish(BusyState.NotBusy());
 				if (r.Error != null)
-					Execute.OnUIThread(() => { MessageBox.Show(r.Error.Message); });
+					events.Publish(new ErrorState(r.Error, "could not check station availability"));
 			}
 			);
 		}
