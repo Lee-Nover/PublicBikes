@@ -43,13 +43,11 @@ namespace Bicikelj.ViewModels
 			else if (busyCount > 0)
 				busyCount--;
 			
-			Execute.OnUIThread(() => {
-				this.IsBusy = busyCount > 0;
-				if (IsBusy)
-					SystemProgress.ShowProgress(message.Message);
-				else
-					SystemProgress.HideProgress();
-			});
+			this.IsBusy = busyCount > 0;
+			if (IsBusy)
+				SystemProgress.ShowProgress(message.Message);
+			else
+				SystemProgress.HideProgress();
 		}
 
 		protected override void OnActivate()
@@ -68,9 +66,7 @@ namespace Bicikelj.ViewModels
 
 		public void Handle(ErrorState message)
 		{
-			Execute.OnUIThread(() => {
-				MessageBox.Show("uh-oh :(\n" + message.ToString());
-			});
+			MessageBox.Show("uh-oh :(\n" + message.ToString());
 		}
 	}
 }

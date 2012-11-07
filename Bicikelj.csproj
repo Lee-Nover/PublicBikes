@@ -100,6 +100,8 @@
     <Compile Include="Model\BusyState.cs" />
     <Compile Include="Model\BingMaps.cs" />
     <Compile Include="Model\ErrorState.cs" />
+    <Compile Include="Model\FavoriteLocation.cs" />
+    <Compile Include="Model\Favorites.cs" />
     <Compile Include="Model\GetCoordinate.cs" />
     <Compile Include="Model\DownloadUrl.cs" />
     <Compile Include="Model\LocationHelper.cs" />
@@ -110,10 +112,12 @@
     <Compile Include="Model\StationLocationList.cs" />
     <Compile Include="Model\SystemConfig.cs" />
     <Compile Include="NavigationExtension.cs" />
+    <Compile Include="Persistence\FavoritesStorage.cs" />
     <Compile Include="Persistence\SystemConfigStorage.cs" />
     <Compile Include="Persistence\StationsViewModelStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentModel.cs" />
+    <Compile Include="ViewModels\FavoriteViewModel.cs" />
     <Compile Include="ViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModels\SystemConfigViewModel.cs" />
     <Compile Include="ViewModels\NavigationStartViewModel.cs" />

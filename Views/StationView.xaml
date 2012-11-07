@@ -29,9 +29,9 @@
 			<ContentControl x:Name="Location" cal:View.Context="Detail" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,0,12" />
 			<ContentControl x:Name="Availability" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0,0,0,12" />        
 		</Grid>
-		<bctl:AppBar IsVisible="True" Height="0">
+		<bctl:AppBar x:Name="AppBar" IsVisible="True" Height="0">
 			<bctl:AppBar.Buttons>
-				<cal:AppBarButton IconUri="/Images/appbar.star.png"
+				<cal:AppBarButton x:Name="ToggleFavorite" IconUri="/Images/appbar.star.png"
 								  Text="favorite"
 								  Message="ToggleFavorite" />
 			</bctl:AppBar.Buttons>

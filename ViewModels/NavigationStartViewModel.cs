@@ -126,6 +126,11 @@ namespace Bicikelj.ViewModels
 			Bicikelj.NavigationExtension.NavigateTo(nvm);
 		}
 
+		public void OpenMap()
+		{
+			//Bicikelj.NavigationExtension.NavigateTo(IoC.Get<SystemConfigViewModel>());
+		}
+
 		public void OpenConfig()
 		{
 			Bicikelj.NavigationExtension.NavigateTo(IoC.Get<SystemConfigViewModel>());

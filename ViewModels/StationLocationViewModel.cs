@@ -192,38 +192,6 @@ namespace Bicikelj.ViewModels
 			}
 		}
 
-		private void ParseRoutePointsXml(string routeXml)
-		{
-			XDocument doc = XDocument.Load(new System.IO.StringReader(routeXml));
-			var res = doc.Descendants("Resources").FirstOrDefault();
-			travelDistance = (double)res.Element("TravelDistance");
-			travelDuration = (double)res.Element("TravelDuration");
-			//var points = from s in doc.Descendants("Response")
-			var points = from s in res.Descendants("Point")
-						 select new GeoCoordinate
-						 {
-							 Latitude = (double)s.Element("Latitude"),
-							 Longitude = (double)s.Element("Longitude")
-						 };
-			LocationCollection locCol = new LocationCollection();
-			foreach (var loc in points)
-				locCol.Add(loc);
-			
-
-			Execute.OnUIThread(() =>
-			{
-				MapPolyline pl = new MapPolyline();
-				pl.Stroke = new SolidColorBrush(Colors.Blue);
-				pl.StrokeThickness = 5;
-				pl.Opacity = 0.7;
-				pl.Locations = locCol;
-				view.Map.Children.Add(pl);
-				view.Map.SetView(LocationRect.CreateLocationRect(points));
-				NotifyOfPropertyChange(() => DistanceString);
-				NotifyOfPropertyChange(() => DurationString);
-			});
-		}
-
 		public void ToggleFavorite()
 		{
 			SetFavorite(!IsFavorite);
@@ -231,6 +199,8 @@ namespace Bicikelj.ViewModels
 
 		private void SetFavorite(bool value)
 		{
+			stationLocation.IsFavorite = value;
+			events.Publish(new FavoriteState(new FavoriteLocation(this.Location), IsFavorite));
 			NotifyOfPropertyChange(() => IsFavorite);
 		}
 	}

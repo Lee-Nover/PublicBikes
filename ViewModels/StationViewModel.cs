@@ -5,11 +5,24 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 using System.Threading;
+using Bicikelj.Views;
+using System.Collections.Generic;
 
 namespace Bicikelj.ViewModels
 {
 	public class StationViewModel : Screen
 	{
+		private IEventAggregator events;
+		public IEventAggregator Events
+		{
+			get
+			{
+				if (events == null)
+					events = IoC.Get<IEventAggregator>();
+				return events;
+			}
+		}
+
 		private StationAvailabilityViewModel availability;
 		public StationLocationViewModel Location { get; set; }
 		public StationAvailabilityViewModel Availability
@@ -49,57 +62,16 @@ namespace Bicikelj.ViewModels
 			if (availability == null || forceUpdate)
 			{
 				Events.Publish(new BusyState(true, "checking availability..."));
-				WebClient wc = new SharpGIS.GZipWebClient();
-				wc.DownloadStringCompleted += new DownloadStringCompletedEventHandler(wc_DownloadStringCompleted);
-				wc.DownloadStringAsync(new Uri("http://www.bicikelj.si/service/stationdetails/ljubljana/" + Location.Location.Number.ToString()));
+				StationLocationList.GetAvailability(Location.Location, (s, a, e) => {
+					if (e != null || a == null)
+						Events.Publish(new ErrorState(e, "could not get availability"));
+					else
+						Execute.OnUIThread(() => {
+							this.Availability = new StationAvailabilityViewModel(a);
+						});
+					Events.Publish(BusyState.NotBusy());
+				});
 			};
-		}
-
-		void wc_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-		{
-			try
-			{
-				if (e.Cancelled)
-					return;
-				else if (e.Error != null)
-					return;
-				else
-					ThreadPool.QueueUserWorkItem((o) =>
-					{
-						LoadAvailability(e.Result);
-					});
-			}
-			finally
-			{
-				Events.Publish(BusyState.NotBusy());
-			}
-		}
-
-		private IEventAggregator events;
-		public IEventAggregator Events
-		{
-			get {
-				if (events == null)
-					events = IoC.Get<IEventAggregator>();
-				return events;
-			}
-		}
-
-		private void LoadAvailability(string availabilityStr)
-		{
-			XDocument doc = XDocument.Load(new System.IO.StringReader(availabilityStr));
-			var stations = from s in doc.Descendants("station")
-						   select new StationAvailability
-						   {
-							   Available = (int)s.Element("available"),
-							   Free = (int)s.Element("free"),
-							   Total = (int)s.Element("total"),
-							   Connected = (bool)s.Element("connected"),
-							   Open = (bool)s.Element("open")
-						   };
-			StationAvailability sa = stations.FirstOrDefault();
-			if (sa != null)
-				Execute.OnUIThread(() => { this.Availability = new StationAvailabilityViewModel(sa); });
 		}
 
 		public void RefreshAvailability()
@@ -111,6 +83,15 @@ namespace Bicikelj.ViewModels
 		{
 			if (Location != null)
 				Location.ToggleFavorite();
+		}
+
+		protected override void OnViewAttached(object view, object context)
+		{
+			base.OnViewAttached(view, context);
+			StationView sv = view as StationView;
+			if (sv == null)
+				return;
+			WP7Bootstrapper.BindAppBar(sv, sv.AppBar);
 		}
 
 		protected override void OnViewReady(object view)

@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using Caliburn.Micro;
 using Bicikelj.ViewModels;
 using Microsoft.Phone.Controls;
+using System.Windows.Media;
 using System.Windows.Controls;
 using Bicikelj.Model;
 using Microsoft.Phone.Controls.Maps;
+using System.Windows;
+using System.Windows.Interactivity;
+using Bicikelj.Controls;
+using System.Linq;
+using Microsoft.Phone.Shell;
 
 namespace Bicikelj
 {
@@ -74,6 +80,35 @@ namespace Bicikelj
 			ConventionManager.AddElementConvention<MapItemsControl>(ItemsControl.ItemsSourceProperty, "DataContext", "Loaded");
 			ConventionManager.AddElementConvention<Pushpin>(ContentControl.ContentProperty, "DataContext", "MouseLeftButtonDown");
 			ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
+			ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
+			
+
+		}
+
+		public static void BindAppBar(FrameworkElement view, AppBar appBar)
+		{
+			var triggers = Interaction.GetTriggers(view);
+
+			foreach (var item in appBar.Buttons)
+			{
+				var menuItem = item as AppBarButton;
+				if (menuItem == null)
+				{
+					continue;
+				}
+
+				var parsedTrigger = Parser.Parse(view, menuItem.Message).First();
+				var trigger = new AppBarMenuItemTrigger(menuItem);
+				var actionMessages = parsedTrigger.Actions.OfType<ActionMessage>().ToList();
+				actionMessages.Apply(x =>
+				{
+					//x.menuItemSource = menuItem;
+					parsedTrigger.Actions.Remove(x);
+					trigger.Actions.Add(x);
+				});
+
+				triggers.Add(trigger);
+			}
 		}
 
 
@@ -90,6 +125,19 @@ namespace Bicikelj
 		protected override void BuildUp(object instance)
 		{
 			container.BuildUp(instance);
+		}
+	}
+
+	class AppBarMenuItemTrigger : TriggerBase<UserControl>
+	{
+		public AppBarMenuItemTrigger(IApplicationBarMenuItem menuItem)
+		{
+			menuItem.Click += ButtonClicked;
+		}
+
+		void ButtonClicked(object sender, EventArgs e)
+		{
+			InvokeActions(e);
 		}
 	}
 }
