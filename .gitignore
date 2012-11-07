@@ -161,3 +161,7 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+/packages/ServiceStack.Text.3.9.26/lib/net35
+/packages/ServiceStack.Text.3.9.26/lib/sl4
+/packages/ServiceStack.Text.3.9.26/lib/sl5
+/packages/SilverlightToolkitWP.4.2012.10.9/lib/sl3-wp
