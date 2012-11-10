@@ -66,6 +66,7 @@ namespace Bicikelj.ViewModels
 		{
 			if (item == null)
 				return;
+			this.DeactivateItem(item, false);
 			item.ViewRect = stationList.LocationRect;
 			StationViewModel svm = new StationViewModel(item);
 			Bicikelj.NavigationExtension.NavigateTo(svm);

@@ -93,11 +93,5 @@ namespace Bicikelj.ViewModels
 				return;
 			WP7Bootstrapper.BindAppBar(sv, sv.AppBar);
 		}
-
-		protected override void OnViewReady(object view)
-		{
-			base.OnViewReady(view);
-			
-		}
 	}
 }

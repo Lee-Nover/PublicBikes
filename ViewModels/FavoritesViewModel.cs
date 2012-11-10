@@ -7,39 +7,45 @@ using System.Linq;
 
 namespace Bicikelj.ViewModels
 {
-	public class FavoritesViewModel : Conductor<StationLocationViewModel>.Collection.OneActive, IHandle<FavoriteState>
+	public class FavoritesViewModel : Conductor<FavoriteViewModel>.Collection.OneActive, IHandle<FavoriteState>
 	{
 		readonly IEventAggregator events;
-		public List<FavoriteLocation> Favorites { get; set; }
-
 		public FavoritesViewModel(IEventAggregator events)
 		{
-			Favorites = new List<FavoriteLocation>();
 			this.events = events;
 			events.Subscribe(this);
+		}
+
+		public override void ActivateItem(FavoriteViewModel item)
+		{
+			if (item == null)
+				return;
+			if (item.Location.Station != null)
+				Bicikelj.NavigationExtension.NavigateTo(new StationViewModel(new StationLocationViewModel(item.Location.Station)));
+			else
+				Bicikelj.NavigationExtension.NavigateTo(item);
 		}
 
 		protected override void OnActivate()
 		{
 			base.OnActivate();
+
 		}
 
-		public override void ActivateItem(StationLocationViewModel item)
+		protected override void OnViewAttached(object view, object context)
 		{
-			StationViewModel svm = new StationViewModel(item);
-			Bicikelj.NavigationExtension.NavigateTo(svm);
+			base.OnViewAttached(view, context);
 		}
 
 		#region IHandle<FavoriteState> Members
 
 		public void Handle(FavoriteState message)
 		{
-			var fav = (from fl in Favorites where fl.Station == message.Location.Station select fl).FirstOrDefault();
+			var fav = (from fl in Items where fl.Location.Equals(message.Location) select fl).FirstOrDefault();
 			if (message.IsFavorite && fav == null)
-				Favorites.Add(new FavoriteLocation(message.Location.Station));
+				Items.Add(new FavoriteViewModel(message.Location));
 			else if (!message.IsFavorite)
-				Favorites.Remove(fav);
-			NotifyOfPropertyChange(() => Favorites);
+				Items.Remove(fav);
 		}
 
 		#endregion

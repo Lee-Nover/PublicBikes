@@ -17,6 +17,15 @@ using ServiceStack.Text;
 
 namespace Bicikelj.Model
 {
+	public enum PinType
+	{
+		CurrentPosition,
+		BikeStand,
+		Cycling,
+		Walking,
+		Finish
+	}
+
 	public static class LocationHelper
 	{
 		public static void SortByLocation(IEnumerable<StationLocation> stations, Action<IEnumerable<StationLocation>> result)

@@ -29,7 +29,7 @@ namespace Bicikelj
 			container.Singleton<FavoritesViewModel>();
 			container.Singleton<InfoViewModel>();
 			container.Singleton<NavigationStartViewModel>();
-			container.PerRequest<NavigationViewModel>();
+			container.Singleton<NavigationViewModel>();
 			container.Singleton<DebugLog>();
 			container.Singleton<SystemConfig>();
 			container.Singleton<SystemConfigViewModel>();
@@ -97,6 +97,9 @@ namespace Bicikelj
 					continue;
 				}
 
+				var trigger1 = from t in triggers where t is AppBarMenuItemTrigger && ((AppBarMenuItemTrigger)t).MenuItem == menuItem select t;
+				if (trigger1.FirstOrDefault() != null)
+					return;
 				var parsedTrigger = Parser.Parse(view, menuItem.Message).First();
 				var trigger = new AppBarMenuItemTrigger(menuItem);
 				var actionMessages = parsedTrigger.Actions.OfType<ActionMessage>().ToList();
@@ -130,9 +133,11 @@ namespace Bicikelj
 
 	class AppBarMenuItemTrigger : TriggerBase<UserControl>
 	{
+		public IApplicationBarMenuItem MenuItem;
 		public AppBarMenuItemTrigger(IApplicationBarMenuItem menuItem)
 		{
 			menuItem.Click += ButtonClicked;
+			MenuItem = menuItem;
 		}
 
 		void ButtonClicked(object sender, EventArgs e)

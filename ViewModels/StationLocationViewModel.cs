@@ -23,10 +23,6 @@ namespace Bicikelj.ViewModels
 		private IEventAggregator events;
 		private SystemConfig config;
 
-		public StationLocationViewModel() : this(null)
-		{
-		}
-
 		public StationLocationViewModel(StationLocation stationLocation)
 		{
 			events = IoC.Get<IEventAggregator>();
@@ -113,7 +109,8 @@ namespace Bicikelj.ViewModels
 			if (ov is Detail)
 			{
 				view = (Detail)ov;
-				view.Map.SetView(ViewRect);
+				if (ViewRect != null) 
+					view.Map.SetView(ViewRect);
 
 				if (!config.LocationEnabled)
 				{

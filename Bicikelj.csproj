@@ -94,6 +94,8 @@
     </Compile>
     <Compile Include="Controls\BindableApplicationBar.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
+    <Compile Include="Converters\PinTypeToIconConverter.cs" />
+    <Compile Include="Converters\FavoriteToIconConverter.cs" />
     <Compile Include="Converters\ValueToVisibilityConverter.cs" />
     <Compile Include="DebugLog.cs" />
     <Compile Include="Model\BingMapsCredentials.cs" />
@@ -149,6 +151,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Assets\BingMapsCredentials.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Favorite\Detail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Favorite\List.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -222,20 +232,11 @@
     <Content Include="Images\appbar.star.delete.png" />
     <Content Include="Images\appbar.star.png" />
     <Content Include="Images\BicikeljLogo.png" />
-    <Content Include="Images\BikePushpin.png" />
-    <Content Include="Images\BikePushpin3.png" />
-    <Content Include="Images\FinishPushpin.png" />
     <Content Include="Images\Ljubljana-header2.png" />
-    <Content Include="Images\WalkingPushpin.png" />
-    <Content Include="Images\PersonPushpin3.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Delete.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Select.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Images\BikePushpin2.png" />
-    <Content Include="Images\PersonPushpin.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

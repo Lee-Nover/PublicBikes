@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:System_Globalization="clr-namespace:System.Globalization;assembly=mscorlib" 
-    x:Class="Bicikelj.Views.StationLocation.Detail"
+    x:Class="Bicikelj.Views.FavoriteView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -26,15 +26,11 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" x:Name="StationName" TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" />
-            <TextBlock Grid.Row="1" x:Name="Address" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
+            <TextBlock Grid.Row="0" x:Name="LocationName" TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" />
             <maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" 
-                      Mode="Road" Center="{Binding GeoLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
-            	<maps:Pushpin x:Name="Station" Location="{Binding GeoLocation}" CacheMode="BitmapCache">
-                    <Path Data="{StaticResource CyclingIconData}" Width="24" Height="24" Fill="White" Stretch="Uniform" />
-            	</maps:Pushpin>
-            	<maps:Pushpin x:Name="Me" Location="{Binding MyGeoLocation}" CacheMode="BitmapCache" >
-                    <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Fill="White" Stretch="Uniform" />
+                      Mode="Road" Center="{Binding Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
+            	<maps:Pushpin x:Name="Station" Location="{Binding Coordinate}" CacheMode="BitmapCache">
+            		<Image Source="/Images/BikePushpin3.png" Stretch="None" />
             	</maps:Pushpin>
             </maps:Map>
             <TextBlock Grid.Row="3" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />

@@ -133,7 +133,7 @@
 							<Grid>
 								<ContentControl x:Name="ContentElement" HorizontalContentAlignment="Stretch" Padding="{TemplateBinding Padding}" VerticalContentAlignment="Stretch"/>
 								<!--ContentControl Content="{StaticResource FilterIcon}" Margin="0,0,4,0" HorizontalAlignment="Right" VerticalAlignment="Center" /-->
-								<Path Data="M2.1299944,9.9798575L55.945994,9.9798575 35.197562,34.081179 35.197562,62.672859 23.428433,55.942383 23.428433,33.52121z M1.3001332,0L56.635813,0C57.355887,0,57.935946,0.5891428,57.935946,1.3080959L57.935946,2.8258877C57.935946,3.5448422,57.355887,4.133985,56.635813,4.133985L1.3001332,4.133985C0.58005941,4.133985,-2.3841858E-07,3.5448422,0,2.8258877L0,1.3080959C-2.3841858E-07,0.5891428,0.58005941,0,1.3001332,0z" Stretch="Uniform" Fill="#FF050505" Width="32" Height="32" RenderTransformOrigin="0.5,0.5" Margin="0,0,4,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
+								<Path Data="{StaticResource FilterIconData}" Fill="Black" Stretch="Uniform" Width="32" Height="32" Margin="0,0,4,0" HorizontalAlignment="Right" VerticalAlignment="Center" />
 							</Grid>
 						</Border>
 						<Border x:Name="DisabledOrReadonlyBorder" BorderBrush="{StaticResource PhoneDisabledBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="{StaticResource PhoneTouchTargetOverhang}" Visibility="Collapsed">

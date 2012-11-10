@@ -13,48 +13,53 @@ using Bicikelj.Model.Bing;
 using System.Threading;
 using System.Globalization;
 using System.Windows;
+using Bicikelj.Views;
+using System.Windows.Shapes;
+using Bicikelj.Converters;
+using System.Windows.Media.Imaging;
 
 namespace Bicikelj.ViewModels
 {
 	public class FavoriteViewModel : Screen
 	{
-		private StationLocation stationLocation;
-		public StationLocation Location { get { return stationLocation; } set { SetLocation(value); } }
+		private FavoriteLocation location;
+		public FavoriteLocation Location { get { return location; } set { SetLocation(value); } }
 		private IEventAggregator events;
-		private SystemConfig config;
-
-		public FavoriteViewModel() : this(null)
-		{
-		}
-
-		public FavoriteViewModel(StationLocation stationLocation)
+		public string LocationName { get { return location.Name; } }
+		public string Address { get { return location.Address; } }
+		public GeoCoordinate Coordinate { get { return location.Coordinate; } }
+		public FavoriteType FavoriteType { get { return location.FavoriteType; } }
+		public object FavoriteIcon { get { return FavoriteToIconConverter.GetIcon(FavoriteType); } }
+		
+		public FavoriteViewModel(FavoriteLocation location)
 		{
 			events = IoC.Get<IEventAggregator>();
-			config = IoC.Get<SystemConfig>();
-			SetLocation(stationLocation);
+			SetLocation(location);
 		}
 
-		private void SetLocation(StationLocation stationLocation)
+		protected override void OnViewAttached(object view, object context)
 		{
-			this.stationLocation = stationLocation;
+			base.OnViewAttached(view, context);
+			var ov = view as FavoriteView;
+			if (ov != null)
+			{
+				var vr = IoC.Get<LocationRect>();
+				if (vr != null)
+					ov.Map.SetView(vr);
+				else
+					ov.Map.ZoomLevel = 14;
+			}
+		}
+
+		private void SetLocation(FavoriteLocation location)
+		{
+			this.location = location;
 			
 		}
 
-		public string Name { get { return stationLocation.Name; } }
-		public string Address { get { return stationLocation.Address; } }
-		public double Latitude { get { return stationLocation.Latitude; } }
-		public double Longitude { get { return stationLocation.Longitude; } }
-		public bool Open { get { return stationLocation.Open; } }
-		public bool IsFavorite { get { return stationLocation.IsFavorite; } set { SetFavorite(value); } }
-
-		public void ToggleFavorite()
+		public void Unfavorite()
 		{
-			SetFavorite(!IsFavorite);
-		}
-
-		private void SetFavorite(bool value)
-		{
-			NotifyOfPropertyChange(() => IsFavorite);
+			events.Publish(FavoriteState.Unfavorite(Location));
 		}
 	}
 }

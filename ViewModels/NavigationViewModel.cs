@@ -11,6 +11,8 @@ using Bicikelj.Views;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Windows.Data;
 
 namespace Bicikelj.ViewModels
 {
@@ -167,24 +169,30 @@ namespace Bicikelj.ViewModels
 					{
 						Pushpin pp = new Pushpin();
 						pp.Location = point;
+						double pinWidth = App.Current.RootVisual.RenderSize.Width * 0.06;
+						Path p = new Path() { Stretch = Stretch.Uniform, Width = pinWidth, Height = pinWidth, Fill = new SolidColorBrush(Colors.White) };
+						Binding b = new Binding();
+						b.Converter = App.Current.Resources["PinTypeToIconConverter"] as IValueConverter;
 						switch (idxPoint++)
 						{
 							case 0:
-								pp.Content = new Image() { Source = new BitmapImage(new Uri("/Images/PersonPushpin3.png", UriKind.Relative)), Stretch = Stretch.None };
+								pp.DataContext = PinType.CurrentPosition;
 								break;
 							case 1:
-								pp.Content = new Image() { Source = new BitmapImage(new Uri("/Images/BikePushpin3.png", UriKind.Relative)), Stretch = Stretch.None };
+								pp.DataContext = PinType.BikeStand;
 								break;
 							case 2:
-								pp.Content = new Image() { Source = new BitmapImage(new Uri("/Images/WalkingPushpin.png", UriKind.Relative)), Stretch = Stretch.None };
+								pp.DataContext = PinType.Walking;
 								break;
 							case 3:
-								pp.Content = new Image() { Source = new BitmapImage(new Uri("/Images/FinishPushpin.png", UriKind.Relative)), Stretch = Stretch.None };
+								pp.DataContext = PinType.Finish;
 								break;
 							default:
 							break;
 						}
-						
+						p.SetBinding(Path.DataProperty, b);
+						pp.Content = p;
+
 						view.Map.Children.Add(pp);
 					}
 					view.Map.SetView(viewRect);

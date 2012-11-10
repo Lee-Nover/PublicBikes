@@ -5,7 +5,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:b="clr-namespace:Bicikelj" 
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
-    xmlns:wctl="clr-namespace:Windows.Controls"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     mc:Ignorable="d">
     

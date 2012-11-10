@@ -12,11 +12,20 @@ using System.Device.Location;
 
 namespace Bicikelj.Model
 {
+	public enum FavoriteType
+	{
+		Station,
+		Coordinate,
+		Name
+	}
+
 	public class FavoriteLocation
 	{
+		public FavoriteType FavoriteType { get; set; }
 		public StationLocation Station { get; set; }
 		public GeoCoordinate Coordinate { get; set; }
 		public string Name { get; set; }
+		public string Address { get; set; }
 
 		public FavoriteLocation()
 		{
@@ -25,13 +34,46 @@ namespace Bicikelj.Model
 		public FavoriteLocation(StationLocation station)
 		{
 			this.Station = station;
-			this.Name = station.Address;
+			this.Name = station.Name;
+			this.Address = station.Address;
 			this.Coordinate = new GeoCoordinate(station.Latitude, station.Longitude);
+			this.FavoriteType = Model.FavoriteType.Station;
 		}
 
 		public FavoriteLocation(string name)
 		{
 			this.Name = name;
+			this.FavoriteType = Model.FavoriteType.Name;
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+			{
+				return false;
+			}
+		
+			var other = obj as FavoriteLocation;
+			if (other == null)
+				return false;
+			// if either object has a Station then compare their instances
+			if (Station != null || other.Station != null)
+				return Station == other.Station;
+			// if either object has a Coordinate then compare their Latitude and Longitude
+			if (Coordinate != null || other.Coordinate != null)
+				if (Coordinate == null || other.Coordinate == null)
+					return false;
+				else
+					return Coordinate.Longitude == other.Coordinate.Longitude && Coordinate.Latitude == other.Coordinate.Latitude;
+			
+			return Name == other.Name;
+		}
+	
+		// override object.GetHashCode
+		public override int GetHashCode()
+		{
+			// TODO: write your implementation of GetHashCode() here
+			return base.GetHashCode();
 		}
 	}
 
