@@ -19,13 +19,13 @@
                 <ResourceDictionary Source="Assets/Styles.xaml"/>
                 <ResourceDictionary Source="Assets/BingMapsCredentials.xaml"/>
                 <ResourceDictionary Source="Assets/Icons.xaml"/>
+                <ResourceDictionary Source="Themes/generic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <local:WP7Bootstrapper x:Key="bootstrapper" />
             <cvt:ValueToVisibilityConverter x:Key="ValueToVisibilityConverter" />
             <cvt:ValueToVisibilityInvConverter x:Key="ValueToVisibilityInvConverter" />
             <cvt:FavoriteToIconConverter x:Key="FavoriteToIconConverter" />
             <cvt:PinTypeToIconConverter x:Key="PinTypeToIconConverter" />
-            <sys:String x:Key="BingKey">Aplf-Zr29iXS78kX-EacQV1PtQHf5o2vhmRjPa-t_SU0tIlbWMzf7_tppgLFkYPM</sys:String>
         </ResourceDictionary>
     </Application.Resources>
 

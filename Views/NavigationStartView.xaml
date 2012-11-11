@@ -6,6 +6,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
 	xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+	xmlns:bctl="clr-namespace:Bicikelj.Controls"
 	FontFamily="{StaticResource PhoneFontFamilyNormal}"
 	FontSize="{StaticResource PhoneFontSizeNormal}"
 	Foreground="{StaticResource PhoneForegroundBrush}"
@@ -14,16 +15,40 @@
 	<!--LayoutRoot is the root grid where all page content is placed-->
 	<Grid x:Name="LayoutRoot" Background="Transparent" >
 		<StackPanel>
-			<!--toolkit:WrapPanel Margin="12">
-				<toolkit:HubTile x:Name="FindNearestAvailableBike" Margin="0,0,12,12" Visibility="{Binding IsEnabled, Converter={StaticResource ValueToVisibilityConverter}}" Title="nearest bike" Message="find the nearest available bike" Source="/Images/BikePushpin3.png" />
-				<toolkit:HubTile Margin="0,0,12,12" Title="nearest station" Message="find the nearest free bike stand" Source="/Images/PersonPushpin3.png" />
-				<toolkit:HubTile Margin="0,0,12,12" Title="take me to..." Message="show a navigation route using the nearest bike stations" Source="/Images/PersonPushpin3.png" />
-				<toolkit:HubTile Margin="0,0,12,12" Title="map" Message="open a map with all stations" Style="{StaticResource HubTileStyle}" />
-			</toolkit:WrapPanel-->
+			<toolkit:WrapPanel Margin="12">
+				<bctl:HubTileWithContent x:Name="FindNearestAvailableBike" toolkit:TiltEffect.IsTiltEnabled="True" Margin="0,0,12,12" Title="nearest bike" Message="find the nearest available bike" >
+					<bctl:HubTileWithContent.Content>
+						<Path Data="{StaticResource CyclingIconData}" Stretch="Uniform" Fill="White" Margin="12" />
+					</bctl:HubTileWithContent.Content>
+				</bctl:HubTileWithContent>
+				<bctl:HubTileWithContent x:Name="FindNearestFreeStand" Margin="0,0,12,12" toolkit:TiltEffect.IsTiltEnabled="True" Title="nearest stand" Message="find the nearest free bike stand" >
+					<bctl:HubTileWithContent.Content>
+						<Path Data="{StaticResource CurrentPositionIconData}" Stretch="Uniform" Fill="White" Margin="12" />
+					</bctl:HubTileWithContent.Content>
+				</bctl:HubTileWithContent>
+				<bctl:HubTileWithContent x:Name="TakeMeTo" Margin="0,0,12,12" toolkit:TiltEffect.IsTiltEnabled="True" Title="take me to..." Message="show a navigation route using the nearest bike stations" >
+					<bctl:HubTileWithContent.Content>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0.5*" />
+								<ColumnDefinition Width="0.5*" />
+							</Grid.ColumnDefinitions>
+							<Path Data="{StaticResource SailorCompassIconData}" Grid.ColumnSpan="2" Stretch="Uniform" Fill="White" Margin="48,12,12,12" VerticalAlignment="Bottom" />
+							<Path Data="{StaticResource NavigationIconData}" Stretch="Uniform" Fill="White" Margin="12" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top">
+								<Path.RenderTransform>
+									<RotateTransform Angle="60" />
+								</Path.RenderTransform>
+							</Path>
+						</Grid>
+					</bctl:HubTileWithContent.Content>
+				</bctl:HubTileWithContent>
+				<bctl:HubTileWithContent x:Name="OpenMap" Margin="0,0,12,12" toolkit:TiltEffect.IsTiltEnabled="True" Title="map" Message="open a map with all stations" >
+					<bctl:HubTileWithContent.Content>
+						<Path Data="{StaticResource MapIconData}" Stretch="Uniform" Fill="White" Margin="12" />
+					</bctl:HubTileWithContent.Content>
+				</bctl:HubTileWithContent>
+			</toolkit:WrapPanel>
 			
-			<HyperlinkButton x:Name="FindNearestAvailableBike" Content="nearest bike" HorizontalAlignment="Left" Style="{StaticResource LargeLinkStyle}" />
-			<HyperlinkButton x:Name="FindNearestFreeStand" Content="nearest free stand" HorizontalAlignment="Left" Style="{StaticResource LargeLinkStyle}" />
-			<HyperlinkButton x:Name="TakeMeTo" Content="take me to..." HorizontalAlignment="Left" Style="{StaticResource LargeLinkStyle}" />
 			<HyperlinkButton x:Name="OpenConfig" Content="enable location" HorizontalAlignment="Left" Visibility="{Binding IsEnabled, Converter={StaticResource ValueToVisibilityInvConverter}}" Style="{StaticResource LargeLinkStyle}" />
 		</StackPanel>
 	</Grid>

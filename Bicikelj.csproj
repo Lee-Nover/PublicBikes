@@ -93,6 +93,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\BindableApplicationBar.cs" />
+    <Compile Include="Controls\HubTileWithContent.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="Converters\PinTypeToIconConverter.cs" />
     <Compile Include="Converters\FavoriteToIconConverter.cs" />
@@ -143,6 +144,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Assets\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

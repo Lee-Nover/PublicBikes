@@ -1,6 +1,8 @@
 ﻿<ResourceDictionary
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+	xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+	xmlns:bctl="clr-namespace:Bicikelj.Controls">
 	
 	<Color x:Key="LogoLightGreen">#FFA6CC38</Color>
 	<Color x:Key="LogoDarkGreen">#FF32560E</Color>
