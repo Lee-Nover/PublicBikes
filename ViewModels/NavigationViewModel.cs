@@ -74,7 +74,7 @@ namespace Bicikelj.ViewModels
 
 		private void FindBestRoute(GeoCoordinate fromLocation, GeoCoordinate toLocation)
 		{
-			events.Publish(new BusyState(true, "calculating route..."));
+			events.Publish(BusyState.Busy("calculating route..."));
 			if (stationList.Stations == null)
 			{
 				stationList.GetStations((s, e) =>
@@ -216,7 +216,7 @@ namespace Bicikelj.ViewModels
 
 		public void TakeMeTo(string address)
 		{
-			events.Publish(new BusyState(true, "searching..."));
+			events.Publish(BusyState.Busy("searching..."));
 			// todo get the address coordinates using bing maps
 			LocationHelper.FindLocation(address, CurrentLocation, (r, e) =>
 			{

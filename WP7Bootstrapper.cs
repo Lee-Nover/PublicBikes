@@ -12,12 +12,17 @@ using System.Windows.Interactivity;
 using Bicikelj.Controls;
 using System.Linq;
 using Microsoft.Phone.Shell;
+using Wintellect.Sterling;
+using Wintellect.Sterling.Database;
+using Bicikelj.Persistence;
+using System.Threading;
 
 namespace Bicikelj
 {
 	public class WP7Bootstrapper : PhoneBootstrapper
 	{
 		PhoneContainer container;
+		ISterlingDatabaseInstance database;
 
 		protected override void Configure()
 		{
@@ -31,13 +36,86 @@ namespace Bicikelj
 			container.Singleton<NavigationStartViewModel>();
 			container.Singleton<NavigationViewModel>();
 			container.Singleton<DebugLog>();
-			container.Singleton<SystemConfig>();
 			container.Singleton<SystemConfigViewModel>();
 			container.Singleton<StationLocationList>();
+			container.Singleton<FavoriteLocationList>();
+
 #if DEBUG
-			LogManager.GetLog = type => new DebugLog(type);
+			//Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
 			AddCustomConventions();
+		}
+
+		protected override void OnActivate(object sender, ActivatedEventArgs e)
+		{
+			base.OnActivate(sender, e);
+			LoadDatabase();
+		}
+
+		protected override void OnStartup(object sender, StartupEventArgs e)
+		{
+			base.OnStartup(sender, e);
+			LoadDatabase();
+		}
+
+		protected override void OnDeactivate(object sender, DeactivatedEventArgs e)
+		{
+			SaveDatabase();
+			base.OnDeactivate(sender, e);
+		}
+
+		protected override void OnClose(object sender, ClosingEventArgs e)
+		{
+			SaveDatabase();
+			base.OnClose(sender, e);
+		}
+
+		private void LoadDatabase()
+		{
+			database = Database.Activate();
+			if (IoC.Get<SystemConfig>() != null)
+				return;
+			container.Instance(database);
+			var config = database.Load<SystemConfig>(true);
+			if (config == null)
+				config = new SystemConfig();
+			container.Instance(config);
+
+			ThreadPool.QueueUserWorkItem(o =>
+			{
+				var allStations = IoC.Get<StationLocationList>();
+				if (allStations.Stations == null)
+				{
+					var storedStations = database.Load<StationLocationList>(true);
+					if (storedStations != null)
+						allStations.Stations = storedStations.Stations;
+					
+				}
+				allStations.SortByDistance(null);
+				
+				var favorites = IoC.Get<FavoriteLocationList>();
+				if (favorites.Items == null)
+				{
+					var storedFavorites = database.Load<FavoriteLocationList>(true);
+					if (storedFavorites != null)
+						favorites.Items = storedFavorites.Items;
+					if (favorites.Items == null)
+						favorites.Items = new List<FavoriteLocation>();
+					IoC.Get<IEventAggregator>().Publish(FavoriteState.Favorite(null));
+				}
+			});
+		}
+
+		private void SaveDatabase()
+		{
+			var config = IoC.Get<SystemConfig>();
+			database.Save(config);
+			var allStations = IoC.Get<StationLocationList>();
+			database.Save(allStations);
+			var favorites = IoC.Get<FavoriteLocationList>();
+			database.Save(favorites);
+			database.Flush();
+			Database.Deactivate();
 		}
 
 		static void AddCustomConventions()

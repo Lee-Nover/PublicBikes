@@ -1,19 +1,8 @@
 ﻿using Caliburn.Micro;
-using System;
-using System.Collections.ObjectModel;
 using Bicikelj.Model;
-using System.Net;
-using System.Linq;
-using System.Xml.Linq;
 using System.Collections.Generic;
-using System.Windows.Data;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Phone.Controls.Maps;
-using System.Device.Location;
-using System.IO;
-using Microsoft.Phone.Controls;
 using System.Threading;
+using System;
 
 namespace Bicikelj.ViewModels
 {
@@ -21,8 +10,8 @@ namespace Bicikelj.ViewModels
 	{
 		readonly IEventAggregator events;
 		readonly SystemConfig config;
+		readonly StationLocationList stationList;
 		private IList<StationLocationViewModel> stations = new List<StationLocationViewModel>();
-		private StationLocationList stationList;
 
 		public StationsViewModel(IEventAggregator events, SystemConfig config, StationLocationList sl)
 		{
@@ -44,22 +33,10 @@ namespace Bicikelj.ViewModels
 			}
 		}
 
-		private string stationsXML = "";
-		public string StationsXML
+		protected override void OnActivate()
 		{
-			get { return stationList == null ? "" : stationList.StationsXML; }
-			set {
-				if (value == StationsXML)
-					return;
-				stationsXML = value;
-				ThreadPool.QueueUserWorkItem((o) => {
-					if (stationList.Stations == null)
-					{
-						stationList.LoadStationsFromXML(stationsXML);
-						stationList.SortByDistance(null);
-					}
-				});
-			}
+			base.OnActivate();
+			UpdateStations();
 		}
 
 		public override void ActivateItem(StationLocationViewModel item)
@@ -99,7 +76,8 @@ namespace Bicikelj.ViewModels
 		public void UpdateStations()
 		{
 			if (stations.Count > 0) return;
-			events.Publish(new BusyState(true, "updating stations..."));
+			events.Publish(BusyState.Busy("updating stations..."));
+			var opStart = DateTime.Now;
 			if (stationList.Stations == null)
 			{
 				stationList.GetStations((s, e) =>
@@ -107,6 +85,9 @@ namespace Bicikelj.ViewModels
 					this.stations.Clear();
 					foreach (var st in s)
 						stations.Add(new StationLocationViewModel(st));
+					var elapsed = DateTime.Now - opStart;
+					if (elapsed.Milliseconds < 500)
+						System.Threading.Thread.Sleep(500 - elapsed.Milliseconds);
 					Execute.OnUIThread(() =>
 					{	
 						FilterChanged();
@@ -121,6 +102,9 @@ namespace Bicikelj.ViewModels
 					this.stations.Clear();
 					foreach (var st in stationList.Stations)
 						stations.Add(new StationLocationViewModel(st));
+					var elapsed = DateTime.Now - opStart;
+					if (elapsed.Milliseconds < 500)
+						System.Threading.Thread.Sleep(500 - elapsed.Milliseconds);
 					Execute.OnUIThread(() =>
 					{
 						FilterChanged();

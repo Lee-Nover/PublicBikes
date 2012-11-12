@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>SterlingPhone</id>
+    <version>1.5.0.1</version>
+    <title>SterlingPhone</title>
+    <authors>Jeremy Likness</authors>
+    <owners>Jeremy Likness</owners>
+    <licenseUrl>http://sterling.codeplex.com/license</licenseUrl>
+    <projectUrl>http://sterling.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Sterling NoSQL object-oriented database for Silverlight Windows Phone applications.</description>
+    <summary>Sterling NoSQL object-oriented database for Silverlight Windows Phone applications.</summary>
+  </metadata>
+</package>

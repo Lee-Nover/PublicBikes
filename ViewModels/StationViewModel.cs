@@ -61,7 +61,7 @@ namespace Bicikelj.ViewModels
 				return;
 			if (availability == null || forceUpdate)
 			{
-				Events.Publish(new BusyState(true, "checking availability..."));
+				Events.Publish(BusyState.Busy("checking availability..."));
 				StationLocationList.GetAvailability(Location.Location, (s, a, e) => {
 					if (e != null || a == null)
 						Events.Publish(new ErrorState(e, "could not get availability"));

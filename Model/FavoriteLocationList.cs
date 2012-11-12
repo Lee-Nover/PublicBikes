@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace Bicikelj.Model
 {
-	public class Favorites
+	public class FavoriteLocationList
 	{
 		public IList<FavoriteLocation> Items { get; set; }
 	}

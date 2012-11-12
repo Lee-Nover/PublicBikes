@@ -21,7 +21,7 @@ namespace Bicikelj.Model
 					coordinate = new GeoCoordinate(Latitude, Longitude);
 				return coordinate;
 			}
-			//set { coordinate = value; }
+			set { coordinate = value; }
 		}
 		
 	}

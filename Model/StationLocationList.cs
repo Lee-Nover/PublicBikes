@@ -39,7 +39,22 @@ namespace Bicikelj.Model
 		private IList<StationLocation> stations;
 		private string stationsXML = "";
 
-		public IList<StationLocation> Stations { get { return stations; } }
+		public IList<StationLocation> Stations { get { return stations; } set { SetStations(value); } }
+
+		private void SetStations(IList<StationLocation> value)
+		{
+			this.stations = value;
+			if (this.stations == null)
+				return;
+			var locations = from station in stations
+							select new GeoCoordinate
+							{
+								Latitude = station.Latitude,
+								Longitude = station.Longitude
+							};
+			locationRect = LocationRect.CreateLocationRect(locations);
+		}
+
 		public string StationsXML { get { return stationsXML; } }
 
 		private LocationRect locationRect;
@@ -140,6 +155,8 @@ namespace Bicikelj.Model
 
 		public void SortByDistance(Action<IEnumerable<StationLocation>> callback)
 		{
+			if (stations == null)
+				return;
 			if (IoC.Get<SystemConfig>().LocationEnabled)
 				LocationHelper.SortByLocation(stations, (r) =>
 				{
@@ -151,7 +168,7 @@ namespace Bicikelj.Model
 
 		public IEnumerable<StationLocation> SortByLocation(GeoCoordinate location)
 		{
-			if (location == null)
+			if (location == null || stations == null)
 				return stations;
 			var sortedStations = from station in stations
 								 orderby station.Coordinate.GetDistanceTo(location)
@@ -164,6 +181,8 @@ namespace Bicikelj.Model
 		{
 			//if (location2 == null)
 				return SortByLocation(location);
+				if (stations == null)
+					return null;
 			int index = 0;
 			var sortedStations1 = (from station in stations
 								 orderby station.Coordinate.GetDistanceTo(location)

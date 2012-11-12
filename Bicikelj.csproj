@@ -87,6 +87,12 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
+    <Reference Include="Wintellect.Sterling.WindowsPhone">
+      <HintPath>packages\SterlingPhone.1.5.0.1\lib\SL3-WP\Wintellect.Sterling.WindowsPhone.dll</HintPath>
+    </Reference>
+    <Reference Include="Wintellect.Sterling.WindowsPhone.IsolatedStorage">
+      <HintPath>packages\SterlingPhone.1.5.0.1\lib\SL3-WP\Wintellect.Sterling.WindowsPhone.IsolatedStorage.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -104,7 +110,7 @@
     <Compile Include="Model\BingMaps.cs" />
     <Compile Include="Model\ErrorState.cs" />
     <Compile Include="Model\FavoriteLocation.cs" />
-    <Compile Include="Model\Favorites.cs" />
+    <Compile Include="Model\FavoriteLocationList.cs" />
     <Compile Include="Model\GetCoordinate.cs" />
     <Compile Include="Model\DownloadUrl.cs" />
     <Compile Include="Model\LocationHelper.cs" />
@@ -115,9 +121,9 @@
     <Compile Include="Model\StationLocationList.cs" />
     <Compile Include="Model\SystemConfig.cs" />
     <Compile Include="NavigationExtension.cs" />
-    <Compile Include="Persistence\FavoritesStorage.cs" />
-    <Compile Include="Persistence\SystemConfigStorage.cs" />
+    <Compile Include="Persistence\Database.cs" />
     <Compile Include="Persistence\StationsViewModelStorage.cs" />
+    <Compile Include="Persistence\TypeSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentModel.cs" />
     <Compile Include="ViewModels\FavoriteViewModel.cs" />

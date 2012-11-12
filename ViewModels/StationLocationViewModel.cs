@@ -144,7 +144,7 @@ namespace Bicikelj.ViewModels
 
 		public void CalculateRoute(GeoCoordinate from, GeoCoordinate to)
 		{
-			events.Publish(new BusyState(true, "calculating route..."));
+			events.Publish(BusyState.Busy("calculating route..."));
 			LocationHelper.CalculateRoute(new GeoCoordinate[] { from, to }, MapRoute);
 		}
 

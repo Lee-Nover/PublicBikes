@@ -67,7 +67,7 @@ namespace Bicikelj.ViewModels
 
 		private void FindNearestStationWithCondition(GeoCoordinate location, string msg, StationCondition condition)
 		{
-			events.Publish(new BusyState(true, msg));
+			events.Publish(BusyState.Busy(msg));
 			if (stationList.Stations == null)
 			{
 				stationList.GetStations((s, e) =>

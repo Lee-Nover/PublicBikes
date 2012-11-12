@@ -7,10 +7,6 @@ namespace Bicikelj.ViewModels
 	{
 		public override void Configure()
 		{
-			Property(x => x.StationsXML)
-				.InAppSettings()
-				.RestoreAfterViewLoad();
-
 			Property(x => x.Filter)
 				.InAppSettings()
 				.RestoreAfterViewLoad();

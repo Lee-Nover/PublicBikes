@@ -56,14 +56,6 @@ namespace Bicikelj.ViewModels
 			IoC.Get<IEventAggregator>().Publish(IoC.Get<SystemConfig>());
 		}
 
-		protected override void OnActivationProcessed(IScreen item, bool success)
-		{
-			base.OnActivationProcessed(item, success);
-			StationsViewModel svm = item as StationsViewModel;
-			if (svm != null)
-				svm.UpdateStations();
-		}
-
 		public void Handle(ErrorState message)
 		{
 			MessageBox.Show("uh-oh :(\n" + message.ToString());
