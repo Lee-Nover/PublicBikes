@@ -30,7 +30,11 @@ namespace Bicikelj.ViewModels
 		public GeoCoordinate Coordinate { get { return location.Coordinate; } }
 		public FavoriteType FavoriteType { get { return location.FavoriteType; } }
 		public object FavoriteIcon { get { return FavoriteToIconConverter.GetIcon(FavoriteType); } }
-		
+
+		public FavoriteViewModel() : this(null)
+		{
+		}
+
 		public FavoriteViewModel(FavoriteLocation location)
 		{
 			events = IoC.Get<IEventAggregator>();

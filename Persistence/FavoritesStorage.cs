@@ -8,17 +8,19 @@ namespace Bicikelj.Model
 	{
 		public override void Configure()
 		{
+			Property(x => x.FavoriteType);
+			Property(x => x.Address);
 			Property(x => x.Name);
 			Property(x => x.Coordinate);
+			//Property(x => x.Station);
 		}
 	}
 
-	public class FavoriteStorage : StorageHandler<FavoriteViewModel>
+	public class FavoriteViewModelStorage : StorageHandler<FavoriteViewModel>
 	{
 		public override void Configure()
 		{
-			Property(x => x.Station);
-			//Property(x => x.Coordinate);
+			Property(x => x.Location);
 		}
 	}
 
@@ -26,7 +28,11 @@ namespace Bicikelj.Model
 	{
 		public override void Configure()
 		{
-			Property(x => x.Items);
+			Property(x => x.Items).InAppSettings().RestoreAfterViewReady();
+		}
+		public override void Save(FavoritesViewModel instance, StorageMode mode)
+		{
+			base.Save(instance, mode);
 		}
 	}*/
 }
