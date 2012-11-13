@@ -72,14 +72,14 @@ namespace Bicikelj.ViewModels
 			{
 				stationList.GetStations((s, e) =>
 				{
-					if (e != null)
+					if (e != null || s == null)
 						events.Publish(new ErrorState(e, "could not get stations"));
-					else if (s != null)
+					else
 					{
-						var sNear = stationList.Stations.AsEnumerable();
+						var sNear = s.AsEnumerable();
 						if (location != null)
 							sNear = LocationHelper.SortByLocation(sNear, location);
-						FindNearest(stationList.Stations, condition);
+						FindNearest(sNear, condition);
 					}
 				});
 				return;
@@ -136,13 +136,9 @@ namespace Bicikelj.ViewModels
 			Bicikelj.NavigationExtension.NavigateTo(IoC.Get<SystemConfigViewModel>());
 		}
 
-		#region IHandle<SystemConfig> Members
-
 		public void Handle(SystemConfig message)
 		{
 			IsEnabled = message.LocationEnabled;
 		}
-
-		#endregion
 	}
 }

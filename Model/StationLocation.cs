@@ -23,6 +23,8 @@ namespace Bicikelj.Model
 			}
 			set { coordinate = value; }
 		}
-		
+
+
+		public string City { get; set; }
 	}
 }

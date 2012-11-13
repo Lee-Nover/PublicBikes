@@ -22,18 +22,16 @@ namespace Bicikelj.Persistence
 					   {
 						   CreateTableDefinition<SystemConfig, bool>(c => true),
 						   CreateTableDefinition<StationLocation, int>(c => c.Number),
-						   CreateTableDefinition<StationLocationList, bool>(c => true),
+						   CreateTableDefinition<StationLocationList, string>(c => c.City),
 						   CreateTableDefinition<FavoriteLocation, string>(c => c.Name),
-						   CreateTableDefinition<FavoriteLocationList, bool>(c => true)
+						   CreateTableDefinition<FavoriteLocationList, string>(GetCurrentCity)
 					   };
 		}
 
-		public override string Name
+		private string GetCurrentCity(FavoriteLocationList favorites)
 		{
-			get
-			{
-				return "BicikeljDatabase";
-			}
+			var config = IoC.Get<SystemConfig>();
+			return config.City;
 		}
 
 		public static ISterlingDatabaseInstance Activate()

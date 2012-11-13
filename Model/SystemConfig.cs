@@ -9,5 +9,13 @@ namespace Bicikelj.Model
 			get { return locationEnabled; }
 			set { locationEnabled = value; }
 		}
+
+		private string city;
+		public string City
+		{
+			get { return city; }
+			set { city = value; }
+		}
+		
 	}
 }

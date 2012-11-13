@@ -79,24 +79,27 @@ namespace Bicikelj
 			var config = database.Load<SystemConfig>(true);
 			if (config == null)
 				config = new SystemConfig();
+			if (string.IsNullOrWhiteSpace(config.City))
+				config.City = "ljubljana";
 			container.Instance(config);
 
 			ThreadPool.QueueUserWorkItem(o =>
 			{
+				// load the station list
 				var allStations = IoC.Get<StationLocationList>();
 				if (allStations.Stations == null)
 				{
-					var storedStations = database.Load<StationLocationList>(true);
+					var storedStations = database.Load<StationLocationList>(config.City);
 					if (storedStations != null)
 						allStations.Stations = storedStations.Stations;
-					
 				}
 				allStations.SortByDistance(null);
 				
+				// load favorites
 				var favorites = IoC.Get<FavoriteLocationList>();
 				if (favorites.Items == null)
 				{
-					var storedFavorites = database.Load<FavoriteLocationList>(true);
+					var storedFavorites = database.Load<FavoriteLocationList>(config.City);
 					if (storedFavorites != null)
 						favorites.Items = storedFavorites.Items;
 					if (favorites.Items == null)
@@ -159,8 +162,7 @@ namespace Bicikelj
 			ConventionManager.AddElementConvention<Pushpin>(ContentControl.ContentProperty, "DataContext", "MouseLeftButtonDown");
 			ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
 			ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
-			
-
+			TiltEffect.TiltableItems.Add(typeof(HubTile));
 		}
 
 		public static void BindAppBar(FrameworkElement view, AppBar appBar)

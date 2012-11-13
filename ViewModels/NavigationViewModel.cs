@@ -63,12 +63,11 @@ namespace Bicikelj.ViewModels
 			stationList.GetStations((s, e) => {
 				this.view.Map.SetView(stationList.LocationRect);
 			});
-			this.view.Map.SetView(stationList.LocationRect);
+			if (stationList.LocationRect != null)
+				this.view.Map.SetView(stationList.LocationRect);
 			
-			//ToLocation = "Triglavska 21, Ljubljana";
 			GetCoordinate.Current((c, e) => {
 				CurrentLocation = c;
-				//TrySearch();
 			});
 		}
 

@@ -83,15 +83,24 @@ namespace Bicikelj.ViewModels
 				stationList.GetStations((s, e) =>
 				{
 					this.stations.Clear();
-					foreach (var st in s)
-						stations.Add(new StationLocationViewModel(st));
-					var elapsed = DateTime.Now - opStart;
-					if (elapsed.Milliseconds < 500)
-						System.Threading.Thread.Sleep(500 - elapsed.Milliseconds);
-					Execute.OnUIThread(() =>
-					{	
-						FilterChanged();
+					if (s == null)
+					{
 						events.Publish(BusyState.NotBusy());
+						events.Publish(new ErrorState(e, "stations could not be loaded"));
+						return;
+					}
+
+					stationList.SortByDistance(ss => {
+						foreach (var st in s)
+							stations.Add(new StationLocationViewModel(st));
+						var elapsed = DateTime.Now - opStart;
+						if (elapsed.Milliseconds < 500)
+							System.Threading.Thread.Sleep(500 - elapsed.Milliseconds);
+						Execute.OnUIThread(() =>
+						{
+							FilterChanged();
+							events.Publish(BusyState.NotBusy());
+						});
 					});
 				});
 			}

@@ -37,8 +37,8 @@
                     <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Fill="White" Stretch="Uniform" />
             	</maps:Pushpin>
             </maps:Map>
-            <TextBlock Grid.Row="3" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
-            <TextBlock Grid.Row="4" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
+            <TextBlock Grid.Row="3" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
+            <TextBlock Grid.Row="4" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
         </Grid>
     </Grid>
  
