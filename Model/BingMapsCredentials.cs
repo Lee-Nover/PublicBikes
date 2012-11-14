@@ -13,6 +13,6 @@ namespace Bicikelj.Model
 {
 	public static class BingMapsCredentials
 	{
-		public static string Key = "Aplf-Zr29iXS78kX-EacQV1PtQHf5o2vhmRjPa-t_SU0tIlbWMzf7_tppgLFkYPM";
+		public static string Key = "your bing maps key";
 	}
 }
