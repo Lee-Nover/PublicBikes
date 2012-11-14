@@ -42,7 +42,8 @@ namespace Bicikelj.Persistence
 			engine.SterlingDatabase.RegisterSerializer<TypeSerializer>();
 #if DEBUG
 			loggerGuid = engine.SterlingDatabase.RegisterLogger((l, s, e) => {
-				Debug.WriteLine("{0}: {1}", l.ToString(), s);
+				if (l != SterlingLogLevel.Information && l != SterlingLogLevel.Verbose)
+					Debug.WriteLine("{0}: {1}", l.ToString(), s);
 			});
 #endif
 			engine.Activate();
