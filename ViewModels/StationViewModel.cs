@@ -1,12 +1,5 @@
 ﻿using Bicikelj.Model;
 using Caliburn.Micro;
-using System.Net;
-using System;
-using System.Linq;
-using System.Xml.Linq;
-using System.Threading;
-using Bicikelj.Views;
-using System.Collections.Generic;
 
 namespace Bicikelj.ViewModels
 {
@@ -82,16 +75,12 @@ namespace Bicikelj.ViewModels
 		public void ToggleFavorite()
 		{
 			if (Location != null)
+			{
 				Location.ToggleFavorite();
+				NotifyOfPropertyChange(() => IsFavorite);
+			}
 		}
 
-		protected override void OnViewAttached(object view, object context)
-		{
-			base.OnViewAttached(view, context);
-			StationView sv = view as StationView;
-			if (sv == null)
-				return;
-			WP7Bootstrapper.BindAppBar(sv, sv.AppBar);
-		}
+		public bool IsFavorite { get { return Location != null ? Location.IsFavorite : false; } }
 	}
 }

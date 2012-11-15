@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Data;
-using System.Collections;
 using Bicikelj.Model;
 
 namespace Bicikelj.Converters
 {
-	public class FavoriteToIconConverter : IValueConverter
+	public class FavoriteTypeToIconConverter : IValueConverter
 	{
 
 		#region IValueConverter Members
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			return FavoriteToIconConverter.GetIcon(value);
+			return FavoriteTypeToIconConverter.GetIcon(value);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -54,7 +52,10 @@ namespace Bicikelj.Converters
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			return FavoriteToIconUriConverter.GetIconUri(value);
+			if (targetType == typeof(Uri))
+				return FavoriteToIconUriConverter.GetIconUri(value, parameter);
+			else
+				return FavoriteToIconUriConverter.GetIconUriStr(value, parameter);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -62,48 +63,24 @@ namespace Bicikelj.Converters
 			throw new NotImplementedException();
 		}
 
-		public static Uri GetIconUri(object value)
+		public static Uri GetIconUri(object value, object parameter)
 		{
-			Uri result = null;
-			if (value is FavoriteType)
-			{
-				switch ((FavoriteType)value)
-				{
-					case FavoriteType.Station:
-						result = new Uri("/Images/Cycle racer 24.png", UriKind.Relative);
-						break;
-					case FavoriteType.Coordinate:
-						result = new Uri("/Images/Map and location 24.png", UriKind.Relative);
-						break;
-					case FavoriteType.Name:
-						result = new Uri("/Images/Map and location 24.png", UriKind.Relative);
-						break;
-					default:
-						break;
-				}
-			}
+			var result = new Uri(GetIconUriStr(value, parameter), UriKind.RelativeOrAbsolute);
 			return result;
 		}
 
-		public static string GetIconUriStr(object value)
+		public static string GetIconUriStr(object value, object parameter)
 		{
 			string result = null;
-			if (value is FavoriteType)
+			if (value is bool)
 			{
-				switch ((FavoriteType)value)
-				{
-					case FavoriteType.Station:
-						result = "/Images/Cycle racer 24.png";
-						break;
-					case FavoriteType.Coordinate:
-						result = "/Images/Map and location 24.png";
-						break;
-					case FavoriteType.Name:
-						result = "/Images/Map and location 24.png";
-						break;
-					default:
-						break;
-				}
+				bool op = parameter is bool ? (bool)parameter : false;
+				if (parameter is string)
+					bool.TryParse(parameter as string, out op);
+				if ((bool)value ^ op)
+					result = "/Images/appbar.star.png";
+				else
+					result = "/Images/appbar.star.delete.png";
 			}
 			return result;
 		}

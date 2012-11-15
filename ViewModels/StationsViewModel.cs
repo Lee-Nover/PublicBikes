@@ -36,7 +36,7 @@ namespace Bicikelj.ViewModels
 		protected override void OnActivate()
 		{
 			base.OnActivate();
-			UpdateStations();
+			UpdateStations(false);
 		}
 
 		public override void ActivateItem(StationLocationViewModel item)
@@ -73,12 +73,13 @@ namespace Bicikelj.ViewModels
 			}
 		}
 
-		public void UpdateStations()
+		public void UpdateStations(bool forceUpdate)
 		{
-			if (stations.Count > 0) return;
+			if (stations.Count > 0 && !forceUpdate) return;
 			events.Publish(BusyState.Busy("updating stations..."));
+			int waitAmount = forceUpdate ? 0 : 600;
 			var opStart = DateTime.Now;
-			if (stationList.Stations == null)
+			if (stationList.Stations == null || forceUpdate)
 			{
 				stationList.GetStations((s, e) =>
 				{
@@ -94,15 +95,15 @@ namespace Bicikelj.ViewModels
 						foreach (var st in s)
 							stations.Add(new StationLocationViewModel(st));
 						var elapsed = DateTime.Now - opStart;
-						if (elapsed.Milliseconds < 500)
-							System.Threading.Thread.Sleep(500 - elapsed.Milliseconds);
+						if (elapsed.Milliseconds < waitAmount)
+							System.Threading.Thread.Sleep(waitAmount - elapsed.Milliseconds);
 						Execute.OnUIThread(() =>
 						{
 							FilterChanged();
 							events.Publish(BusyState.NotBusy());
 						});
 					});
-				});
+				}, forceUpdate);
 			}
 			else
 			{
@@ -112,8 +113,8 @@ namespace Bicikelj.ViewModels
 					foreach (var st in stationList.Stations)
 						stations.Add(new StationLocationViewModel(st));
 					var elapsed = DateTime.Now - opStart;
-					if (elapsed.Milliseconds < 500)
-						System.Threading.Thread.Sleep(500 - elapsed.Milliseconds);
+					if (elapsed.Milliseconds < waitAmount)
+						System.Threading.Thread.Sleep(waitAmount - elapsed.Milliseconds);
 					Execute.OnUIThread(() =>
 					{
 						FilterChanged();

@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using Caliburn.Micro;
 using Bicikelj.ViewModels;
 using Microsoft.Phone.Controls;
-using System.Windows.Media;
 using System.Windows.Controls;
 using Bicikelj.Model;
 using Microsoft.Phone.Controls.Maps;
 using System.Windows;
-using System.Windows.Interactivity;
-using Bicikelj.Controls;
-using System.Linq;
 using Microsoft.Phone.Shell;
 using Wintellect.Sterling;
-using Wintellect.Sterling.Database;
 using Bicikelj.Persistence;
 using System.Threading;
+using BindableApplicationBar;
 
 namespace Bicikelj
 {
@@ -162,38 +158,10 @@ namespace Bicikelj
 			ConventionManager.AddElementConvention<Pushpin>(ContentControl.ContentProperty, "DataContext", "MouseLeftButtonDown");
 			ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
 			ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
+			ConventionManager.AddElementConvention<AppBarCM>(FrameworkElement.DataContextProperty, "DataContext", "Loaded");
+			ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
 			TiltEffect.TiltableItems.Add(typeof(HubTile));
 		}
-
-		public static void BindAppBar(FrameworkElement view, AppBar appBar)
-		{
-			var triggers = Interaction.GetTriggers(view);
-
-			foreach (var item in appBar.Buttons)
-			{
-				var menuItem = item as AppBarButton;
-				if (menuItem == null)
-				{
-					continue;
-				}
-
-				var trigger1 = from t in triggers where t is AppBarMenuItemTrigger && ((AppBarMenuItemTrigger)t).MenuItem == menuItem select t;
-				if (trigger1.FirstOrDefault() != null)
-					return;
-				var parsedTrigger = Parser.Parse(view, menuItem.Message).First();
-				var trigger = new AppBarMenuItemTrigger(menuItem);
-				var actionMessages = parsedTrigger.Actions.OfType<ActionMessage>().ToList();
-				actionMessages.Apply(x =>
-				{
-					//x.menuItemSource = menuItem;
-					parsedTrigger.Actions.Remove(x);
-					trigger.Actions.Add(x);
-				});
-
-				triggers.Add(trigger);
-			}
-		}
-
 
 		protected override object GetInstance(Type service, string key)
 		{
@@ -208,21 +176,6 @@ namespace Bicikelj
 		protected override void BuildUp(object instance)
 		{
 			container.BuildUp(instance);
-		}
-	}
-
-	class AppBarMenuItemTrigger : TriggerBase<UserControl>
-	{
-		public IApplicationBarMenuItem MenuItem;
-		public AppBarMenuItemTrigger(IApplicationBarMenuItem menuItem)
-		{
-			menuItem.Click += ButtonClicked;
-			MenuItem = menuItem;
-		}
-
-		void ButtonClicked(object sender, EventArgs e)
-		{
-			InvokeActions(e);
 		}
 	}
 }

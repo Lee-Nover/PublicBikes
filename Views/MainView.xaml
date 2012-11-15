@@ -27,13 +27,4 @@
 			</controls:Panorama.Background>
 		</controls:Panorama>		
 	</Grid>
-	<!--phone:PhoneApplicationPage.ApplicationBar>
-		<shell:ApplicationBar IsVisible="True">
-			<shell:ApplicationBar.Buttons>
-				<cal:AppBarButton IconUri="ApplicationIcon.png"
-								  Text="Page Two"
-								  Message="GotoPageTwo" />
-			</shell:ApplicationBar.Buttons>
-		</shell:ApplicationBar>
-	</phone:PhoneApplicationPage.ApplicationBar-->
 </phone:PhoneApplicationPage>

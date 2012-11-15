@@ -98,7 +98,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\AppBarCM.cs" />
+    <Compile Include="Controls\Bindable.cs" />
     <Compile Include="Controls\BindableApplicationBar.cs" />
+    <Compile Include="Controls\BindableApplicationBarButton.cs" />
+    <Compile Include="Controls\BindableApplicationBarMenuItem.cs" />
     <Compile Include="Controls\HubTileWithContent.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="Converters\PinTypeToIconConverter.cs" />
@@ -240,6 +244,7 @@
     <Resource Include="Images\SplashScreenImage.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\appbar.button.png" />
     <Content Include="Images\appbar.star.delete.png" />
     <Content Include="Images\appbar.star.png" />
     <Content Include="Images\BicikeljLogo.png" />

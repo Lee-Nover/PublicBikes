@@ -29,7 +29,7 @@ namespace Bicikelj.ViewModels
 		public string Address { get { return location.Address; } }
 		public GeoCoordinate Coordinate { get { return location.Coordinate; } }
 		public FavoriteType FavoriteType { get { return location.FavoriteType; } }
-		public object FavoriteIcon { get { return FavoriteToIconConverter.GetIcon(FavoriteType); } }
+		public object FavoriteIcon { get { return FavoriteTypeToIconConverter.GetIcon(FavoriteType); } }
 
 		public FavoriteViewModel() : this(null)
 		{

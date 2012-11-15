@@ -94,9 +94,9 @@ namespace Bicikelj.Model
 			locationRect = LocationRect.CreateLocationRect(locations);
 		}
 
-		public void GetStations(Action<IList<StationLocation>, Exception> result)
+		public void GetStations(Action<IList<StationLocation>, Exception> result, bool forceUpdate = false)
 		{
-			if (stations == null)
+			if (stations == null || forceUpdate)
 				Download(result);
 			else
 				result(stations, null);

@@ -11,6 +11,7 @@
 	xmlns:vsl="clr-namespace:Bicikelj.Views.StationLocation"
 	xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
 	xmlns:bctl="clr-namespace:Bicikelj.Controls"
+	xmlns:bab="clr-namespace:BindableApplicationBar"
 	mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
 
 	<!--LayoutRoot is the root grid where all page content is placed-->
@@ -29,12 +30,16 @@
 			<ContentControl x:Name="Location" cal:View.Context="Detail" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,0,0,12" />
 			<ContentControl x:Name="Availability" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0,0,0,12" />        
 		</Grid>
-		<bctl:AppBar x:Name="AppBar" IsVisible="True" Height="0">
-			<bctl:AppBar.Buttons>
-				<cal:AppBarButton x:Name="ToggleFavorite" IconUri="/Images/appbar.star.png"
-								  Text="favorite"
-								  Message="ToggleFavorite" />
-			</bctl:AppBar.Buttons>
-		</bctl:AppBar>
+
+		<!--bab:Bindable.ApplicationBar-->
+		<bab:AppBarCM x:Name="AppBar" IsVisible="True" >
+				<bab:BindableApplicationBar.Buttons>
+					<bab:BindableApplicationBarButton x:Name="ToggleFavorite" 
+										 Text="favorite"
+										 IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
+				</bab:BindableApplicationBar.Buttons>
+		</bab:AppBarCM>
+		<!--/bab:Bindable.ApplicationBar-->
 	</Grid>
+	
 </UserControl>
