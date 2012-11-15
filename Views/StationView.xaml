@@ -19,7 +19,6 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
-			<RowDefinition Height="84"/>
 		</Grid.RowDefinitions>
 	   
 		<!--ContentPanel - place additional content here-->
@@ -33,7 +32,7 @@
 		</Grid>
 
 		<!--bab:Bindable.ApplicationBar-->
-		<bab:AppBarCM x:Name="AppBar" IsVisible="True" BindableOpacity="0">
+		<bab:AppBarCM x:Name="AppBar" IsVisible="True" >
 				<bab:BindableApplicationBar.Buttons>
 					<bab:BindableApplicationBarButton x:Name="ToggleFavorite" 
 										 Text="favorite"

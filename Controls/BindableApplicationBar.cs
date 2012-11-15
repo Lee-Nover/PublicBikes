@@ -23,7 +23,7 @@ namespace BindableApplicationBar
 	/// TODO: Figure out the best handling of cases when a button or menu item is added beyond the maximum number allowable.
 	/// </remarks>
 	[ContentProperty("Buttons")]
-	public class BindableApplicationBar : Control
+	public class BindableApplicationBar : ItemsControl
 	{
 		private ApplicationBar applicationBar;
 		private PhoneApplicationPage page;
@@ -83,13 +83,10 @@ namespace BindableApplicationBar
 		/// Event data that is issued by any event that
 		/// tracks changes to the effective value of this property.
 		/// </param>
-		private static void OnButtonsChanged(
-			DependencyObject d, DependencyPropertyChangedEventArgs e)
+		private static void OnButtonsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var target = (BindableApplicationBar)d;
-			var oldButtons =
-				(DependencyObjectCollection<BindableApplicationBarButton>)
-					e.OldValue;
+			var oldButtons = (DependencyObjectCollection<BindableApplicationBarButton>)e.OldValue;
 			var newButtons = target.Buttons;
 			target.OnButtonsChanged(oldButtons, newButtons);
 		}
@@ -106,11 +103,18 @@ namespace BindableApplicationBar
 		{
 			if (oldButtons != null)
 			{
+				oldButtons.Count((i) => { return Items.Remove(i); });
 				oldButtons.CollectionChanged -= this.ButtonsCollectionChanged;
 			}
 
 			if (newButtons != null)
 			{
+				newButtons.Count((i) => { 
+					var idx = Items.IndexOf(i); 
+					if (idx < 0) 
+						Items.Add(i); 
+					return idx < 0; 
+				});
 				newButtons.CollectionChanged += this.ButtonsCollectionChanged;
 			}
 		}
@@ -155,8 +159,7 @@ namespace BindableApplicationBar
 			BindableApplicationBar target = (BindableApplicationBar)d;
 			DependencyObjectCollection<BindableApplicationBarMenuItem> oldMenuItems = 
 				(DependencyObjectCollection<BindableApplicationBarMenuItem>)e.OldValue;
-			DependencyObjectCollection<BindableApplicationBarMenuItem> newMenuItems = 
-				target.MenuItems;
+			DependencyObjectCollection<BindableApplicationBarMenuItem> newMenuItems = target.MenuItems;
 			target.OnMenuItemsChanged(oldMenuItems, newMenuItems);
 		}
 
@@ -172,14 +175,14 @@ namespace BindableApplicationBar
 		{
 			if (oldMenuItems != null)
 			{
-				oldMenuItems.CollectionChanged -=
-					this.MenuItemsCollectionChanged;
+				oldMenuItems.Count((i) => { return Items.Remove(i); });
+				oldMenuItems.CollectionChanged -= this.MenuItemsCollectionChanged;
 			}
 
 			if (newMenuItems != null)
 			{
-				newMenuItems.CollectionChanged += 
-					this.MenuItemsCollectionChanged;
+				newMenuItems.Count((i) => { var idx = Items.IndexOf(i); if (idx < 0) Items.Add(i); return idx < 0; });
+				newMenuItems.CollectionChanged += this.MenuItemsCollectionChanged;
 			}
 		}
 		#endregion
@@ -252,8 +255,7 @@ namespace BindableApplicationBar
 			}
 		}
 
-		private void ButtonsSourceCollectionChanged(
-			object sender, NotifyCollectionChangedEventArgs e)
+		private void ButtonsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.OldItems != null)
 			{
@@ -267,6 +269,7 @@ namespace BindableApplicationBar
 
 					if (button != null)
 					{
+						Items.Remove(button);
 						this.buttonsSourceButtons.Remove(button);
 					}
 				}
@@ -289,6 +292,7 @@ namespace BindableApplicationBar
 
 					button.DataContext = buttonSource;
 					this.buttonsSourceButtons.Add(button);
+					Items.Add(button);
 				}
 			}
 		}
@@ -297,6 +301,7 @@ namespace BindableApplicationBar
 		#region GenerateButtonsFromSource()
 		private void GenerateButtonsFromSource()
 		{
+			buttonsSourceButtons.Count((i) => { return Items.Remove(i); });
 			this.buttonsSourceButtons.Clear();
 
 			if (this.ButtonsSource != null && this.ButtonTemplate != null)
@@ -314,6 +319,7 @@ namespace BindableApplicationBar
 
 					button.DataContext = buttonSource;
 					this.buttonsSourceButtons.Add(button);
+					Items.Add(button);
 				}
 			}
 		} 
@@ -322,16 +328,14 @@ namespace BindableApplicationBar
 		#region GenerateMenuItemsFromSource()
 		private void GenerateMenuItemsFromSource()
 		{
+			menuItemsSourceMenuItems.Count((i) => { return Items.Remove(i); });
 			this.menuItemsSourceMenuItems.Clear();
 
-			if (this.MenuItemsSource != null &&
-				this.MenuItemTemplate != null)
+			if (this.MenuItemsSource != null && this.MenuItemTemplate != null)
 			{
 				foreach (var menuItemSource in this.MenuItemsSource)
 				{
-					var menuItem = (BindableApplicationBarMenuItem)
-						this.MenuItemTemplate.LoadContent();
-
+					var menuItem = (BindableApplicationBarMenuItem)this.MenuItemTemplate.LoadContent();
 					if (menuItem == null)
 					{
 						throw new InvalidOperationException(
@@ -340,11 +344,12 @@ namespace BindableApplicationBar
 
 					menuItem.DataContext = menuItemSource;
 					this.menuItemsSourceMenuItems.Add(menuItem);
+					Items.Add(menuItem);
 				}
 			}
 		}
 		#endregion
-
+		
 		#region ButtonTemplate
 		/// <summary>
 		/// ButtonTemplate Dependency Property
@@ -445,8 +450,7 @@ namespace BindableApplicationBar
 			BindableApplicationBar target = (BindableApplicationBar)d;
 			IEnumerable oldMenuItemsSource = (IEnumerable)e.OldValue;
 			IEnumerable newMenuItemsSource = target.MenuItemsSource;
-			target.OnMenuItemsSourceChanged(
-				oldMenuItemsSource, newMenuItemsSource);
+			target.OnMenuItemsSourceChanged(oldMenuItemsSource, newMenuItemsSource);
 		}
 
 		/// <summary>
@@ -496,6 +500,7 @@ namespace BindableApplicationBar
 
 					if (menuItem != null)
 					{
+						Items.Remove(menuItem);
 						this.menuItemsSourceMenuItems.Remove(menuItem);
 					}
 				}
@@ -507,8 +512,7 @@ namespace BindableApplicationBar
 			{
 				foreach (var menuItemSource in e.NewItems)
 				{
-					var menuItem = (BindableApplicationBarMenuItem)
-						this.MenuItemTemplate.LoadContent();
+					var menuItem = (BindableApplicationBarMenuItem)this.MenuItemTemplate.LoadContent();
 
 					if (menuItem == null)
 					{
@@ -518,6 +522,7 @@ namespace BindableApplicationBar
 
 					menuItem.DataContext = menuItemSource;
 					this.menuItemsSourceMenuItems.Add(menuItem);
+					Items.Add(menuItem);
 				}
 			}
 		}
@@ -1351,6 +1356,11 @@ namespace BindableApplicationBar
 		private void ButtonsCollectionChanged(
 			object sender, NotifyCollectionChangedEventArgs e)
 		{
+			if (e.OldItems != null)
+				Buttons.Count((i) => { return Items.Remove(i); });
+			if (e.NewItems != null)
+				Buttons.Count((i) => { var idx = Items.IndexOf(i); if (idx < 0) Items.Add(i); return idx < 0; });
+
 			if (this.applicationBar == null)
 			{
 				return;
@@ -1382,6 +1392,11 @@ namespace BindableApplicationBar
 		private void MenuItemsCollectionChanged(
 			object sender, NotifyCollectionChangedEventArgs e)
 		{
+			if (e.OldItems != null)
+				MenuItems.Count((i) => { return Items.Remove(i); });
+			if (e.NewItems != null)
+				MenuItems.Count((i) => { var idx = Items.IndexOf(i); if (idx < 0) Items.Add(i); return idx < 0; });
+
 			if (this.applicationBar == null)
 			{
 				return;
