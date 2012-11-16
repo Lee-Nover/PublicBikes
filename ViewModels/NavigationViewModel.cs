@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Data;
+using Bicikelj.Converters;
 
 namespace Bicikelj.ViewModels
 {
@@ -23,6 +24,8 @@ namespace Bicikelj.ViewModels
 		{
 			this.events = events;
 			this.stationList = stationList;
+			this.CurrentLocation = new LocationViewModel();
+			this.DestinationLocation = new LocationViewModel();
 		}
 
 		private StationLocationList stationList;
@@ -54,21 +57,30 @@ namespace Bicikelj.ViewModels
 		}
 
 		public string ToLocation { get; set; }
-		public GeoCoordinate CurrentLocation { get; set; }
+		public LocationViewModel CurrentLocation { get; set; }
+		public LocationViewModel DestinationLocation { get; set; }
+		private GeoCoordinateWatcher gw = new GeoCoordinateWatcher();
 
 		protected override void OnViewAttached(object view, object context)
 		{
 			base.OnViewAttached(view, context);
 			this.view = view as NavigationView;
 			stationList.GetStations((s, e) => {
-				this.view.Map.SetView(stationList.LocationRect);
+				Execute.OnUIThread(() => { this.view.Map.SetView(stationList.LocationRect); });
 			});
 			if (stationList.LocationRect != null)
 				this.view.Map.SetView(stationList.LocationRect);
-			
-			GetCoordinate.Current((c, e) => {
-				CurrentLocation = c;
+
+			gw.PositionChanged += ((s, e) => {
+				CurrentLocation.Coordinate = e.Position.Location;
 			});
+			gw.Start();
+		}
+
+		protected override void OnDeactivate(bool close)
+		{
+			gw.Stop();
+			base.OnDeactivate(close);
 		}
 
 		private void FindBestRoute(GeoCoordinate fromLocation, GeoCoordinate toLocation)
@@ -125,6 +137,7 @@ namespace Bicikelj.ViewModels
 		}
 
 		IEnumerable<GeoCoordinate> navPoints;
+
 		private void RouteMap(IEnumerable<GeoCoordinate> navPoints)
 		{
 			this.navPoints = navPoints;
@@ -161,38 +174,38 @@ namespace Bicikelj.ViewModels
 					pl.StrokeThickness = 5;
 					pl.Opacity = 0.7;
 					pl.Locations = locCol;
-					view.Map.Children.Clear();
-					view.Map.Children.Add(pl);
+					
+					// clear the route and remove pins other than CurrentPos and Destination
+					view.RouteLayer.Children.Clear();
+					view.RouteLayer.Children.Add(pl);
+					view.RoutePinsLayer.Children.Clear();
+					
 					int idxPoint = 0;
 					foreach (var point in navPoints)
 					{
-						Pushpin pp = new Pushpin();
-						pp.Location = point;
-						double pinWidth = App.Current.RootVisual.RenderSize.Width * 0.06;
-						Path p = new Path() { Stretch = Stretch.Uniform, Width = pinWidth, Height = pinWidth, Fill = new SolidColorBrush(Colors.White) };
-						Binding b = new Binding();
-						b.Converter = App.Current.Resources["PinTypeToIconConverter"] as IValueConverter;
-						switch (idxPoint++)
+						if (idxPoint > 0 && idxPoint < 3)
 						{
-							case 0:
-								pp.DataContext = PinType.CurrentPosition;
-								break;
-							case 1:
-								pp.DataContext = PinType.BikeStand;
-								break;
-							case 2:
-								pp.DataContext = PinType.Walking;
-								break;
-							case 3:
-								pp.DataContext = PinType.Finish;
-								break;
-							default:
-							break;
-						}
-						p.SetBinding(Path.DataProperty, b);
-						pp.Content = p;
+							Pushpin pp = new Pushpin();
+							pp.Location = point;
+							double pinWidth = 28;// App.Current.RootVisual.RenderSize.Width * 0.06;
+							Path p = new Path() { Stretch = Stretch.Uniform, Width = pinWidth, Height = pinWidth, Fill = new SolidColorBrush(Colors.White) };
+							Binding b = new Binding();
+							b.Converter = App.Current.Resources["PinTypeToIconConverter"] as IValueConverter;
 
-						view.Map.Children.Add(pp);
+							if (idxPoint == 1)
+								pp.DataContext = PinType.BikeStand;
+							else if (idxPoint == 2)
+								pp.DataContext = PinType.Walking;
+							p.SetBinding(Path.DataProperty, b);
+							pp.Content = p;
+
+							view.RoutePinsLayer.Children.Add(pp);
+						}
+						else if (idxPoint == 0)
+							CurrentLocation.Coordinate = point;
+						else if (idxPoint == 3)
+							DestinationLocation.Coordinate = point;
+						idxPoint++;
 					}
 					view.Map.SetView(viewRect);
 					
@@ -217,7 +230,7 @@ namespace Bicikelj.ViewModels
 		{
 			events.Publish(BusyState.Busy("searching..."));
 			// todo get the address coordinates using bing maps
-			LocationHelper.FindLocation(address, CurrentLocation, (r, e) =>
+			LocationHelper.FindLocation(address, CurrentLocation.Coordinate, (r, e) =>
 			{
 				if (e != null || r == null || r.Location == null)
 				{
@@ -225,7 +238,10 @@ namespace Bicikelj.ViewModels
 					events.Publish(new ErrorState(e, "could not find location"));
 				}
 				else
+				{
+					this.DestinationLocation.Name = address;
 					TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
+				}
 			});
 		}
 
@@ -239,7 +255,7 @@ namespace Bicikelj.ViewModels
 				}
 				else
 				{
-					CurrentLocation = c;
+					CurrentLocation.Coordinate = c;
 					FindBestRoute(c, location);
 				}
 			});

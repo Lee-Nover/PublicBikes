@@ -132,6 +132,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentModel.cs" />
     <Compile Include="ViewModels\FavoriteViewModel.cs" />
+    <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModels\SystemConfigViewModel.cs" />
     <Compile Include="ViewModels\NavigationStartViewModel.cs" />

@@ -37,7 +37,7 @@ namespace Bicikelj
 			container.Singleton<FavoriteLocationList>();
 
 #if DEBUG
-			//Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
+			Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
 			AddCustomConventions();
 		}
@@ -155,7 +155,7 @@ namespace Bicikelj
 
 			ConventionManager.AddElementConvention<ToggleSwitch>(ToggleSwitch.IsCheckedProperty, "IsChecked", "Checked");
 			ConventionManager.AddElementConvention<MapItemsControl>(ItemsControl.ItemsSourceProperty, "DataContext", "Loaded");
-			ConventionManager.AddElementConvention<Pushpin>(ContentControl.ContentProperty, "DataContext", "MouseLeftButtonDown");
+			ConventionManager.AddElementConvention<Pushpin>(ContentControl.DataContextProperty, "DataContext", "MouseLeftButtonDown");
 			ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
 			ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
 			ConventionManager.AddElementConvention<AppBarCM>(FrameworkElement.DataContextProperty, "DataContext", "Loaded");
