@@ -31,7 +31,6 @@
 			<ContentControl x:Name="Availability" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0,0,0,12" />        
 		</Grid>
 
-		<!--bab:Bindable.ApplicationBar-->
 		<bab:AppBarCM x:Name="AppBar" IsVisible="True" >
 				<bab:BindableApplicationBar.Buttons>
 					<bab:BindableApplicationBarButton x:Name="ToggleFavorite" 
@@ -39,7 +38,6 @@
 										 IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
 				</bab:BindableApplicationBar.Buttons>
 		</bab:AppBarCM>
-		<!--/bab:Bindable.ApplicationBar-->
 	</Grid>
 	
 </UserControl>

@@ -105,6 +105,7 @@
     <Compile Include="Controls\BindableApplicationBarMenuItem.cs" />
     <Compile Include="Controls\HubTileWithContent.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
+    <Compile Include="Converters\HubTileConverters.cs" />
     <Compile Include="Converters\PinTypeToIconConverter.cs" />
     <Compile Include="Converters\FavoriteToIconConverter.cs" />
     <Compile Include="Converters\ValueToVisibilityConverter.cs" />
