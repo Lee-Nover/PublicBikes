@@ -52,15 +52,24 @@ namespace Bicikelj.ViewModels
 		{
 			if (item == null)
 				return;
+			this.ActiveItem = null;
+			if (view != null)
+				view.Items.SelectedItem = null;
 			if (item.Location.Station != null)
 				Bicikelj.NavigationExtension.NavigateTo(new StationViewModel(new StationLocationViewModel(item.Location.Station)));
 			else
-				Bicikelj.NavigationExtension.NavigateTo(item);
+			{
+				NavigationViewModel nvm = IoC.Get<NavigationViewModel>();
+				nvm.NavigateRequest = new LocationViewModel() { Coordinate = item.Coordinate, Name = item.LocationName, Address = item.Address };
+				Bicikelj.NavigationExtension.NavigateTo(nvm);
+			}
 		}
 
+		private FavoritesView view;
 		protected override void OnViewAttached(object view, object context)
 		{
 			base.OnViewAttached(view, context);
+			this.view = view as FavoritesView;
 		}
 
 		public void Handle(FavoriteState message)

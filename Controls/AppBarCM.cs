@@ -34,6 +34,11 @@ namespace BindableApplicationBar
 
 		void AppBarCM_Loaded(object sender, RoutedEventArgs e)
 		{
+			UpdateAttached();
+		}
+
+		private void UpdateAttached()
+		{
 			// parent is null when created as an attached property
 			var parent = VisualTreeHelper.GetParent(this);
 			while (parent != null && !(parent is PhoneApplicationPage))

@@ -4,7 +4,8 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
-	xmlns:System_Globalization="clr-namespace:System.Globalization;assembly=mscorlib" 
+	xmlns:bctl="clr-namespace:Bicikelj.Controls"
+	xmlns:bab="clr-namespace:BindableApplicationBar"
 	x:Class="Bicikelj.Views.NavigationView"
 	FontFamily="{StaticResource PhoneFontFamilyNormal}"
 	FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -47,6 +48,13 @@
 			<TextBlock Grid.Row="3" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
 			<TextBlock Grid.Row="4" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
 		</Grid>
+		<bab:AppBarCM x:Name="AppBar" IsVisible="True" >
+			<bab:BindableApplicationBar.Buttons>
+				<bab:BindableApplicationBarButton x:Name="ToggleFavorite" 
+										 Text="favorite"
+										 IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
+			</bab:BindableApplicationBar.Buttons>
+		</bab:AppBarCM>
 	</Grid>
  
 </UserControl>

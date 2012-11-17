@@ -34,6 +34,8 @@ namespace Bicikelj.ViewModels
 		private double travelDuration = double.NaN;
 		private NavigationView view;
 
+		public LocationViewModel NavigateRequest { get; set; }
+
 		public string DistanceString
 		{
 			get
@@ -75,6 +77,18 @@ namespace Bicikelj.ViewModels
 				CurrentLocation.Coordinate = e.Position.Location;
 			});
 			gw.Start();
+			if (NavigateRequest != null)
+			{
+				IsFavorite = true;
+				ToLocation = NavigateRequest.Name;
+				if (string.IsNullOrWhiteSpace(ToLocation))
+					ToLocation = NavigateRequest.Address;
+				if (NavigateRequest.Coordinate != null)
+					TakeMeTo(NavigateRequest.Coordinate);
+				else
+					TakeMeTo(NavigateRequest.Name);
+				NavigateRequest = null;
+			}
 		}
 
 		protected override void OnDeactivate(bool close)
@@ -259,6 +273,32 @@ namespace Bicikelj.ViewModels
 					FindBestRoute(c, location);
 				}
 			});
+		}
+
+		private bool isFavorite;
+		public bool IsFavorite
+		{
+			get { return isFavorite; }
+			set { SetFavorite(value); }
+		}
+		
+		public bool CanToggleFavorite()
+		{
+			return !string.IsNullOrWhiteSpace(DestinationLocation.Name) || DestinationLocation.Coordinate != null;
+		}
+		public void ToggleFavorite()
+		{
+			SetFavorite(!IsFavorite);
+		}
+
+		private void SetFavorite(bool value)
+		{
+			if (value == isFavorite) return;
+			isFavorite = value;
+			NotifyOfPropertyChange(() => IsFavorite);
+			if (string.IsNullOrWhiteSpace(DestinationLocation.Name) && DestinationLocation.Coordinate == null)
+				return;
+			events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.Name) { Coordinate = DestinationLocation.Coordinate }, IsFavorite));
 		}
 	}
 }

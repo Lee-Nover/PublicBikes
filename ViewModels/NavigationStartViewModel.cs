@@ -123,6 +123,9 @@ namespace Bicikelj.ViewModels
 		public void TakeMeTo()
 		{
 			NavigationViewModel nvm = IoC.Get<NavigationViewModel>();
+			// TODO: the viewmodel must handle this itself
+			// maybe pass some params in the url?
+			nvm.IsFavorite = false;
 			Bicikelj.NavigationExtension.NavigateTo(nvm);
 		}
 

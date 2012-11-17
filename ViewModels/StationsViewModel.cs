@@ -3,6 +3,7 @@ using Bicikelj.Model;
 using System.Collections.Generic;
 using System.Threading;
 using System;
+using Bicikelj.Views;
 
 namespace Bicikelj.ViewModels
 {
@@ -39,11 +40,20 @@ namespace Bicikelj.ViewModels
 			UpdateStations(false);
 		}
 
+		private StationsView view;
+		protected override void OnViewAttached(object view, object context)
+		{
+			base.OnViewAttached(view, context);
+			this.view = view as StationsView;
+		}
+
 		public override void ActivateItem(StationLocationViewModel item)
 		{
 			if (item == null)
 				return;
-			this.DeactivateItem(item, false);
+			this.ActiveItem = null;
+			if (view != null)
+				view.Items.SelectedItem = null;
 			item.ViewRect = stationList.LocationRect;
 			StationViewModel svm = new StationViewModel(item);
 			Bicikelj.NavigationExtension.NavigateTo(svm);

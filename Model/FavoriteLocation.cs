@@ -65,8 +65,20 @@ namespace Bicikelj.Model
 					return false;
 				else
 					return Coordinate.Longitude == other.Coordinate.Longitude && Coordinate.Latitude == other.Coordinate.Latitude;
-			
-			return Name == other.Name;
+			// check names
+			if (Name != null || other.Name != null)
+				if (Name == null || other.Name == null)
+					return false;
+				else
+					return Name.ToLower() == other.Name.ToLower();
+			// check addresses
+			if (Address != null || other.Address != null)
+				if (Address == null || other.Address == null)
+					return false;
+				else
+					return Address.ToLower() == other.Address.ToLower();
+
+			return false;
 		}
 	
 		// override object.GetHashCode

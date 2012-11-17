@@ -1083,9 +1083,16 @@ namespace BindableApplicationBar
 		public void Attach(PhoneApplicationPage parentPage)
 		{
 			this.page = parentPage;
+			if (this.applicationBar != null)
+			{
+				parentPage.ApplicationBar = applicationBar;
+				return;
+			}
 			this.applicationBar = 
-				(ApplicationBar)(//parentPage.ApplicationBar ?? 
+				(ApplicationBar)(parentPage.ApplicationBar ?? 
 				(parentPage.ApplicationBar = new ApplicationBar()));
+			this.applicationBar.Buttons.Clear();
+			this.applicationBar.MenuItems.Clear();
 			this.applicationBar.StateChanged += this.ApplicationBarStateChanged;
 
 			if (this.GetBindingExpression(DataContextProperty) == null && this.DataContext == null)
@@ -1163,8 +1170,7 @@ namespace BindableApplicationBar
 		#endregion
 
 		#region AttachButtons()
-		private void AttachButtons(
-			IEnumerable<BindableApplicationBarButton> buttons)
+		private void AttachButtons(IEnumerable<BindableApplicationBarButton> buttons)
 		{
 			int i = this.applicationBar.Buttons.Count;
 
