@@ -50,9 +50,8 @@
 		</Grid>
 		<bab:AppBarCM x:Name="AppBar" IsVisible="True" >
 			<bab:BindableApplicationBar.Buttons>
-				<bab:BindableApplicationBarButton x:Name="ToggleFavorite" 
-										 Text="favorite"
-										 IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
+				<bab:BindableApplicationBarButton x:Name="ToggleFavorite" Text="favorite" IsEnabled="{Binding CanToggleFavorite}"
+												  IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
 			</bab:BindableApplicationBar.Buttons>
 		</bab:AppBarCM>
 	</Grid>

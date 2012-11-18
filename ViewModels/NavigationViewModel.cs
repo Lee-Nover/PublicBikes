@@ -226,6 +226,7 @@ namespace Bicikelj.ViewModels
 					view.Map.SetView(LocationRect.CreateLocationRect(points));
 					NotifyOfPropertyChange(() => DistanceString);
 					NotifyOfPropertyChange(() => DurationString);
+					NotifyOfPropertyChange(() => CanToggleFavorite);
 					events.Publish(BusyState.NotBusy());
 				});
 			}
@@ -254,6 +255,7 @@ namespace Bicikelj.ViewModels
 				else
 				{
 					this.DestinationLocation.Name = address;
+					NotifyOfPropertyChange(() => CanToggleFavorite);
 					TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
 				}
 			});
@@ -282,13 +284,16 @@ namespace Bicikelj.ViewModels
 			set { SetFavorite(value); }
 		}
 		
-		public bool CanToggleFavorite()
+		public bool CanToggleFavorite
 		{
-			return !string.IsNullOrWhiteSpace(DestinationLocation.Name) || DestinationLocation.Coordinate != null;
+			get { return !string.IsNullOrWhiteSpace(DestinationLocation.Name) || DestinationLocation.Coordinate != null; }
 		}
 		public void ToggleFavorite()
 		{
 			SetFavorite(!IsFavorite);
+			if (string.IsNullOrWhiteSpace(DestinationLocation.Name) && DestinationLocation.Coordinate == null)
+				return;
+			events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.Name) { Coordinate = DestinationLocation.Coordinate }, IsFavorite));
 		}
 
 		private void SetFavorite(bool value)
@@ -296,9 +301,6 @@ namespace Bicikelj.ViewModels
 			if (value == isFavorite) return;
 			isFavorite = value;
 			NotifyOfPropertyChange(() => IsFavorite);
-			if (string.IsNullOrWhiteSpace(DestinationLocation.Name) && DestinationLocation.Coordinate == null)
-				return;
-			events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.Name) { Coordinate = DestinationLocation.Coordinate }, IsFavorite));
 		}
 	}
 }
