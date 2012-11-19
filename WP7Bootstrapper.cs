@@ -160,6 +160,19 @@ namespace Bicikelj
 			ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
 			ConventionManager.AddElementConvention<AppBarCM>(FrameworkElement.DataContextProperty, "DataContext", "Loaded");
 			ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
+
+			var aaf = ActionMessage.ApplyAvailabilityEffect;
+			ActionMessage.ApplyAvailabilityEffect = (context => {
+				if (context.Source is BindableApplicationBarMenuItem)
+				{
+					var bmi = context.Source as BindableApplicationBarMenuItem;
+					if (context.CanExecute != null)
+						bmi.IsEnabled = context.CanExecute();
+					return bmi.IsEnabled;
+				}
+				return aaf(context);
+			});
+
 			TiltEffect.TiltableItems.Add(typeof(HubTile));
 		}
 

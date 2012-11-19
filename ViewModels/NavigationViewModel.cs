@@ -58,7 +58,17 @@ namespace Bicikelj.ViewModels
 			}
 		}
 
-		public string ToLocation { get; set; }
+		private string toLocation;
+		public string ToLocation {
+			get { return toLocation; }
+			set
+			{
+				if (value == toLocation)
+					return;
+				toLocation = value;
+				NotifyOfPropertyChange(() => ToLocation);
+			}
+		}
 		public LocationViewModel CurrentLocation { get; set; }
 		public LocationViewModel DestinationLocation { get; set; }
 		private GeoCoordinateWatcher gw = new GeoCoordinateWatcher();
@@ -68,7 +78,10 @@ namespace Bicikelj.ViewModels
 			base.OnViewAttached(view, context);
 			this.view = view as NavigationView;
 			stationList.GetStations((s, e) => {
-				Execute.OnUIThread(() => { this.view.Map.SetView(stationList.LocationRect); });
+				Execute.OnUIThread(() => {
+					if (stationList.LocationRect != null)
+						this.view.Map.SetView(stationList.LocationRect);
+				});
 			});
 			if (stationList.LocationRect != null)
 				this.view.Map.SetView(stationList.LocationRect);
@@ -124,24 +137,31 @@ namespace Bicikelj.ViewModels
 
 		private void FindNearestStations(GeoCoordinate fromLocation, GeoCoordinate toLocation)
 		{
-			// find closes available bike
+			// find closest available bike
 			StationAvailabilityHelper.CheckStations(stationList.SortByLocation(fromLocation, toLocation), (fromStation, fromAvail) =>
 			{
 				bool availableResult = fromAvail != null && fromAvail.Available > 0;
 				if (availableResult)
 				{
-					// find closes free stand
+					// find closest free stand
 					StationAvailabilityHelper.CheckStations(stationList.SortByLocation(toLocation, fromLocation), (toStation, toAvail) =>
 						{
 							bool freeResult = toAvail != null && toAvail.Free > 0;
 							if (freeResult)
 							{
-								Execute.OnUIThread(() =>
+								IList<GeoCoordinate> navPoints = new List<GeoCoordinate>();
+								navPoints.Add(fromLocation);
+								// if closest bike station is the same as the destination station or the destination is closer than the station then don't use the bikes
+								if (fromStation != toStation 
+									&& fromLocation.GetDistanceTo(fromStation.Coordinate) < fromLocation.GetDistanceTo(toLocation)
+									&& toLocation.GetDistanceTo(toStation.Coordinate) < fromLocation.GetDistanceTo(toLocation))
 								{
-									var navPoints = new GeoCoordinate[] { fromLocation, fromStation.Coordinate, toStation.Coordinate, toLocation };
-									RouteMap(navPoints);
-									events.Publish(BusyState.NotBusy());
-								});
+									navPoints.Add(fromStation.Coordinate);
+									navPoints.Add(toStation.Coordinate);
+								}
+								navPoints.Add(toLocation);
+								CalculateRoute(navPoints);
+								events.Publish(BusyState.NotBusy());
 							}
 							return freeResult;
 						}, HandleAvailabilityError);
@@ -152,7 +172,7 @@ namespace Bicikelj.ViewModels
 
 		IEnumerable<GeoCoordinate> navPoints;
 
-		private void RouteMap(IEnumerable<GeoCoordinate> navPoints)
+		private void CalculateRoute(IEnumerable<GeoCoordinate> navPoints)
 		{
 			this.navPoints = navPoints;
 			LocationHelper.CalculateRoute(navPoints, MapRoute);
@@ -175,65 +195,73 @@ namespace Bicikelj.ViewModels
 								 Latitude = pt.Latitude,
 								 Longitude = pt.Longitude
 							 };
-				LocationCollection locCol = new LocationCollection();
-				foreach (var loc in points)
-					locCol.Add(loc);
 
-				LocationRect viewRect = LocationRect.CreateLocationRect(points);
-
-				Execute.OnUIThread(() =>
-				{
-					MapPolyline pl = new MapPolyline();
-					pl.Stroke = new SolidColorBrush(Colors.Blue);
-					pl.StrokeThickness = 5;
-					pl.Opacity = 0.7;
-					pl.Locations = locCol;
-					
-					// clear the route and remove pins other than CurrentPos and Destination
-					view.RouteLayer.Children.Clear();
-					view.RouteLayer.Children.Add(pl);
-					view.RoutePinsLayer.Children.Clear();
-					
-					int idxPoint = 0;
-					foreach (var point in navPoints)
-					{
-						if (idxPoint > 0 && idxPoint < 3)
-						{
-							Pushpin pp = new Pushpin();
-							pp.Location = point;
-							double pinWidth = 28;// App.Current.RootVisual.RenderSize.Width * 0.06;
-							Path p = new Path() { Stretch = Stretch.Uniform, Width = pinWidth, Height = pinWidth, Fill = new SolidColorBrush(Colors.White) };
-							Binding b = new Binding();
-							b.Converter = App.Current.Resources["PinTypeToIconConverter"] as IValueConverter;
-
-							if (idxPoint == 1)
-								pp.DataContext = PinType.BikeStand;
-							else if (idxPoint == 2)
-								pp.DataContext = PinType.Walking;
-							p.SetBinding(Path.DataProperty, b);
-							pp.Content = p;
-
-							view.RoutePinsLayer.Children.Add(pp);
-						}
-						else if (idxPoint == 0)
-							CurrentLocation.Coordinate = point;
-						else if (idxPoint == 3)
-							DestinationLocation.Coordinate = point;
-						idxPoint++;
-					}
-					view.Map.SetView(viewRect);
-					
-					view.Map.SetView(LocationRect.CreateLocationRect(points));
-					NotifyOfPropertyChange(() => DistanceString);
-					NotifyOfPropertyChange(() => DurationString);
-					NotifyOfPropertyChange(() => CanToggleFavorite);
-					events.Publish(BusyState.NotBusy());
-				});
+				MapRoute(points);
 			}
 			finally
 			{
 				events.Publish(BusyState.NotBusy());
 			}
+		}
+
+		private void MapRoute(IEnumerable<GeoCoordinate> points)
+		{
+			LocationCollection locCol = new LocationCollection();
+			foreach (var loc in points)
+				locCol.Add(loc);
+
+			LocationRect viewRect = LocationRect.CreateLocationRect(points);
+
+			Execute.OnUIThread(() =>
+			{
+				MapPolyline pl = new MapPolyline();
+				pl.Stroke = new SolidColorBrush(Colors.Blue);
+				pl.StrokeThickness = 5;
+				pl.Opacity = 0.7;
+				pl.Locations = locCol;
+					
+				// clear the route and remove pins other than CurrentPos and Destination
+				view.RouteLayer.Children.Clear();
+				view.RouteLayer.Children.Add(pl);
+				view.RoutePinsLayer.Children.Clear();
+					
+				int idxPoint = 0;
+				int idxDest = navPoints.Count() - 1;
+				foreach (var point in navPoints)
+				{
+					if (idxPoint == 0)
+						CurrentLocation.Coordinate = point;
+					else if (idxPoint == idxDest)
+						DestinationLocation.Coordinate = point;
+					else
+					{
+						Pushpin pp = new Pushpin();
+						pp.Location = point;
+						double pinWidth = 28;// App.Current.RootVisual.RenderSize.Width * 0.06;
+						Path p = new Path() { Stretch = Stretch.Uniform, Width = pinWidth, Height = pinWidth, Fill = new SolidColorBrush(Colors.White) };
+						Binding b = new Binding();
+						b.Converter = App.Current.Resources["PinTypeToIconConverter"] as IValueConverter;
+
+						if (idxPoint == 1)
+							pp.DataContext = PinType.BikeStand;
+						else if (idxPoint == 2)
+							pp.DataContext = PinType.Walking;
+						p.SetBinding(Path.DataProperty, b);
+						pp.Content = p;
+
+						view.RoutePinsLayer.Children.Add(pp);
+					}
+						
+					idxPoint++;
+				}
+				view.Map.SetView(viewRect);
+					
+				view.Map.SetView(LocationRect.CreateLocationRect(points));
+				NotifyOfPropertyChange(() => DistanceString);
+				NotifyOfPropertyChange(() => DurationString);
+				NotifyOfPropertyChange(() => CanToggleFavorite);
+				events.Publish(BusyState.NotBusy());
+			});
 		}
 
 		public void TrySearch()
@@ -301,6 +329,16 @@ namespace Bicikelj.ViewModels
 			if (value == isFavorite) return;
 			isFavorite = value;
 			NotifyOfPropertyChange(() => IsFavorite);
+			NotifyOfPropertyChange(() => CanEditName);
+		}
+
+		public bool CanEditName
+		{
+			get { return IsFavorite; }
+		}
+		public void EditName()
+		{
+
 		}
 	}
 }
