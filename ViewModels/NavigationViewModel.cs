@@ -351,8 +351,11 @@ namespace Bicikelj.ViewModels
 		public IEnumerable<IResult> EditName()
 		{
 			LocationViewModel lvm = new LocationViewModel();
+			if (string.IsNullOrWhiteSpace(DestinationLocation.Address))
+				DestinationLocation.Address = DestinationLocation.LocationName;
 			lvm.Address = DestinationLocation.Address;
 			lvm.LocationName = DestinationLocation.LocationName;
+			
 			var question = new Dialog<Answer>(DialogType.Question,
 				"edit location name",							  
 				lvm,
@@ -363,8 +366,6 @@ namespace Bicikelj.ViewModels
 
 			if (question.GivenResponse == Answer.Ok)
 			{
-				if (string.IsNullOrWhiteSpace(DestinationLocation.Address))
-					DestinationLocation.Address = DestinationLocation.LocationName;
 				events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate, Address = DestinationLocation.Address }, false));
 				DestinationLocation.LocationName = lvm.LocationName;
 				events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate, Address = DestinationLocation.Address }, true));
