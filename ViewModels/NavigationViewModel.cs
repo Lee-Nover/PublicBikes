@@ -70,6 +70,18 @@ namespace Bicikelj.ViewModels
 				NotifyOfPropertyChange(() => ToLocation);
 			}
 		}
+
+		public string Address {
+			get { return DestinationLocation != null ? DestinationLocation.Address : ""; }
+			set {
+				if (DestinationLocation != null)
+				{
+					DestinationLocation.Address = value;
+					NotifyOfPropertyChange(() => Address);
+				}
+			}
+		}
+
 		public LocationViewModel CurrentLocation { get; set; }
 		public LocationViewModel DestinationLocation { get; set; }
 		private GeoCoordinateWatcher gw = new GeoCoordinateWatcher();
@@ -97,7 +109,7 @@ namespace Bicikelj.ViewModels
 				ToLocation = NavigateRequest.LocationName;
 				if (string.IsNullOrWhiteSpace(ToLocation))
 					ToLocation = NavigateRequest.Address;
-				DestinationLocation.Address = NavigateRequest.Address;
+				Address = NavigateRequest.Address;
 				DestinationLocation.LocationName = NavigateRequest.LocationName;
 				DestinationLocation.Coordinate = NavigateRequest.Coordinate;
 				if (NavigateRequest.Coordinate != null)
@@ -275,6 +287,8 @@ namespace Bicikelj.ViewModels
 
 		public void TakeMeTo(string address)
 		{
+			Address = "";
+			IsFavorite = false;
 			events.Publish(BusyState.Busy("searching..."));
 			// todo get the address coordinates using bing maps
 			LocationHelper.FindLocation(address, CurrentLocation.Coordinate, (r, e) =>
@@ -286,6 +300,8 @@ namespace Bicikelj.ViewModels
 				}
 				else
 				{
+					// todo: get the actual address from bing service
+					Address = address;
 					this.DestinationLocation.LocationName = address;
 					NotifyOfPropertyChange(() => CanToggleFavorite);
 					TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
@@ -351,8 +367,8 @@ namespace Bicikelj.ViewModels
 		public IEnumerable<IResult> EditName()
 		{
 			LocationViewModel lvm = new LocationViewModel();
-			if (string.IsNullOrWhiteSpace(DestinationLocation.Address))
-				DestinationLocation.Address = DestinationLocation.LocationName;
+			if (string.IsNullOrWhiteSpace(Address))
+				Address = DestinationLocation.LocationName;
 			lvm.Address = DestinationLocation.Address;
 			lvm.LocationName = DestinationLocation.LocationName;
 			

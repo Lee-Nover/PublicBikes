@@ -19,6 +19,7 @@
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -28,7 +29,8 @@
 			<Button x:Name="TrySearch" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
 				<Path Data="{StaticResource SearchIconData}" Stretch="Uniform" Fill="White" Width="32" />
 			</Button>
-			<maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" 
+			<TextBlock Grid.Row="2" x:Name="Address" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
+			<maps:Map Grid.Row="3" x:Name="Map" Margin="12,12,12,0" 
 					  Mode="Road" Center="{Binding CurrentLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
 				<maps:MapLayer x:Name="RouteLayer" />
 				<maps:MapLayer x:Name="PinsLayer">
@@ -41,8 +43,8 @@
 				</maps:MapLayer>
 				<maps:MapLayer x:Name="RoutePinsLayer" />
 			</maps:Map>
-			<TextBlock Grid.Row="3" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
-			<TextBlock Grid.Row="4" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
+			<TextBlock Grid.Row="4" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
+			<TextBlock Grid.Row="5" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
 		</Grid>
 		<bab:AppBarCM x:Name="AppBar" IsVisible="True" >
 			<bab:BindableApplicationBar.Buttons>
