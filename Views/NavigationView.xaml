@@ -11,10 +11,6 @@
 	FontSize="{StaticResource PhoneFontSizeNormal}"
 	Foreground="{StaticResource PhoneForegroundBrush}"
 	mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
-	<!--UserControl.Resources>
-		<m:StationLocation x:Key="stationLoc" Address="Address 1" Name="Station1" Latitude="46.051367" Longitude="14.506542" />
-		<vm:StationLocationViewModel x:Key="stationLocVM" Location="{StaticResource stationLoc}" />
-	</UserControl.Resources-->
 	<!--LayoutRoot is the root grid where all page content is placed-->
 	<Grid x:Name="LayoutRoot" Background="Transparent" >
 	   
@@ -30,7 +26,7 @@
 			<TextBlock Grid.Row="0" x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
 			<TextBox Grid.Row="1" x:Name="ToLocation" TextWrapping="Wrap" Margin="0,0,80,0"/>
 			<Button x:Name="TrySearch" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-				<Path Data="F1M-185.925,-2026.96L-203.062,-2048.74C-197.485,-2056.51 -197.433,-2067.31 -203.64,-2075.2 -211.167,-2084.76 -225.019,-2086.42 -234.588,-2078.89 -244.154,-2071.36 -245.808,-2057.51 -238.282,-2047.94 -231.986,-2039.95 -221.274,-2037.5 -212.337,-2041.31L-195.262,-2019.61 -185.925,-2026.96z M-231.201,-2053.51C-235.653,-2059.17 -234.674,-2067.36 -229.02,-2071.81 -223.36,-2076.26 -215.169,-2075.29 -210.721,-2069.63 -206.269,-2063.97 -207.245,-2055.78 -212.902,-2051.33 -218.559,-2046.88 -226.752,-2047.86 -231.201,-2053.51z" Stretch="Uniform" Fill="White" Width="32" />
+				<Path Data="{StaticResource SearchIconData}" Stretch="Uniform" Fill="White" Width="32" />
 			</Button>
 			<maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" 
 					  Mode="Road" Center="{Binding CurrentLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
@@ -52,6 +48,8 @@
 			<bab:BindableApplicationBar.Buttons>
 				<bab:BindableApplicationBarButton x:Name="ToggleFavorite" Text="favorite" IsEnabled="{Binding CanToggleFavorite}"
 												  IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
+				<bab:BindableApplicationBarButton x:Name="EditName" Text="rename" IsEnabled="{Binding CanEditName}"
+												  IconUri="/Images/appbar.edit.png" />
 			</bab:BindableApplicationBar.Buttons>
 		</bab:AppBarCM>
 	</Grid>

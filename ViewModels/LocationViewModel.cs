@@ -14,7 +14,7 @@ namespace Bicikelj.ViewModels
 				NotifyOfPropertyChange(() => Coordinate);
 			}
 		}
-		public string Name { get; set; }
+		public string LocationName { get; set; }
 		public string Address { get; set; }
 	}
 }

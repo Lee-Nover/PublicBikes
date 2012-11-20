@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="Caliburn.Micro.Contrib.Dialogs.DialogView"
+			xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			xmlns:Micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+			FontFamily="{StaticResource PhoneFontFamilyNormal}"
+			FontSize="{StaticResource PhoneFontSizeNormal}"
+			Foreground="{StaticResource PhoneForegroundBrush}"		  
+			Background="{StaticResource PhoneBackgroundBrush}"		
+			Opacity="1"
+			 MinWidth="240"
+			MinHeight="250"
+			MaxHeight="500">
+	<Border>
+		<Border.Background>
+			<SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
+		</Border.Background>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<TextBlock x:Name="DisplayName" Style="{StaticResource PhoneTextLargeStyle}" />
+
+			<TextBlock Grid.Row="1" x:Name="Message" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" />
+			<ContentControl Grid.Row="1" x:Name="ContentVM" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" Micro:View.Context="Dialog" />
+
+			<ItemsControl x:Name="Responses"
+					  Grid.Row="2"
+					  Margin="12">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button MinWidth="75"
+							Margin="5 0"
+							Content="{Binding Response}"
+							Micro:Message.Attach="Respond($dataContext)" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Grid>
+	</Border>
+</UserControl>

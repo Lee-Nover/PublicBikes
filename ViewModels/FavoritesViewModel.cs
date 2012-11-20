@@ -60,7 +60,7 @@ namespace Bicikelj.ViewModels
 			else
 			{
 				NavigationViewModel nvm = IoC.Get<NavigationViewModel>();
-				nvm.NavigateRequest = new LocationViewModel() { Coordinate = item.Coordinate, Name = item.LocationName, Address = item.Address };
+				nvm.NavigateRequest = new LocationViewModel() { Coordinate = item.Coordinate, LocationName = item.LocationName, Address = item.Address };
 				Bicikelj.NavigationExtension.NavigateTo(nvm);
 			}
 		}

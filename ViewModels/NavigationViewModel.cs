@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Data;
 using Bicikelj.Converters;
+using Caliburn.Micro.Contrib.Dialogs;
 
 namespace Bicikelj.ViewModels
 {
@@ -93,13 +94,16 @@ namespace Bicikelj.ViewModels
 			if (NavigateRequest != null)
 			{
 				IsFavorite = true;
-				ToLocation = NavigateRequest.Name;
+				ToLocation = NavigateRequest.LocationName;
 				if (string.IsNullOrWhiteSpace(ToLocation))
 					ToLocation = NavigateRequest.Address;
+				DestinationLocation.Address = NavigateRequest.Address;
+				DestinationLocation.LocationName = NavigateRequest.LocationName;
+				DestinationLocation.Coordinate = NavigateRequest.Coordinate;
 				if (NavigateRequest.Coordinate != null)
 					TakeMeTo(NavigateRequest.Coordinate);
 				else
-					TakeMeTo(NavigateRequest.Name);
+					TakeMeTo(NavigateRequest.LocationName);
 				NavigateRequest = null;
 			}
 		}
@@ -282,7 +286,7 @@ namespace Bicikelj.ViewModels
 				}
 				else
 				{
-					this.DestinationLocation.Name = address;
+					this.DestinationLocation.LocationName = address;
 					NotifyOfPropertyChange(() => CanToggleFavorite);
 					TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
 				}
@@ -314,14 +318,14 @@ namespace Bicikelj.ViewModels
 		
 		public bool CanToggleFavorite
 		{
-			get { return !string.IsNullOrWhiteSpace(DestinationLocation.Name) || DestinationLocation.Coordinate != null; }
+			get { return !string.IsNullOrWhiteSpace(DestinationLocation.LocationName) || DestinationLocation.Coordinate != null; }
 		}
 		public void ToggleFavorite()
 		{
 			SetFavorite(!IsFavorite);
-			if (string.IsNullOrWhiteSpace(DestinationLocation.Name) && DestinationLocation.Coordinate == null)
+			if (string.IsNullOrWhiteSpace(DestinationLocation.LocationName) && DestinationLocation.Coordinate == null)
 				return;
-			events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.Name) { Coordinate = DestinationLocation.Coordinate }, IsFavorite));
+			events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate }, IsFavorite));
 		}
 
 		private void SetFavorite(bool value)
@@ -336,9 +340,35 @@ namespace Bicikelj.ViewModels
 		{
 			get { return IsFavorite; }
 		}
-		public void EditName()
+		public void EditName_()
 		{
+			LocationViewModel lvm = new LocationViewModel();
+			lvm.Address = DestinationLocation.Address;
+			lvm.LocationName = DestinationLocation.LocationName;
+			IWindowManager wm = IoC.Get<IWindowManager>();
+		}
 
+		public IEnumerable<IResult> EditName()
+		{
+			LocationViewModel lvm = new LocationViewModel();
+			lvm.Address = DestinationLocation.Address;
+			lvm.LocationName = DestinationLocation.LocationName;
+			var question = new Dialog<Answer>(DialogType.Question,
+				"edit location name",							  
+				lvm,
+				Answer.Ok,
+				Answer.Cancel);
+
+			yield return question.AsResult();
+
+			if (question.GivenResponse == Answer.Ok)
+			{
+				if (string.IsNullOrWhiteSpace(DestinationLocation.Address))
+					DestinationLocation.Address = DestinationLocation.LocationName;
+				events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate, Address = DestinationLocation.Address }, false));
+				DestinationLocation.LocationName = lvm.LocationName;
+				events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate, Address = DestinationLocation.Address }, true));
+			};
 		}
 	}
 }

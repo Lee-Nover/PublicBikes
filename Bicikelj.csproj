@@ -98,6 +98,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CM.Contrib\Dialogs\Answer.cs" />
+    <Compile Include="CM.Contrib\Dialogs\BindableResponse.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Dialog.cs" />
+    <Compile Include="CM.Contrib\Dialogs\DialogResult.cs" />
+    <Compile Include="CM.Contrib\Dialogs\DialogType.cs" />
+    <Compile Include="CM.Contrib\Dialogs\DialogViewModel.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Error.cs" />
+    <Compile Include="CM.Contrib\Dialogs\IDialogViewModel.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Information.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Question.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Warning.cs" />
     <Compile Include="Controls\AppBarCM.cs" />
     <Compile Include="Controls\Bindable.cs" />
     <Compile Include="Controls\BindableApplicationBar.cs" />
@@ -159,6 +170,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="CM.Contrib\Dialogs\DialogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -176,6 +191,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Favorite\List.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Location\Dialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -247,6 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\appbar.button.png" />
+    <Content Include="Images\appbar.edit.png" />
     <Content Include="Images\appbar.star.delete.png" />
     <Content Include="Images\appbar.star.png" />
     <Content Include="Images\BicikeljLogo.png" />
