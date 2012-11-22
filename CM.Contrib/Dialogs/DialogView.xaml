@@ -27,8 +27,9 @@
 			<ContentControl Grid.Row="1" x:Name="ContentVM" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" Micro:View.Context="Dialog" />
 
 			<ItemsControl x:Name="Responses"
-					  Grid.Row="2"
-					  Margin="12">
+						  Grid.Row="2"
+						  Margin="0,12"
+						  HorizontalContentAlignment="Stretch">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal" />
@@ -36,10 +37,10 @@
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<Button MinWidth="75"
-							Margin="5 0"
-							Content="{Binding Response}"
-							Micro:Message.Attach="Respond($dataContext)" />
+						<Button MinWidth="75" HorizontalAlignment="Stretch" 
+								Margin="5 0"
+								Content="{Binding Response}"
+								Micro:Message.Attach="Respond($dataContext)" />
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>

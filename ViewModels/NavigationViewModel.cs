@@ -416,7 +416,7 @@ namespace Bicikelj.ViewModels
 			lvm.LocationName = DestinationLocation.LocationName;
 			
 			var question = new Dialog<Answer>(DialogType.Question,
-				"edit location name",							  
+				"location name",							  
 				lvm,
 				Answer.Ok,
 				Answer.Cancel);
