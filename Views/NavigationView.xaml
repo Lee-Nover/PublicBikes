@@ -15,7 +15,7 @@
 	<Grid x:Name="LayoutRoot" Background="Transparent" >
 	   
 		<!--ContentPanel - place additional content here-->
-		<Grid x:Name="ContentGrid" Margin="12,0,12,0" >
+		<Grid x:Name="ContentGrid" Margin="12,0,12,12" >
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
@@ -24,7 +24,10 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<TextBlock Grid.Row="0" x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
+			<StackPanel Grid.Row="0" Orientation="Horizontal">
+				<Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Fill="White" Stretch="Uniform" Margin="12,0,0,0" />
+				<TextBlock x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
+			</StackPanel>
 			<TextBox Grid.Row="1" x:Name="ToLocation" TextWrapping="Wrap" Margin="0,0,80,0"/>
 			<Button x:Name="TrySearch" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
 				<Path Data="{StaticResource SearchIconData}" Stretch="Uniform" Fill="White" Width="32" />
@@ -43,8 +46,8 @@
 				</maps:MapLayer>
 				<maps:MapLayer x:Name="RoutePinsLayer" />
 			</maps:Map>
-			<TextBlock Grid.Row="4" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
-			<TextBlock Grid.Row="5" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,12" />
+			<TextBlock Grid.Row="4" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
+			<TextBlock Grid.Row="5" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
 		</Grid>
 		<bab:AppBarCM x:Name="AppBar" IsVisible="True" >
 			<bab:BindableApplicationBar.Buttons>

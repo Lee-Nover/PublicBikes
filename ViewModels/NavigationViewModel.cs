@@ -59,6 +59,19 @@ namespace Bicikelj.ViewModels
 			}
 		}
 
+		private string fromLocation;
+		public string FromLocation
+		{
+			get { return fromLocation; }
+			set
+			{
+				if (value == fromLocation)
+					return;
+				fromLocation = value;
+				NotifyOfPropertyChange(() => FromLocation);
+			}
+		}
+
 		private string toLocation;
 		public string ToLocation {
 			get { return toLocation; }
@@ -100,9 +113,24 @@ namespace Bicikelj.ViewModels
 				this.view.Map.SetView(stationList.LocationRect);
 
 			gw.PositionChanged += ((s, e) => {
-				CurrentLocation.Coordinate = e.Position.Location;
+				if (CurrentLocation.Coordinate == null
+					|| (e.Position.Location.Latitude != CurrentLocation.Coordinate.Latitude
+					&& e.Position.Location.Longitude != CurrentLocation.Coordinate.Longitude))
+				{
+					CurrentLocation.Coordinate = e.Position.Location;
+					LocationHelper.FindAddress(e.Position.Location, (r, e2) =>
+					{
+						if (r != null && r.Location != null && r.Location.Address != null)
+							FromLocation = r.Location.Address.AddressLine;
+					});
+				}
 			});
 			gw.Start();
+			CheckNavigateRequest();
+		}
+
+		private void CheckNavigateRequest()
+		{
 			if (NavigateRequest != null)
 			{
 				IsFavorite = true;
@@ -300,8 +328,14 @@ namespace Bicikelj.ViewModels
 				}
 				else
 				{
-					// todo: get the actual address from bing service
-					Address = address;
+					if (r.Location.Address != null)
+					{
+						Address = r.Location.Address.AddressLine;
+						if (string.IsNullOrEmpty(Address))
+							Address = r.Location.Address.FormattedAddress;
+					}
+					if (string.IsNullOrEmpty(Address))
+						Address = address;
 					this.DestinationLocation.LocationName = address;
 					NotifyOfPropertyChange(() => CanToggleFavorite);
 					TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
@@ -341,7 +375,16 @@ namespace Bicikelj.ViewModels
 			SetFavorite(!IsFavorite);
 			if (string.IsNullOrWhiteSpace(DestinationLocation.LocationName) && DestinationLocation.Coordinate == null)
 				return;
-			events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate }, IsFavorite));
+			events.Publish(new FavoriteState(GetFavorite(DestinationLocation), IsFavorite));
+		}
+
+		private static FavoriteLocation GetFavorite(LocationViewModel location)
+		{
+			return new FavoriteLocation(location.LocationName)
+			{
+				Address = location.Address,
+				Coordinate = location.Coordinate
+			};
 		}
 
 		private void SetFavorite(bool value)
@@ -382,9 +425,9 @@ namespace Bicikelj.ViewModels
 
 			if (question.GivenResponse == Answer.Ok)
 			{
-				events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate, Address = DestinationLocation.Address }, false));
+				events.Publish(new FavoriteState(GetFavorite(DestinationLocation), false));
 				DestinationLocation.LocationName = lvm.LocationName;
-				events.Publish(new FavoriteState(new FavoriteLocation(DestinationLocation.LocationName) { Coordinate = DestinationLocation.Coordinate, Address = DestinationLocation.Address }, true));
+				events.Publish(new FavoriteState(GetFavorite(DestinationLocation), true));
 			};
 		}
 	}

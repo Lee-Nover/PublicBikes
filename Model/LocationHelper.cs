@@ -102,6 +102,25 @@ namespace Bicikelj.Model
 			wc.DownloadStringAsync(new Uri(query));
 		}
 
+		public static void FindAddress(GeoCoordinate coordinate, Action<FindLocationResponse, Exception> result)
+		{
+			string query = @"http://dev.virtualearth.net/REST/v1/Locations/"
+				+ string.Format(CultureInfo.InvariantCulture, "{0},{1}", coordinate.Latitude, coordinate.Longitude)
+				+ "?key=" + BingMapsCredentials.Key;
+			
+			var wc = new SharpGIS.GZipWebClient();
+			wc.DownloadStringCompleted += (s, e) =>
+			{
+				if (e.Error != null)
+					result(null, e.Error);
+				else if (e.Cancelled)
+					result(null, null);
+				else
+					result(e.Result.FromJson<FindLocationResponse>(), null);
+			};
+			wc.DownloadStringAsync(new Uri(query));
+		}
+
 		public static string GetDistanceString(double distance, bool imperial = false)
 		{
 			string[,] unit = { { "ft", "mi" }, { "m", "km" } };

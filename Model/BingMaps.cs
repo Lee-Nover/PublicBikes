@@ -63,6 +63,7 @@ namespace Bicikelj.Model.Bing
 		public string CountryRegion { get; set; }
 		public string FormattedAddress { get; set; }
 		public string PostalCode { get; set; }
+		public string Locality { get; set; }
 	}
 
 	public enum Confidence
