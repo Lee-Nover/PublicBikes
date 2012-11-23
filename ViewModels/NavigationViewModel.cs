@@ -121,7 +121,7 @@ namespace Bicikelj.ViewModels
 					LocationHelper.FindAddress(e.Position.Location, (r, e2) =>
 					{
 						if (r != null && r.Location != null && r.Location.Address != null)
-							FromLocation = r.Location.Address.AddressLine;
+							FromLocation = r.Location.Address.FormattedAddress;
 					});
 				}
 			});
@@ -329,11 +329,8 @@ namespace Bicikelj.ViewModels
 				else
 				{
 					if (r.Location.Address != null)
-					{
-						Address = r.Location.Address.AddressLine;
-						if (string.IsNullOrEmpty(Address))
-							Address = r.Location.Address.FormattedAddress;
-					}
+						Address = r.Location.Address.FormattedAddress;
+					
 					if (string.IsNullOrEmpty(Address))
 						Address = address;
 					this.DestinationLocation.LocationName = address;

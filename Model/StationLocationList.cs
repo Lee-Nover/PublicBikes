@@ -235,24 +235,14 @@ namespace Bicikelj.Model
 
 		public IEnumerable<StationLocation> SortByLocation(GeoCoordinate location, GeoCoordinate location2)
 		{
-			//if (location2 == null)
+			if (location2 == null)
 				return SortByLocation(location);
-				if (stations == null)
-					return null;
-			int index = 0;
-			var sortedStations1 = (from station in stations
-								 orderby station.Coordinate.GetDistanceTo(location)
-								 select new StationLocationIndex(station, index++)).ToList();
-			index = 0;
-			var sortedStations2 = (from station in stations
-								   orderby station.Coordinate.GetDistanceTo(location2)
-								   select new StationLocationIndex(station, index++)).ToList();
-
-			var sortedStations = from stationA in sortedStations1
-								 from stationB in sortedStations2
-								 orderby stationA.Index + stationB.Index
-								 where stationA.Location == stationB.Location
-								 select stationA.Location;
+			if (stations == null)
+				return null;
+			
+			var sortedStations = from station in stations
+								 orderby station.Coordinate.GetDistanceTo(location) * 2 + station.Coordinate.GetDistanceTo(location2)
+								 select station;
 
 			return sortedStations;
 		}
