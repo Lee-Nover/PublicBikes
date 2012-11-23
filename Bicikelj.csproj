@@ -115,6 +115,7 @@
     <Compile Include="Controls\BindableApplicationBarButton.cs" />
     <Compile Include="Controls\BindableApplicationBarMenuItem.cs" />
     <Compile Include="Controls\HubTileWithContent.cs" />
+    <Compile Include="Controls\ProportionalPanel.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="Converters\HubTileConverters.cs" />
     <Compile Include="Converters\PinTypeToIconConverter.cs" />
