@@ -30,7 +30,7 @@
 
             <Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource LogoLightGreenBrush}">
                 <Border CornerRadius="12" BorderThickness="0" Margin="2" Background="{StaticResource LogoDarkGreenBrush}">
-            		<TextBlock x:Name="Number" Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" />
+            		<TextBlock x:Name="Number" Style="{StaticResource PhoneTextLargeStyle}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" />
             	</Border>
             </Border>
             <TextBlock Grid.Column="1" x:Name="StationName" Style="{StaticResource PhoneTextLargeStyle}" />
