@@ -117,6 +117,7 @@
     <Compile Include="Controls\HubTileWithContent.cs" />
     <Compile Include="Controls\ProportionalPanel.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
+    <Compile Include="Converters\BoolToStringConverter.cs" />
     <Compile Include="Converters\HubTileConverters.cs" />
     <Compile Include="Converters\PinTypeToIconConverter.cs" />
     <Compile Include="Converters\FavoriteToIconConverter.cs" />

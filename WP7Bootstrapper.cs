@@ -72,7 +72,15 @@ namespace Bicikelj
 			if (IoC.Get<SystemConfig>() != null)
 				return;
 			container.Instance(database);
-			var config = database.Load<SystemConfig>(true);
+			SystemConfig config;
+			try
+			{
+				config = database.Load<SystemConfig>(true);
+			}
+			catch (Exception)
+			{
+				config = null;
+			}
 			if (config == null)
 				config = new SystemConfig();
 			if (string.IsNullOrWhiteSpace(config.City))
@@ -85,7 +93,16 @@ namespace Bicikelj
 				var allStations = IoC.Get<StationLocationList>();
 				if (allStations.Stations == null)
 				{
-					var storedStations = database.Load<StationLocationList>(config.City);
+					StationLocationList storedStations;
+					try
+					{
+						storedStations = database.Load<StationLocationList>(config.City);
+					}
+					catch (Exception)
+					{
+						storedStations = null;
+					}
+					
 					if (storedStations != null)
 						allStations.Stations = storedStations.Stations;
 				}

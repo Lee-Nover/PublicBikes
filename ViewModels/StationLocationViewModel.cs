@@ -75,7 +75,7 @@ namespace Bicikelj.ViewModels
 					else
 						return "location services are turned off";
 				else
-					return string.Format("distance to station {0}", LocationHelper.GetDistanceString(Distance, false));
+					return string.Format("distance to station {0}", LocationHelper.GetDistanceString(Distance, config.UseImperialUnits));
 			}
 		}
 

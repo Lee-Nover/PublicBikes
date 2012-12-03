@@ -21,15 +21,17 @@ namespace Bicikelj.ViewModels
 	public class NavigationViewModel : Screen
 	{
 		readonly IEventAggregator events;
-		public NavigationViewModel(IEventAggregator events, StationLocationList stationList)
+		readonly SystemConfig config;
+		private StationLocationList stationList;
+
+		public NavigationViewModel(IEventAggregator events, StationLocationList stationList, SystemConfig config)
 		{
 			this.events = events;
 			this.stationList = stationList;
+			this.config = config;
 			this.CurrentLocation = new LocationViewModel();
 			this.DestinationLocation = new LocationViewModel();
 		}
-
-		private StationLocationList stationList;
 
 		private double travelDistance = double.NaN;
 		private double travelDuration = double.NaN;
@@ -44,7 +46,7 @@ namespace Bicikelj.ViewModels
 				if (double.IsNaN(travelDistance))
 					return "travel distance not available";
 				else
-					return string.Format("travel distance {0}", LocationHelper.GetDistanceString(travelDistance, false));
+					return string.Format("travel distance {0}", LocationHelper.GetDistanceString(travelDistance, config.UseImperialUnits));
 			}
 		}
 
@@ -318,8 +320,10 @@ namespace Bicikelj.ViewModels
 			Address = "";
 			IsFavorite = false;
 			events.Publish(BusyState.Busy("searching..."));
-			// todo get the address coordinates using bing maps
-			LocationHelper.FindLocation(address, CurrentLocation.Coordinate, (r, e) =>
+			var localAddress = address;
+			if (!string.IsNullOrWhiteSpace(config.City) && !localAddress.ToLower().Contains(config.City.ToLower()))
+				localAddress = localAddress + ", " + config.City;
+			LocationHelper.FindLocation(localAddress, CurrentLocation.Coordinate, (r, e) =>
 			{
 				if (e != null || r == null || r.Location == null)
 				{
