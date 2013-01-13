@@ -1,11 +1,12 @@
-﻿<UserControl 
-	x:Class="Bicikelj.Views.SystemConfigView"
+﻿<UserControl
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
 	xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+	xmlns:bctl="clr-namespace:Bicikelj.Controls" 
+	x:Class="Bicikelj.Views.SystemConfigView"
 	FontFamily="{StaticResource PhoneFontFamilyNormal}"
 	FontSize="{StaticResource PhoneFontSizeNormal}"
 	Foreground="{StaticResource PhoneForegroundBrush}"
@@ -15,17 +16,11 @@
 	<Grid x:Name="LayoutRoot" Background="Transparent" >
 		<StackPanel>
 			<TextBlock Text="options" Style="{StaticResource PhoneTextExtraLargeStyle}" />
-			<toolkit:ToggleSwitch x:Name="LocationEnabled" Content="{Binding LocationEnabled, Converter={StaticResource BoolToStringConverter}, ConverterParameter=on;off}" Header="location service" VerticalContentAlignment="Center" Style="{StaticResource MyToggleSwitchStyle}" />
+			<toolkit:ToggleSwitch x:Name="LocationEnabled" Content="{Binding LocationEnabled, ConverterParameter=on;off, Converter={StaticResource BoolToStringConverter}}" Header="location service" VerticalContentAlignment="Center" Style="{StaticResource MyToggleSwitchStyle}" />
 			<TextBlock Margin="12,-12,12,24" Text="allow the app to find your current location to find the nearest stations and be able to map a route." Style="{StaticResource PhoneTextSubtleStyle}" TextWrapping="Wrap" />
-			<!--Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width=".5*" />
-					<ColumnDefinition Width=".5*" />
-				</Grid.ColumnDefinitions>
-				<RadioButton Content="meters" IsChecked="True" />
-				<RadioButton Grid.Column="1" Content="miles feet" />
-			</Grid-->
-			<toolkit:ToggleSwitch x:Name="UseImperialUnits" Content="{Binding UseImperialUnits, Converter={StaticResource BoolToStringConverter}, ConverterParameter=miles\ and\ feet;meters}" Style="{StaticResource MyToggleSwitchStyle}" Header="use imperial units (feet) or SI (meters)?" VerticalContentAlignment="Center" />
+			<toolkit:ToggleSwitch x:Name="UseImperialUnits" Content="{Binding UseImperialUnits, ConverterParameter=miles and feet;meters, Converter={StaticResource BoolToStringConverter}}" Style="{StaticResource MyToggleSwitchStyle}" Header="use imperial units (feet) or SI (meters)?" VerticalContentAlignment="Center" />
+			<bctl:TravelSpeedControl Title="walking speed"/>
+			<bctl:TravelSpeedControl Title="cycling speed" TravelType="Cycling"/>
 		</StackPanel>
 	</Grid>
 </UserControl>

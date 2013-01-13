@@ -117,7 +117,11 @@
     <Compile Include="Controls\HubTileWithContent.cs" />
     <Compile Include="Controls\ProportionalPanel.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
+    <Compile Include="Controls\TravelSpeedControl.cs">
+      <DependentUpon>TravelSpeedControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BoolToStringConverter.cs" />
+    <Compile Include="Converters\TravelSpeedConverters.cs" />
     <Compile Include="Converters\HubTileConverters.cs" />
     <Compile Include="Converters\PinTypeToIconConverter.cs" />
     <Compile Include="Converters\FavoriteToIconConverter.cs" />

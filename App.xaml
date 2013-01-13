@@ -28,6 +28,7 @@
 			<cvt:FavoriteToIconUriConverter x:Key="FavoriteToIconUriConverter" />
 			<cvt:PinTypeToIconConverter x:Key="PinTypeToIconConverter" />
 			<cvt:BoolToStringConverter x:Key="BoolToStringConverter" />
+			<cvt:TravelSpeedConverter x:Key="TravelSpeedConverter" />
 		</ResourceDictionary>
 	</Application.Resources>
 

@@ -246,5 +246,30 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+	
+	<Style TargetType="bctl:TravelSpeedControl">
+		<Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyLight}"/>
+		<Setter Property="FontSize" Value="{StaticResource PhoneFontSizeLarge}"/>
+		<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="bctl:TravelSpeedControl">
+					<Grid Background="Transparent">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<TextBlock Text="{TemplateBinding Title}" VerticalAlignment="Center" Margin="12,0,0,0"/>
+						<Slider Grid.Row="1" Maximum="2" SmallChange="1" Value="{Binding Speed, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TravelSpeedConverter}, Mode=TwoWay}" Grid.ColumnSpan="2"/>
+						<TextBlock Grid.Column="1" Text="{Binding Speed, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TravelSpeedConverter}}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 
 </ResourceDictionary>
