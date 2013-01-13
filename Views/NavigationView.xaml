@@ -32,7 +32,7 @@
 				</Path>
 				<TextBlock x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
 			</StackPanel>
-			<TextBox Grid.Row="1" x:Name="ToLocation" TextWrapping="Wrap" Margin="0,0,80,0"/>
+			<TextBox Grid.Row="1" x:Name="ToLocation" TextWrapping="NoWrap"  Margin="0,0,80,0"/>
 			<Button x:Name="TrySearch" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
 				<Path Data="{StaticResource SearchIconData}" Stretch="Uniform" Width="32" >
 					<Path.Fill>
