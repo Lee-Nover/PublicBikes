@@ -42,5 +42,35 @@ namespace Bicikelj.ViewModels
 				events.Publish(config);
 			}
 		}
+
+		public TravelSpeed WalkingSpeed
+		{
+			get { return config != null ? config.WalkingSpeed : TravelSpeed.Normal; }
+			set
+			{
+				if (config == null)
+					return;
+				if (value == config.WalkingSpeed)
+					return;
+				config.WalkingSpeed = value;
+				NotifyOfPropertyChange(() => WalkingSpeed);
+				events.Publish(config);
+			}
+		}
+
+		public TravelSpeed CyclingSpeed
+		{
+			get { return config != null ? config.CyclingSpeed : TravelSpeed.Normal; }
+			set
+			{
+				if (config == null)
+					return;
+				if (value == config.CyclingSpeed)
+					return;
+				config.CyclingSpeed = value;
+				NotifyOfPropertyChange(() => CyclingSpeed);
+				events.Publish(config);
+			}
+		}
 	}
 }

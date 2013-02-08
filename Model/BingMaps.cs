@@ -48,6 +48,12 @@ namespace Bicikelj.Model.Bing
 		}
 	}
 
+	public class RouteLeg
+	{
+		public double TravelDistance { get; set; }
+		public double TravelDuration { get; set; }
+	}
+
 	public class RouteResource
 	{
 		public string DistanceUnit { get; set; }
@@ -55,6 +61,7 @@ namespace Bicikelj.Model.Bing
 		public double TravelDistance { get; set; }
 		public double TravelDuration { get; set; }
 		public RoutePath RoutePath { get; set; }
+		public List<RouteLeg> RouteLegs { get; set; }
 	}
 
 	public class Address

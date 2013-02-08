@@ -152,19 +152,27 @@ namespace Bicikelj.Model
             return distance.ToString(format[moreThan1km ? 0 : 1]) + unit[idx1, idx2];
         }
 
-        public static string GetTravelSpeed(TravelType type, TravelSpeed speed, bool imperial = false)
+        public static double GetTravelSpeed(TravelType type, TravelSpeed speed, bool imperial = false)
         {
             int idxSpeed = speed == TravelSpeed.Slow ? 0 : speed == TravelSpeed.Normal ? 1 : 2;
             int idxImp = imperial ? 0 : 1;
-            string[] label = { " mph", " km/h" };
             int[,] walkingSpeed = { { 2, 3, 5 }, { 3, 5, 8 } };
             int[,] cyclingSpeed = { { 6, 10, 15 }, { 10, 15, 22 } };
 
-            string result = "";
+            double result = 0;
             if (type == TravelType.Walking)
-                result = walkingSpeed[idxImp, idxSpeed].ToString() + label[idxImp];
+                result = walkingSpeed[idxImp, idxSpeed];
             else
-                result = cyclingSpeed[idxImp, idxSpeed].ToString() + label[idxImp];
+                result = cyclingSpeed[idxImp, idxSpeed];
+            return result;
+        }
+
+        public static string GetTravelSpeedString(TravelType type, TravelSpeed speed, bool imperial = false)
+        {
+            var travelSpeed = GetTravelSpeed(type, speed, imperial);
+            int idxImp = imperial ? 0 : 1;
+            string[] label = { " mph", " km/h" };
+            string result = travelSpeed.ToString() + label[idxImp];
             return result;
         }
     }

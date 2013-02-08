@@ -22,7 +22,7 @@ namespace Bicikelj.ViewModels
     public class NavigationViewModel : Screen
     {
         readonly IEventAggregator events;
-        readonly SystemConfig config;
+        private SystemConfig config;
         private StationLocationList stationList;
 
         public NavigationViewModel(IEventAggregator events, StationLocationList stationList, SystemConfig config)
@@ -249,6 +249,17 @@ namespace Bicikelj.ViewModels
 
                 travelDistance = 1000 * routeResponse.Route.TravelDistance;
                 travelDuration = routeResponse.Route.TravelDuration;
+                if (routeResponse.Route.RouteLegs != null && routeResponse.Route.RouteLegs.Count == 3)
+                {
+                    var routeLegs = routeResponse.Route.RouteLegs;
+                    var walkingDistance = routeLegs[0].TravelDistance + routeLegs[2].TravelDistance;
+                    var cyclingDistance = routeLegs[1].TravelDistance;
+                    var walkingSpeed = LocationHelper.GetTravelSpeed(TravelType.Walking, config.WalkingSpeed, false);
+                    var cyclingSpeed = LocationHelper.GetTravelSpeed(TravelType.Cycling, config.CyclingSpeed, false);
+                    travelDuration = 3600 * walkingDistance / walkingSpeed;
+                    travelDuration += 3600 * cyclingDistance / cyclingSpeed;
+                    travelDuration = (int)travelDuration;
+                }
                 var points = from pt in routeResponse.Route.RoutePath.Points
                              select new GeoCoordinate
                              {

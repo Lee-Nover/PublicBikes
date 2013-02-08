@@ -16,6 +16,11 @@ namespace Bicikelj.Controls
 	[TemplatePart(Name = "ContentContainer", Type = typeof(object))]
 	public class HubTileWithContent : HubTile
 	{
+		void HubTileWithContent_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
 		public object Content
 		{
 			get { return (object)GetValue(ContentProperty); }
@@ -30,6 +35,13 @@ namespace Bicikelj.Controls
 		public HubTileWithContent() : base()
 		{
 			DefaultStyleKey = typeof(HubTileWithContent);
+			this.IsEnabledChanged += (sender, e) =>
+			{
+				if (IsEnabled)
+					Background = (Brush)Application.Current.Resources["PhoneAccentBrush"];
+				else
+					Background = (Brush)Application.Current.Resources["PhoneDisabledBrush"];
+			};
 		}
 
 		public override void OnApplyTemplate()

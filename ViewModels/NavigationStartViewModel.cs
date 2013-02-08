@@ -15,6 +15,7 @@ namespace Bicikelj.ViewModels
 		public NavigationStartViewModel(IEventAggregator events)
 		{
 			this.events = events;
+			events.Subscribe(this);
 		}
 
 		private StationLocationList stationList;

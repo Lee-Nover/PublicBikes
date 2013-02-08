@@ -52,25 +52,6 @@ namespace Bicikelj.Converters
 			return result;
 		}
 
-		public static object GetString(object value, object parameter)
-		{
-			object result = null;
-			if (value is bool)
-			{
-				var boolVal = (bool)value;
-				var paramStr = parameter as string;
-				if (!string.IsNullOrWhiteSpace(paramStr))
-				{
-					var boolStrs = paramStr.Split(';');
-					if (boolStrs.Length > 1)
-						result = boolStrs[boolVal ? 0 : 1];
-				}
-				if (result == null)
-					result = boolVal.ToString();
-			}
-			return result;
-		}
-
 		#endregion
 	}
 }

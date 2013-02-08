@@ -12,6 +12,7 @@ using Wintellect.Sterling;
 using Bicikelj.Persistence;
 using System.Threading;
 using BindableApplicationBar;
+using Bicikelj.Controls;
 
 namespace Bicikelj
 {
@@ -82,7 +83,12 @@ namespace Bicikelj
 				config = null;
 			}
 			if (config == null)
+			{
 				config = new SystemConfig();
+				config.WalkingSpeed = TravelSpeed.Normal;
+				config.CyclingSpeed = TravelSpeed.Normal;
+			}
+				
 			if (string.IsNullOrWhiteSpace(config.City))
 				config.City = "ljubljana";
 			container.Instance(config);
@@ -177,6 +183,7 @@ namespace Bicikelj
 			ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
 			ConventionManager.AddElementConvention<AppBarCM>(FrameworkElement.DataContextProperty, "DataContext", "Loaded");
 			ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
+			ConventionManager.AddElementConvention<TravelSpeedControl>(TravelSpeedControl.SpeedProperty, "Speed", "Change");
 
 			var aaf = ActionMessage.ApplyAvailabilityEffect;
 			ActionMessage.ApplyAvailabilityEffect = (context => {
