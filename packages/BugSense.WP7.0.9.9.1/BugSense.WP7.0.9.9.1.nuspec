@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>BugSense.WP7</id>
+    <version>0.9.9.1</version>
+    <title>BugSense for Windows Phone</title>
+    <authors>John Katsiotis</authors>
+    <owners>John Katsiotis</owners>
+    <projectUrl>http://www.bugsense.com/</projectUrl>
+    <iconUrl>http://www.panicnot.com/image/bugsense-min-in.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>BugSense is a tool that collects and analyzes crash reports from mobile apps. This is the plugin for WP7.</description>
+    <releaseNotes>-Support for XNA
+-Improved error handling</releaseNotes>
+    <references>
+      <reference file="BugSense.Xna.dll" />
+      <reference file="ServiceStack.Text.XBox360.dll" />
+      <reference file="BugSense.dll" />
+    </references>
+  </metadata>
+</package>

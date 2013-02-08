@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using Caliburn.Micro;
-using Bicikelj.ViewModels;
-using Microsoft.Phone.Controls;
-using System.Windows.Controls;
-using Bicikelj.Model;
-using Microsoft.Phone.Controls.Maps;
+using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using Bicikelj.Controls;
+using Bicikelj.Model;
+using Bicikelj.Persistence;
+using Bicikelj.ViewModels;
+using BindableApplicationBar;
+using BugSense;
+using Caliburn.Micro;
+using Microsoft.Phone.Controls;
+using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Shell;
 using Wintellect.Sterling;
-using Bicikelj.Persistence;
-using System.Threading;
-using BindableApplicationBar;
-using Bicikelj.Controls;
 
 namespace Bicikelj
 {
@@ -53,6 +54,7 @@ namespace Bicikelj
 		{
 			base.OnStartup(sender, e);
 			LoadDatabase();
+			BugSenseHandler.Instance.Init(Application, BugSenseCredentials.Key);
 		}
 
 		protected override void OnDeactivate(object sender, DeactivatedEventArgs e)

@@ -1,6 +1,5 @@
-﻿using Caliburn.Micro;
-using System.Collections.Generic;
-using Bicikelj.Model;
+﻿using Bicikelj.Model;
+using Caliburn.Micro;
 
 namespace Bicikelj.ViewModels
 {

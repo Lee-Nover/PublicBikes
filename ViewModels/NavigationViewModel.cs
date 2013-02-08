@@ -1,21 +1,17 @@
-﻿using Caliburn.Micro;
+﻿using System;
 using System.Collections.Generic;
-using Bicikelj.Model;
-using System.Windows;
-using Microsoft.Phone.Controls.Maps;
 using System.Device.Location;
 using System.Linq;
-using System;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using Bicikelj.Model;
 using Bicikelj.Model.Bing;
 using Bicikelj.Views;
-using System.Windows.Media;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Windows.Data;
-using Bicikelj.Converters;
+using Caliburn.Micro;
 using Caliburn.Micro.Contrib.Dialogs;
-using System.Windows.Input;
+using Microsoft.Phone.Controls.Maps;
 
 namespace Bicikelj.ViewModels
 {
