@@ -125,7 +125,6 @@ namespace Bicikelj.ViewModels
                     });
                 }
             });
-            gw.Start();
             CheckNavigateRequest();
         }
 
@@ -158,6 +157,13 @@ namespace Bicikelj.ViewModels
                     TakeMeTo(NavigateRequest.LocationName);
                 NavigateRequest = null;
             }
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            if (config.LocationEnabled)
+                gw.Start();
         }
 
         protected override void OnDeactivate(bool close)
@@ -245,16 +251,24 @@ namespace Bicikelj.ViewModels
 
                 travelDistance = 1000 * routeResponse.Route.TravelDistance;
                 travelDuration = routeResponse.Route.TravelDuration;
-                if (routeResponse.Route.RouteLegs != null && routeResponse.Route.RouteLegs.Count == 3)
+                if (routeResponse.Route.RouteLegs != null)
                 {
                     var routeLegs = routeResponse.Route.RouteLegs;
-                    var walkingDistance = routeLegs[0].TravelDistance + routeLegs[2].TravelDistance;
-                    var cyclingDistance = routeLegs[1].TravelDistance;
-                    var walkingSpeed = LocationHelper.GetTravelSpeed(TravelType.Walking, config.WalkingSpeed, false);
-                    var cyclingSpeed = LocationHelper.GetTravelSpeed(TravelType.Cycling, config.CyclingSpeed, false);
-                    travelDuration = 3600 * walkingDistance / walkingSpeed;
-                    travelDuration += 3600 * cyclingDistance / cyclingSpeed;
-                    travelDuration = (int)travelDuration;
+                    if (routeLegs.Count == 1 || routeLegs.Count == 3)
+                    {
+                        var walkingDistance = routeLegs[0].TravelDistance;
+                        if (routeLegs.Count == 3)
+                            walkingDistance += routeLegs[2].TravelDistance;
+                        var walkingSpeed = LocationHelper.GetTravelSpeed(TravelType.Walking, config.WalkingSpeed, false);
+                        travelDuration = 3600 * walkingDistance / walkingSpeed;
+                        if (routeLegs.Count == 3)
+                        {
+                            var cyclingDistance = routeLegs[1].TravelDistance;
+                            var cyclingSpeed = LocationHelper.GetTravelSpeed(TravelType.Cycling, config.CyclingSpeed, false);
+                            travelDuration += 3600 * cyclingDistance / cyclingSpeed;
+                        }
+                        travelDuration = (int)travelDuration;
+                    }
                 }
                 var points = from pt in routeResponse.Route.RoutePath.Points
                              select new GeoCoordinate
@@ -367,18 +381,21 @@ namespace Bicikelj.ViewModels
 
         public void TakeMeTo(GeoCoordinate location)
         {
-            GetCoordinate.Current((c, e) => {
-                if (e != null)
-                {
-                    events.Publish(BusyState.NotBusy());
-                    events.Publish(new ErrorState(e, "could not get current location"));
-                }
-                else
-                {
-                    CurrentLocation.Coordinate = c;
-                    FindBestRoute(c, location);
-                }
-            });
+            if (config.LocationEnabled)
+                GetCoordinate.Current((c, e) => {
+                    if (e != null)
+                    {
+                        events.Publish(BusyState.NotBusy());
+                        events.Publish(new ErrorState(e, "could not get current location"));
+                    }
+                    else
+                    {
+                        CurrentLocation.Coordinate = c;
+                        FindBestRoute(c, location);
+                    }
+                });
+            else if (CurrentLocation.Coordinate != null)
+                FindBestRoute(CurrentLocation.Coordinate, location);
         }
 
         private bool isFavorite;
