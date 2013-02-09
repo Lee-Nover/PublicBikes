@@ -78,9 +78,9 @@ namespace Bicikelj.Converters
 				if (parameter is string)
 					bool.TryParse(parameter as string, out op);
 				if ((bool)value ^ op)
-					result = "/Images/appbar.star.png";
+					result = "/Images/appbar.star.add.png";
 				else
-					result = "/Images/appbar.star.delete.png";
+					result = "/Images/appbar.star.png";
 			}
 			return result;
 		}

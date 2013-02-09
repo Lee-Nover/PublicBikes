@@ -275,6 +275,7 @@
   <ItemGroup>
     <Resource Include="Images\appbar.button.png" />
     <Content Include="Images\appbar.edit.png" />
+    <Content Include="Images\appbar.star.add.png" />
     <Content Include="Images\appbar.star.delete.png" />
     <Content Include="Images\appbar.star.png" />
     <Content Include="Images\BicikeljLogo.png" />
