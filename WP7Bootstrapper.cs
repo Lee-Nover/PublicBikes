@@ -54,7 +54,11 @@ namespace Bicikelj
 		{
 			base.OnStartup(sender, e);
 			LoadDatabase();
-			BugSenseHandler.Instance.Init(Application, BugSenseCredentials.Key);
+			BugSenseHandler.Instance.Init(Application, BugSenseCredentials.Key,
+				new NotificationOptions() { 
+					Type = enNotificationType.MessageBoxConfirm, 
+					Title = "uh-oh :(", 
+					Text = "Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?" });
 		}
 
 		protected override void OnDeactivate(object sender, DeactivatedEventArgs e)
@@ -101,6 +105,7 @@ namespace Bicikelj
 				var allStations = IoC.Get<StationLocationList>();
 				if (allStations.Stations == null)
 				{
+					allStations.City = config.City;
 					StationLocationList storedStations;
 					try
 					{

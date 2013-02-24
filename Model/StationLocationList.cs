@@ -10,35 +10,6 @@ using System.Device.Location;
 
 namespace Bicikelj.Model
 {
-	public enum CityList
-	{
-		Amiens,// = "Amiens, France",
-		Besancon,// = "Besançon, France",
-		Brussels,// = "Brussels, Belgium",
-		Brisbane,// = "Brisbane, Australia",
-		Cergy,// = "Cergy-Pontoise, France",
-		Creteil,// = "Créteil, France",
-		Cordoba,// = "Cordoba, Spain",
-		Dublin,// = "Dublin, Ireland",
-		Gijon,// = "Gijon, Spain",
-		Gothenburg,// = "Gothenburg, Sweden",
-		Ljubljana,// = "Ljubljana, Slovenia",
-		Luxembourg,// = "Luxembourg, Luxembourg",
-		Lyon,// = "Lyon, France",
-		Marseille,// = "Marseille, France",
-		Mulhouse,// = "Mulhouse, France",
-		Nancy,// = "Nancy, France",
-		Nantes,// = "Nantes, France",
-		Paris,// = "Paris, France",
-		Rouen,// = "Rouen, France",
-		Santander,// = "Santander, Spain",
-		Seville,// = "Seville, Spain",
-		Toulouse,// = "Toulouse, France",
-		Toyama,// = "Toyama, Japan",
-		Valencia,// = "Valencia, Spain",
-		Vienna// = "Vienna, Austria"
-	}
-
 	public class StationLocationIndex
 	{
 		public StationLocation Location;
@@ -115,13 +86,11 @@ namespace Bicikelj.Model
 		public static bool IsCitySupported(string city)
 		{
 			city = city.Split(',', ';', ' ')[0].ToLower();
-			foreach (var x in typeof(CityList).GetFields())
+			var allCities = BikeServiceProvider.GetAllCities();
+			foreach (var x in allCities)
 			{
-				if (x.IsLiteral && x.IsPublic)
-				{
-					if (x.Name.ToLower().Contains(city))
-						return true;
-				}
+				if (x.CityName.ToLower().Contains(city))
+					return true;
 			}
 			return false;
 		}
