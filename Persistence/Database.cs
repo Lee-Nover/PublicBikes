@@ -13,7 +13,9 @@ namespace Bicikelj.Persistence
 	public class Database : BaseDatabaseInstance
 	{
 		private static SterlingEngine engine;
+#if DEBUG
 		private static Guid loggerGuid;
+#endif
 		private static ISterlingDatabaseInstance database;
 
 		protected override List<ITableDefinition> RegisterTables()

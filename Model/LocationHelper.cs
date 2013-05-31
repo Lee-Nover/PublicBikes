@@ -126,6 +126,31 @@ namespace Bicikelj.Model
             wc.DownloadStringAsync(new Uri(query));
         }
 
+        public static void GetCurrentCity(Action<string, Exception> result)
+        {
+            GetCoordinate.Current((coordinate, ex) =>
+            {
+                string query = @"http://dev.virtualearth.net/REST/v1/Locations/"
+                    + string.Format(CultureInfo.InvariantCulture, "{0},{1}", coordinate.Latitude, coordinate.Longitude)
+                    + "?key=" + BingMapsCredentials.Key;
+
+                var wc = new SharpGIS.GZipWebClient();
+                wc.DownloadStringCompleted += (s, e) =>
+                {
+                    if (e.Error != null)
+                        result(null, e.Error);
+                    else if (e.Cancelled)
+                        result(null, null);
+                    else
+                    {
+                        var addr = e.Result.FromJson<FindLocationResponse>().Location.Address;
+                        result(addr.AdminDistrict2, null);
+                    }
+                };
+                wc.DownloadStringAsync(new Uri(query));
+            });
+        }
+
         public static string GetDistanceString(double distance, bool imperial = false)
         {
             string[,] unit = { { "ft", "mi" }, { "m", "km" } };

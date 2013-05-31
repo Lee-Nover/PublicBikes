@@ -17,6 +17,30 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <TextBox x:Name="Filter" cal:Message.Attach="[Event KeyUp] = [Action FilterChanged()]" Style="{StaticResource FilterTextBoxStyle}" />
-        <ListBox x:Name="Items" Grid.Row="1" ItemContainerStyle="{StaticResource StationListItemContainerStyle}" ItemTemplate="{StaticResource CaliburnListItem}" />
+        <ListBox x:Name="Items" Grid.Row="1" ItemContainerStyle="{StaticResource StationListItemContainerStyle}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="12,0,12,12" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <!--Rectangle Width="2" Grid.RowSpan="2" HorizontalAlignment="Left" StrokeThickness="0" Margin="0,4,0,0">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{StaticResource PhoneAccentColor}"/>
+                </Rectangle.Fill>
+            </Rectangle-->
+
+                        <!--Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource LogoLightGreenBrush}">
+                <Border CornerRadius="12" BorderThickness="0" Margin="2" Background="{StaticResource LogoDarkGreenBrush}">
+            		<TextBlock x:Name="Number" Style="{StaticResource PhoneTextLargeStyle}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" />
+            	</Border>
+            </Border-->
+                        <TextBlock Grid.Column="0" x:Name="StationName" Text="{Binding StationName}" Style="{StaticResource PhoneTextLargeStyle}" />
+                        <TextBlock Grid.Column="0" Grid.Row="1" x:Name="Address" Text="{Binding Address}" Style="{StaticResource PhoneTextSubtleStyle}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

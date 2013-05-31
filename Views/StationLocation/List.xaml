@@ -11,11 +11,9 @@
     xmlns:b="clr-namespace:Bicikelj" 
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
 
-    <Grid x:Name="LayoutRoot">
-        
         <Grid x:Name="ContentGrid" Margin="12,0,12,12" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <!--ColumnDefinition Width="Auto" /-->
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -28,13 +26,13 @@
                 </Rectangle.Fill>
             </Rectangle-->
 
-            <Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource LogoLightGreenBrush}">
+            <!--Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource LogoLightGreenBrush}">
                 <Border CornerRadius="12" BorderThickness="0" Margin="2" Background="{StaticResource LogoDarkGreenBrush}">
             		<TextBlock x:Name="Number" Style="{StaticResource PhoneTextLargeStyle}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" />
             	</Border>
-            </Border>
+            </Border-->
             <TextBlock Grid.Column="1" x:Name="StationName" Style="{StaticResource PhoneTextLargeStyle}" />
             <TextBlock Grid.Column="1" Grid.Row="1" x:Name="Address" Style="{StaticResource PhoneTextSubtleStyle}" />
         </Grid>
-    </Grid>
+
 </UserControl>

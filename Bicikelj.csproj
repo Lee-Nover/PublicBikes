@@ -72,7 +72,7 @@
     </Reference>
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="ServiceStack.Text.WP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\ServiceStack.Text.3.9.37\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
+      <HintPath>packages\ServiceStack.Text.3.9.48\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
     </Reference>
     <Reference Include="SharpGIS.GZipWebClient, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -93,11 +93,12 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
-    <Reference Include="Wintellect.Sterling.WindowsPhone">
-      <HintPath>packages\SterlingPhone.1.5.0.1\lib\SL3-WP\Wintellect.Sterling.WindowsPhone.dll</HintPath>
+    <Reference Include="Wintellect.Sterling.WindowsPhone, Version=1.6.2.32154, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\SterlingPhone.1.6.2\lib\sl3-wp\Wintellect.Sterling.WindowsPhone.dll</HintPath>
     </Reference>
-    <Reference Include="Wintellect.Sterling.WindowsPhone.IsolatedStorage">
-      <HintPath>packages\SterlingPhone.1.5.0.1\lib\SL3-WP\Wintellect.Sterling.WindowsPhone.IsolatedStorage.dll</HintPath>
+    <Reference Include="Wintellect.Sterling.WindowsPhone.IsolatedStorage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\SterlingPhone.1.6.2\lib\sl3-wp\Wintellect.Sterling.WindowsPhone.IsolatedStorage.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +151,7 @@
     <Compile Include="Model\StationLocationList.cs" />
     <Compile Include="Model\SystemConfig.cs" />
     <Compile Include="NavigationExtension.cs" />
+    <Compile Include="Persistence\MainViewModelStorage.cs" />
     <Compile Include="Persistence\Database.cs" />
     <Compile Include="Persistence\StationsViewModelStorage.cs" />
     <Compile Include="Persistence\TypeSerializer.cs" />
