@@ -43,7 +43,11 @@ namespace Bicikelj.ViewModels
             this.events = events;
             this.config = config;
             subCity = new Subject<City>();
-            obsCity = subCity.Publish(city).RefCount();
+            obsCity = subCity
+                .Publish(city)
+                .RefCount()
+                .SubscribeOn(ThreadPoolScheduler.Instance)
+                .ObserveOn(ThreadPoolScheduler.Instance);
         }
 
         public void SetCity(string cityName)
@@ -95,12 +99,16 @@ namespace Bicikelj.ViewModels
 
         private void LoadFromDB()
         {
-            CityLoadState cityState = CityLoadState.NotLoaded;
-            if (city == null || string.IsNullOrEmpty(city.UrlCityName) 
-                || (cityLoadStates.TryGetValue(city, out cityState) && cityState != CityLoadState.NotLoaded))
-                return;
+            lock (cityLoadStates)
+            {
+                CityLoadState cityState = CityLoadState.NotLoaded;
+                if (city == null || string.IsNullOrEmpty(city.UrlCityName)
+                    || (cityLoadStates.TryGetValue(city, out cityState) && cityState != CityLoadState.NotLoaded))
+                    return;
 
-            cityLoadStates[city] = CityLoadState.ReadingCache;
+                cityLoadStates[city] = CityLoadState.ReadingCache;
+            }
+            
             City storedCity = null;
             ISterlingDatabaseInstance db = IoC.Get<ISterlingDatabaseInstance>();
             try
@@ -138,7 +146,8 @@ namespace Bicikelj.ViewModels
                         observer.OnNext(city);
                         observer.OnCompleted();
                         return Disposable.Empty;
-                    });
+                    })
+                    .SubscribeOn(ThreadPoolScheduler.Instance); // will make LoadFromDB run background
 
             return obsCache;
         }
@@ -146,7 +155,6 @@ namespace Bicikelj.ViewModels
         private IObservable<List<StationLocation>> DownloadStations(bool forceUpdate = false)
         {
             return DownloadUrl.GetAsync(StationLocationList.GetStationListUri(city.UrlCityName))
-                    .ObserveOn(ThreadPoolScheduler.Instance)
                     .Select<string, List<StationLocation>>(s =>
                         {
                             var sl = StationLocationList.LoadStationsFromXML(s, city.UrlCityName);
@@ -160,14 +168,13 @@ namespace Bicikelj.ViewModels
         {
             if (obsStations == null)
                 obsStations = obsCity
-                    .ObserveOn(ThreadPoolScheduler.Instance)
                     .Do(_ => events.Publish(BusyState.Busy("loading stations...")))
                     .SelectMany(
                         LoadFromCache()
                             .Where(c => c != null)
-                            //.ObserveOn(ThreadPoolScheduler.Instance)
                             .Select(c => string.IsNullOrEmpty(c.UrlCityName) ? null : c.Stations))
-                    .SelectMany(sl => {
+                    .SelectMany(sl =>
+                    {
                         if (sl != null && sl.Count == 0)
                         {
                             events.Publish(BusyState.NotBusy());
@@ -175,13 +182,13 @@ namespace Bicikelj.ViewModels
                             return DownloadStations();
                         }
                         else
-                            return Observable.Return(sl);
+                            return Observable.Return(sl, ThreadPoolScheduler.Instance);
                     })
-                    .Merge(Observable.Never<List<StationLocation>>())
-                    //.ObserveOn(ThreadPoolScheduler.Instance)
+                    .Merge(Observable.Never<List<StationLocation>>(), ThreadPoolScheduler.Instance)
                     .Do(_ => events.Publish(BusyState.NotBusy()))
                     .Publish(city != null ? city.Stations : null)
                     .RefCount();
+                    
 
             return obsStations;
         }
@@ -192,7 +199,6 @@ namespace Bicikelj.ViewModels
             if (obsFavorites == null)
                 obsFavorites = obsCity
                     .Do(_ => events.Publish(BusyState.Busy("updating favorites...")))
-                    .ObserveOn(ThreadPoolScheduler.Instance)
                     .SelectMany(LoadFromCache())
                     .Select(c => c != null ? c.Favorites : null)
                     .Do(_ => events.Publish(BusyState.NotBusy()))

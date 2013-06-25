@@ -100,7 +100,6 @@ namespace Bicikelj.ViewModels
             if (stationsObs == null)
             {
                 stationsObs = cityContext.GetStations()
-                    .ObserveOn(ThreadPoolScheduler.Instance)
                     .SelectMany(s => LocationHelper.SortByNearest(s))
                     .Do(s => {
                         this.stations.Clear();
