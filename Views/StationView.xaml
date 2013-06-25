@@ -22,7 +22,7 @@
 		</Grid.RowDefinitions>
 	   
 		<!--ContentPanel - place additional content here-->
-		<Grid x:Name="ContentGrid" Grid.Row="1" Margin="12,0,12,0" >
+		<Grid x:Name="ContentGrid" Grid.Row="1" Margin="0" >
 			<Grid.RowDefinitions>
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />

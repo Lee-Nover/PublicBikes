@@ -1,8 +1,8 @@
-﻿using Bicikelj.Model;
-using Caliburn.Micro;
-using Bicikelj.Views;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Bicikelj.Model;
+using Caliburn.Micro;
 
 namespace Bicikelj.ViewModels
 {
@@ -10,19 +10,25 @@ namespace Bicikelj.ViewModels
     {
         private IEventAggregator events;
         private SystemConfig config;
+        private CityContextViewModel cityContext;
 
-        public SystemConfigViewModel(IEventAggregator events, SystemConfig config)
+        public SystemConfigViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
         {
             this.events = events;
             this.config = config;
-            this.Cities = new List<string>();
-            Cities.Add("");
-            Cities.AddRange(BikeServiceProvider.GetAllCities().OrderBy(c => c.CityName).Select(c => c.CityName.ToLower()));
+            this.cityContext = cityContext;
+            this.Cities = new List<City>();
+            Cities.Add(new City() { CityName = " - automatic - " });
+            Cities.AddRange(BikeServiceProvider.GetAllCities().OrderBy(c => c.Country + c.CityName).Select(c => c));
+            if (string.IsNullOrEmpty(config.City))
+                selectedCity = Cities[0];
+            else
+                selectedCity = Cities.Where(c => config.City.Equals(c.UrlCityName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
         }
 
         public bool LocationEnabled
         {
-            get { return config != null ? config.LocationEnabled : false; }
+            get { return config != null ? config.LocationEnabled.GetValueOrDefault() : false; }
             set {
                 if (config == null)
                     return;
@@ -30,7 +36,7 @@ namespace Bicikelj.ViewModels
                     return;
                 config.LocationEnabled = value;
                 NotifyOfPropertyChange(() => LocationEnabled);
-                UpdateLocation();
+                ObserveCurrentCity(value);
                 events.Publish(config);
             }
         }
@@ -79,19 +85,22 @@ namespace Bicikelj.ViewModels
             }
         }
 
-        public string SelectedCity
+        private City selectedCity;
+        public City SelectedCity
         {
-            get { return config != null ? config.City : ""; }
+            get { return selectedCity; }
             set
             {
-                if (config == null)
+                if (value == selectedCity)
                     return;
-                if (value == config.City)
-                    return;
-                config.City = value;
+                selectedCity = value;
+                if (config != null)
+                    if (string.IsNullOrEmpty(selectedCity.UrlCityName))
+                        config.City = "";
+                    else
+                        config.City = selectedCity.UrlCityName;
                 NotifyOfPropertyChange(() => SelectedCity);
-                // check if we want to get the current city
-                UpdateLocation();
+                LocationUpdated();
             }
         }
 
@@ -100,32 +109,45 @@ namespace Bicikelj.ViewModels
             get { return config != null ? config.CurrentCity : ""; }
         }
 
-        public List<string> Cities { get; private set; }
+        public List<City> Cities { get; private set; }
+        
+        private IDisposable dispCity = null;
+        public void ObserveCurrentCity(bool observe)
+        {
+            if (observe && config.LocationEnabled.GetValueOrDefault())
+            {
+                if (dispCity == null)
+                    dispCity = LocationHelper.GetCurrentCity()
+                        .Subscribe(city =>
+                        {
+                            config.CurrentCity = city;
+                            NotifyOfPropertyChange(() => CurrentCity);
+                        });
+            }
+            else
+            {
+                ReactiveExtensions.Dispose(ref dispCity);
+                config.CurrentCity = "";
+                NotifyOfPropertyChange(() => CurrentCity);
+            }
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            ObserveCurrentCity(true);
+        }
+
+        protected override void OnDeactivate(bool close)
+        {
+            ObserveCurrentCity(false);
+            base.OnDeactivate(close);
+        }
 
         private void LocationUpdated()
         {
-            var allStations = IoC.Get<StationLocationList>();
-            if (allStations != null)
-                allStations.City = config.UseCity;
+            cityContext.SetCity(config.UseCity);
             events.Publish(config);
-        }
-
-        private void UpdateLocation()
-        {
-            if (config == null)
-                return;
-            if (config.LocationEnabled)
-                LocationHelper.GetCurrentCity((city, ex) =>
-                {
-                    if (!string.IsNullOrEmpty(city))
-                    {
-                        config.CurrentCity = city;
-                        NotifyOfPropertyChange(() => CurrentCity);
-                    }
-                    LocationUpdated();
-                });
-            else
-                LocationUpdated();
         }
     }
 }

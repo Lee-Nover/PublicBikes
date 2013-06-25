@@ -36,24 +36,24 @@ namespace Bicikelj
             container.Singleton<NavigationViewModel>();
             container.Singleton<DebugLog>();
             container.Singleton<SystemConfigViewModel>();
-            container.Singleton<StationLocationList>();
-            container.Singleton<FavoriteLocationList>();
+            container.Singleton<AboutViewModel>();
+            container.Singleton<CityContextViewModel>();
 
 #if DEBUG
-            Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
+            //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
             AddCustomConventions();
         }
 
         private void InitBugSense()
         {
-            BugSenseHandler.Instance.Init(Application, BugSenseCredentials.Key,
-                new NotificationOptions()
+            BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
+                /*new NotificationOptions()
                 {
                     Type = enNotificationType.MessageBoxConfirm,
                     Title = "uh-oh :(",
                     Text = "Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?"
-                });
+                });*/
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
@@ -90,7 +90,6 @@ namespace Bicikelj
             if (IoC.Get<SystemConfig>() != null)
                 return;
 
-            bool newConfig = false;
             database = Database.Activate();
             container.Instance(database);
             SystemConfig config;
@@ -104,107 +103,20 @@ namespace Bicikelj
             }
             if (config == null)
             {
-                newConfig = true;
                 config = new SystemConfig();
                 config.WalkingSpeed = TravelSpeed.Normal;
                 config.CyclingSpeed = TravelSpeed.Normal;
             }
             container.Instance(config);
-
-            if (string.IsNullOrEmpty(config.CurrentCity))
-                config.CurrentCity = "";
-            if (string.IsNullOrEmpty(config.City))
-                config.City = "";
-            var events = IoC.Get<IEventAggregator>();
-
-            ThreadPool.QueueUserWorkItem(o =>
-            {
-                if (!config.LocationEnabled && newConfig)
-                    Execute.OnUIThread(() =>
-                    {
-                        if (MessageBox.Show("Location services are not enabled. Is it ok to enable them?", "location services", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
-                            config.LocationEnabled = true;
-                    });
-
-                if (string.IsNullOrWhiteSpace(config.City) && config.LocationEnabled)
-                {
-                    LocationHelper.GetCurrentCity((city, ex) =>
-                    {
-                        if (string.IsNullOrEmpty(city))
-                            config.CurrentCity = "ljubljana";
-                        else
-                            config.CurrentCity = city.ToLowerInvariant();
-                        UpdateStations(config, events);
-                    });
-                }
-                else
-                {
-                    UpdateStations(config, events);
-                }
-            });
-        }
-
-        private void UpdateStations(SystemConfig config, IEventAggregator events)
-        {
-            var allStations = IoC.Get<StationLocationList>();
-            if (allStations.Stations == null && allStations.State == StationListState.Empty)
-            {
-                allStations.City = config.UseCity.ToLowerInvariant();
-                allStations.State = StationListState.Updating;
-                StationLocationList storedStations = null;
-                try
-                {
-                    if (!string.IsNullOrEmpty(allStations.City))
-                    {
-                        events.Publish(BusyState.Busy("loading stations from cache..."));
-                        storedStations = database.Load<StationLocationList>(allStations.City);
-                    }
-                }
-                catch (Exception)
-                {
-                    storedStations = null;
-                }
-                events.Publish(BusyState.NotBusy());
-
-                if (storedStations != null)
-                    allStations.Stations = storedStations.Stations;
-            }
-            allStations.SortByDistance(null);
-
-            // load favorites
-            var favorites = IoC.Get<FavoriteLocationList>();
-            if (favorites.Items == null)
-            {
-                if (!string.IsNullOrEmpty(allStations.City))
-                {
-                    FavoriteLocationList storedFavorites = null;
-                    try
-                    {
-                        database.Load<FavoriteLocationList>(allStations.City);
-                    }
-                    catch (Exception)
-                    {
-                        storedFavorites = null;
-                    }
-                    
-                    if (storedFavorites != null)
-                        favorites.Items = storedFavorites.Items;
-                }
-                if (favorites.Items == null)
-                    favorites.Items = new List<FavoriteLocation>();
-                events.Publish(FavoriteState.Favorite(null));
-            }
         }
 
         private void SaveDatabase()
         {
             var config = IoC.Get<SystemConfig>();
             database.Save(config);
-            var allStations = IoC.Get<StationLocationList>();
-            database.Save(allStations);
-            var favorites = IoC.Get<FavoriteLocationList>();
-            if (favorites != null && favorites.Items != null && favorites.Items.Count > 0)
-                database.Save(favorites);
+            var cityCtx = IoC.Get<CityContextViewModel>();
+            if (cityCtx.City != null)
+                database.Save(cityCtx.City);
             database.Flush();
             Database.Deactivate();
         }
@@ -251,6 +163,7 @@ namespace Bicikelj
             ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
             ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
             ConventionManager.AddElementConvention<AppBarCM>(FrameworkElement.DataContextProperty, "DataContext", "Loaded");
+            ConventionManager.AddElementConvention<MenuItem>(ItemsControl.ItemsSourceProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<TravelSpeedControl>(TravelSpeedControl.SpeedProperty, "Speed", "Change");
 

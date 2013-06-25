@@ -27,6 +27,8 @@
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
     <Utf8Output>true</Utf8Output>
     <ExpressionBlendVersion>4.0.30816.0</ExpressionBlendVersion>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,16 +52,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BugSense">
-      <HintPath>packages\BugSense.WP7.0.9.9.1\lib\sl3-wp\BugSense.dll</HintPath>
-    </Reference>
-    <Reference Include="Caliburn.Micro, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BugSense, Version=0.9.9.32861, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\Caliburn.Micro.1.4.1\lib\wp71\Caliburn.Micro.dll</HintPath>
+      <HintPath>packages\BugSense.WP7.3.1\lib\wp71\BugSense.dll</HintPath>
     </Reference>
-    <Reference Include="Caliburn.Micro.Extensions, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Caliburn.Micro, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\Caliburn.Micro.1.4.1\lib\wp71\Caliburn.Micro.Extensions.dll</HintPath>
+      <HintPath>packages\Caliburn.Micro.1.5.1\lib\wp71\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Extensions, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\Caliburn.Micro.1.5.1\lib\wp71\Caliburn.Micro.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=3.7.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>Bin\Debug\Microsoft.Expression.Interactions.dll</HintPath>
@@ -68,11 +71,11 @@
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Maps, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL">
-      <HintPath>packages\WPtoolkit.4.2012.10.30\lib\sl4-windowsphone71\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
+      <HintPath>packages\WPToolkit.4.2013.06.11\lib\sl4-windowsphone71\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="ServiceStack.Text.WP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\ServiceStack.Text.3.9.48\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
+      <HintPath>packages\ServiceStack.Text.3.9.54\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
     </Reference>
     <Reference Include="SharpGIS.GZipWebClient, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -80,6 +83,18 @@
     </Reference>
     <Reference Include="System.Device" />
     <Reference Include="System.Observable" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>packages\Rx-Core.2.1.30214.0\lib\SL4-WindowsPhone71\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>packages\Rx-Interfaces.2.1.30214.0\lib\SL4-WindowsPhone71\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>packages\Rx-Linq.2.1.30214.0\lib\SL4-WindowsPhone71\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>packages\Rx-PlatformServices.2.1.30214.0\lib\SL4-WindowsPhone71\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows" />
@@ -88,7 +103,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Windows.Interactivity, Version=3.8.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Caliburn.Micro.1.4.1\lib\wp71\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>packages\Caliburn.Micro.1.5.1\lib\wp71\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -138,15 +153,15 @@
     <Compile Include="Model\BusyState.cs" />
     <Compile Include="Model\BingMaps.cs" />
     <Compile Include="Model\City.cs" />
+    <Compile Include="Model\GoogleMaps.cs" />
     <Compile Include="Model\ErrorState.cs" />
     <Compile Include="Model\FavoriteLocation.cs" />
-    <Compile Include="Model\FavoriteLocationList.cs" />
-    <Compile Include="Model\GetCoordinate.cs" />
     <Compile Include="Model\DownloadUrl.cs" />
     <Compile Include="Model\LocationHelper.cs" />
     <Compile Include="Model\LocationState.cs" />
+    <Compile Include="Model\MapsCommon.cs" />
+    <Compile Include="Model\ReactiveExtensions.cs" />
     <Compile Include="Model\StationAvailability.cs" />
-    <Compile Include="Model\StationAvailabilityHelper.cs" />
     <Compile Include="Model\StationLocation.cs" />
     <Compile Include="Model\StationLocationList.cs" />
     <Compile Include="Model\SystemConfig.cs" />
@@ -157,6 +172,8 @@
     <Compile Include="Persistence\TypeSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentModel.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
+    <Compile Include="ViewModels\CityContextViewModel.cs" />
     <Compile Include="ViewModels\FavoriteViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
     <Compile Include="ViewModels\NavigationViewModel.cs" />
@@ -198,6 +215,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Assets\BingMapsCredentials.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AboutView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -280,6 +301,10 @@
     <Resource Include="Images\SplashScreenImage.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\PublicBikeLogo200.png" />
+    <Resource Include="Images\PublicBikeLogo173.png" />
+    <Resource Include="Images\PublicBikeLogo62.png" />
+    <Content Include="Images\PublicBikeLogo99.png" />
     <Resource Include="Images\appbar.button.png" />
     <Content Include="Images\appbar.edit.png" />
     <Content Include="Images\appbar.star.add.png" />
@@ -302,4 +327,5 @@
   </Target>
   -->
   <ProjectExtensions />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

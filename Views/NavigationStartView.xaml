@@ -15,6 +15,7 @@
 	<!--LayoutRoot is the root grid where all page content is placed-->
 	<Grid x:Name="LayoutRoot" Background="Transparent" >
 		<StackPanel>
+			<TextBlock x:Name="UsedLocation" Style="{StaticResource PhoneTextSubtleStyle}" />
 			<Grid Margin="12">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -32,7 +33,7 @@
 				</bctl:HubTileWithContent>
 				<bctl:HubTileWithContent x:Name="FindNearestFreeStand" Grid.Column="1" Margin="0,0,12,12" toolkit:TiltEffect.IsTiltEnabled="True" Title="nearest stand" Message="find the nearest free bike stand" >
 					<bctl:HubTileWithContent.Content>
-						<Path Data="{StaticResource CurrentPositionIconData}" Stretch="Uniform" Fill="White" Margin="12" />
+						<Path Data="{StaticResource ParkingIconData}" Stretch="Uniform" Fill="White" Margin="12" />
 					</bctl:HubTileWithContent.Content>
 				</bctl:HubTileWithContent>
 				<bctl:HubTileWithContent x:Name="TakeMeTo" Margin="0,0,12,12" Grid.Row="1" toolkit:TiltEffect.IsTiltEnabled="True" Title="take me to..." Message="show a navigation route using the nearest bike stations" >
@@ -58,7 +59,7 @@
 				</bctl:HubTileWithContent>
 			</Grid>
 			
-			<HyperlinkButton x:Name="OpenConfig" Content="enable location" HorizontalAlignment="Left" Visibility="{Binding IsEnabled, Converter={StaticResource ValueToVisibilityInvConverter}}" Style="{StaticResource LargeLinkStyle}" />
+			<HyperlinkButton x:Name="OpenConfig" Content="enable location" HorizontalAlignment="Left" Visibility="{Binding IsLocationEnabled, Converter={StaticResource ValueToVisibilityInvConverter}}" Style="{StaticResource LargeLinkStyle}" />
 		</StackPanel>
 	</Grid>
 </UserControl>

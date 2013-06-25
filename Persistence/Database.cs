@@ -1,11 +1,9 @@
-﻿using Caliburn.Micro;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Bicikelj.Model;
 using Wintellect.Sterling;
 using Wintellect.Sterling.Database;
-using Bicikelj.Model;
-using Bicikelj.ViewModels;
-using System;
-using System.Diagnostics;
 using Wintellect.Sterling.IsolatedStorage;
 
 namespace Bicikelj.Persistence
@@ -23,17 +21,10 @@ namespace Bicikelj.Persistence
 			return new List<ITableDefinition>
 					   {
 						   CreateTableDefinition<SystemConfig, bool>(c => true),
-						   CreateTableDefinition<StationLocation, int>(c => c.Number),
-						   CreateTableDefinition<StationLocationList, string>(c => c.City),
-						   CreateTableDefinition<FavoriteLocation, string>(c => c.Name),
-						   CreateTableDefinition<FavoriteLocationList, string>(GetCurrentCity)
+						   CreateTableDefinition<City, string>(c => c.UrlCityName),
+						   CreateTableDefinition<StationLocation, string>(c => string.Format("{0}-{1}", c.City, c.Number)),
+						   CreateTableDefinition<FavoriteLocation, string>(c => string.Format("{0}-{1}", c.City, c.Name))
 					   };
-		}
-
-		private string GetCurrentCity(FavoriteLocationList favorites)
-		{
-			var config = IoC.Get<SystemConfig>();
-			return config.City;
 		}
 
 		public static ISterlingDatabaseInstance Activate()

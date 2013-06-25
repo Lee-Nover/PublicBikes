@@ -26,6 +26,7 @@ namespace Bicikelj.Model
 		public GeoCoordinate Coordinate { get; set; }
 		public string Name { get; set; }
 		public string Address { get; set; }
+		public string City { get; set; }
 
 		public FavoriteLocation()
 		{
@@ -35,6 +36,7 @@ namespace Bicikelj.Model
 		{
 			this.Station = station;
 			this.Name = station.Name;
+			this.City = station.City;
 			this.Address = station.Address;
 			this.Coordinate = new GeoCoordinate(station.Latitude, station.Longitude);
 			this.FavoriteType = Model.FavoriteType.Station;
@@ -46,7 +48,13 @@ namespace Bicikelj.Model
 			this.FavoriteType = Model.FavoriteType.Name;
 		}
 
-		public override bool Equals (object obj)
+		// just to remove the warning
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
 		{
 			if (obj == null || GetType() != obj.GetType())
 			{
@@ -70,22 +78,15 @@ namespace Bicikelj.Model
 				if (Name == null || other.Name == null)
 					return false;
 				else
-					return Name.ToLower() == other.Name.ToLower();
+					return Name.Equals(other.Name, StringComparison.InvariantCultureIgnoreCase);
 			// check addresses
 			if (Address != null || other.Address != null)
 				if (Address == null || other.Address == null)
 					return false;
 				else
-					return Address.ToLower() == other.Address.ToLower();
+					return Address.Equals(other.Address, StringComparison.InvariantCultureIgnoreCase);
 
 			return false;
-		}
-	
-		// override object.GetHashCode
-		public override int GetHashCode()
-		{
-			// TODO: write your implementation of GetHashCode() here
-			return base.GetHashCode();
 		}
 	}
 

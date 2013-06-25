@@ -6,6 +6,11 @@ using System.Linq;
 using System.Net;
 using Bicikelj.Model.Bing;
 using ServiceStack.Text;
+using Microsoft.Phone.Controls.Maps;
+using System.Reactive.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Concurrency;
+using System.Diagnostics;
 
 namespace Bicikelj.Model
 {
@@ -31,124 +36,182 @@ namespace Bicikelj.Model
         Fast
     }
 
+    public class GeoStatusAndPos
+    {
+        public GeoPositionStatus? Status { get; set; }
+        public GeoCoordinate Coordinate { get; set; }
+        public DateTimeOffset? LastUpdate { get; set; }
+        public bool IsEmpty { get { return Coordinate == null; } }
+    }
+
+    public class GeoAddress : GeoStatusAndPos
+    {
+        public IAddress Address { get; set; }
+        new public bool IsEmpty { get { return Coordinate == null || Address == null; } }
+
+        public GeoAddress()
+        {
+        }
+
+        public GeoAddress(GeoStatusAndPos pos)
+        {
+            Status = pos.Status;
+            Coordinate = pos.Coordinate;
+            LastUpdate = pos.LastUpdate;
+        }
+
+        public GeoAddress(GeoStatusAndPos pos, IAddress address)
+            : this(pos)
+        {
+            Address = address;
+        }
+    }
+
     public static class LocationHelper
     {
-        public static void SortByLocation(IEnumerable<StationLocation> stations, Action<IEnumerable<StationLocation>> result)
-        {
-            GeoCoordinateWatcher gw = new GeoCoordinateWatcher();
-            gw.StatusChanged += (sender, e) =>
-            {
-                if (e.Status == GeoPositionStatus.Disabled)
-                {
-                    gw.Stop();
-                    if (result != null)
-                        result(null);
-                    return;
-                }
-                if (e.Status != GeoPositionStatus.Ready)
-                    return;
-                GeoCoordinate location = ((GeoCoordinateWatcher)sender).Position.Location;
-                var sortedStations = SortByLocation(stations, location);
+        #region Reactive
 
-                gw.Stop();
-                if (result != null)
-                    result(sortedStations);
-            };
-            gw.Start();
+        private static readonly GeoCoordinateWatcher geoCoordinateWatcher = new GeoCoordinateWatcher();
+        private static IObservable<GeoStatusAndPos> observableGeo = null;
+        private static GeoStatusAndPos geoPos = new GeoStatusAndPos();
+        public static IObservable<GeoStatusAndPos> GetCurrentLocation()
+        {
+            if (observableGeo == null)
+            {
+                observableGeo = Observable.Create<GeoStatusAndPos>(observer =>
+                {
+                    EventHandler<GeoPositionStatusChangedEventArgs> statusChanged = (sender, e) =>
+                    {
+                        geoPos.Status = e.Status;
+                        observer.OnNext(geoPos);
+                    };
+                    EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>> positionChanged = (sender, e) =>
+                    {
+                        geoPos.Coordinate = e.Position.Location;
+                        geoPos.LastUpdate = e.Position.Timestamp;
+                        observer.OnNext(geoPos);
+                    };
+                    geoCoordinateWatcher.StatusChanged += statusChanged;
+                    geoCoordinateWatcher.PositionChanged += positionChanged;
+
+                    if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromSeconds(15)))
+                        observer.OnError(new Exception("GeoCoordinate service could not be started"));
+
+                    return Disposable.Create(() =>
+                    {
+                        geoCoordinateWatcher.StatusChanged -= statusChanged;
+                        geoCoordinateWatcher.PositionChanged -= positionChanged;
+                        geoCoordinateWatcher.Stop();
+                        observableGeo = null;
+                    });
+                })
+                .ObserveOn(ThreadPoolScheduler.Instance)
+                .Publish(geoPos)
+                .RefCount();
+            }
+            return observableGeo;
         }
+
+        public static IObservable<IAddress> FindAddress(GeoCoordinate coordinate)
+        {
+            //string query = string.Format(CultureInfo.InvariantCulture, Bing.FindLocationResponse.ApiUrl, coordinate.Latitude, coordinate.Longitude, BingMapsCredentials.Key);
+            string query = string.Format(CultureInfo.InvariantCulture, Google.FindLocationResponse.ApiUrl, coordinate.Latitude, coordinate.Longitude);
+
+            return DownloadUrl.GetAsync<Google.FindLocationResponse>(query)
+                .Select<Google.FindLocationResponse, IAddress>(addr => addr.FirstAddress());
+        }
+
+        public static IObservable<GeoAddress> GetCurrentGeoAddress()
+        {
+            return GetCurrentLocation()
+                .Where(pos => { return !pos.IsEmpty && pos.Status.GetValueOrDefault() == GeoPositionStatus.Ready; })
+                .DistinctUntilChanged(pos => pos.Coordinate)
+                .SelectMany(pos =>
+                    FindAddress(pos.Coordinate)
+                       .Select(addr => new GeoAddress(pos, addr))
+                );
+        }
+
+        public static IObservable<IAddress> GetCurrentAddress()
+        {
+            return GetCurrentGeoAddress().Select(addr => addr.Address);
+        }
+
+        public static IObservable<string> GetCurrentCity()
+        {
+            return GetCurrentAddress().Select(addr => addr.Locality);
+        }
+
+        public static IObservable<IEnumerable<StationLocation>> SortByNearest(IEnumerable<StationLocation> stations)
+        {
+            if (stations == null)
+                return Observable.Return<IEnumerable<StationLocation>>(null);
+            else
+                return GetCurrentLocation()
+                    .Where(pos => { 
+                        return !pos.IsEmpty && pos.Status.GetValueOrDefault() != GeoPositionStatus.Initializing
+                            && pos.Coordinate.HorizontalAccuracy < 100;
+                    })
+                    .Take(1)
+                    .Select<GeoStatusAndPos, IEnumerable<StationLocation>>(pos => SortByLocation(stations, pos.Coordinate));
+        }
+
+        public static IObservable<FindLocationResponse> FindLocation(string search, GeoCoordinate near)
+        {
+            string query = string.Format(CultureInfo.InvariantCulture, Bing.FindLocationResponse.ApiUrlLocation, HttpUtility.UrlEncode(search), BingMapsCredentials.Key);
+            if (near != null)
+                query += string.Format(CultureInfo.InvariantCulture, "&ul={0},{1}", near.Latitude, near.Longitude);
+
+            return DownloadUrl.GetAsync<FindLocationResponse>(query);
+        }
+
+        public static IObservable<NavigationResponse> CalculateRoute(IEnumerable<GeoCoordinate> points)
+        {
+            string query = Bing.NavigationResponse.ApiUrl;
+            int pointNum = 1;
+            foreach (var point in points)
+                query += string.Format(CultureInfo.InvariantCulture, "&wp.{0}={1},{2}", pointNum++, point.Latitude, point.Longitude);
+
+            return DownloadUrl.GetAsync<NavigationResponse>(query);
+        }
+
+        #endregion
+
+        #region Passive
+
 
         public static IEnumerable<StationLocation> SortByLocation(IEnumerable<StationLocation> stations, GeoCoordinate location)
         {
             var sortedStations = from station in stations
                                  orderby station.Coordinate.GetDistanceTo(location)
                                  select station;
+            
+            return sortedStations;
+        }
+
+        public static IEnumerable<StationLocation> SortByLocation(IEnumerable<StationLocation> stations, GeoCoordinate location, GeoCoordinate location2)
+        {
+            if (location2 == null)
+                return SortByLocation(stations, location);
+            if (stations == null)
+                return null;
+
+            var sortedStations = from station in stations
+                                 orderby station.Coordinate.GetDistanceTo(location) * 2 + station.Coordinate.GetDistanceTo(location2)
+                                 select station;
 
             return sortedStations;
         }
 
-        public static void CalculateRoute(IEnumerable<GeoCoordinate> points, Action<NavigationResponse, Exception> result)
+        public static LocationRect GetLocationRect(IEnumerable<StationLocation> stations)
         {
-            string query = @"http://dev.virtualearth.net/REST/v1/Routes/Walking?"
-                + "travelMode=Walking&optimize=distance&routePathOutput=Points&tl=0.00000344978&maxSolutions=1"
-                + "&key=" + BingMapsCredentials.Key;
-            int pointNum = 1;
-            foreach (var point in points)
-                query += string.Format(CultureInfo.InvariantCulture, "&wp.{0}={1},{2}", pointNum++, point.Latitude, point.Longitude);
-
-            var wc = new SharpGIS.GZipWebClient();
-            wc.DownloadStringCompleted += (s, e) => {
-                if (e.Error != null)
-                    result(null, e.Error);
-                else if (e.Cancelled)
-                    result(null, null);
-                else
-                    result(e.Result.FromJson<NavigationResponse>(), null);
-            };
-            wc.DownloadStringAsync(new Uri(query));
-        }
-
-        public static void FindLocation(string search, GeoCoordinate near, Action<FindLocationResponse, Exception> result)
-        {
-            string query = @"http://dev.virtualearth.net/REST/v1/Locations?q=" + HttpUtility.UrlEncode(search)
-                + "&key=" + BingMapsCredentials.Key;
-            if (near != null)
-                query += string.Format(CultureInfo.InvariantCulture, "&ul={0},{1}", near.Latitude, near.Longitude);
-            
-            var wc = new SharpGIS.GZipWebClient();
-            wc.DownloadStringCompleted += (s, e) =>
-            {
-                if (e.Error != null)
-                    result(null, e.Error);
-                else if (e.Cancelled)
-                    result(null, null);
-                else
-                    result(e.Result.FromJson<FindLocationResponse>(), null);
-            };
-            wc.DownloadStringAsync(new Uri(query));
-        }
-
-        public static void FindAddress(GeoCoordinate coordinate, Action<FindLocationResponse, Exception> result)
-        {
-            string query = @"http://dev.virtualearth.net/REST/v1/Locations/"
-                + string.Format(CultureInfo.InvariantCulture, "{0},{1}", coordinate.Latitude, coordinate.Longitude)
-                + "?key=" + BingMapsCredentials.Key;
-            
-            var wc = new SharpGIS.GZipWebClient();
-            wc.DownloadStringCompleted += (s, e) =>
-            {
-                if (e.Error != null)
-                    result(null, e.Error);
-                else if (e.Cancelled)
-                    result(null, null);
-                else
-                    result(e.Result.FromJson<FindLocationResponse>(), null);
-            };
-            wc.DownloadStringAsync(new Uri(query));
-        }
-
-        public static void GetCurrentCity(Action<string, Exception> result)
-        {
-            GetCoordinate.Current((coordinate, ex) =>
-            {
-                string query = @"http://dev.virtualearth.net/REST/v1/Locations/"
-                    + string.Format(CultureInfo.InvariantCulture, "{0},{1}", coordinate.Latitude, coordinate.Longitude)
-                    + "?key=" + BingMapsCredentials.Key;
-
-                var wc = new SharpGIS.GZipWebClient();
-                wc.DownloadStringCompleted += (s, e) =>
-                {
-                    if (e.Error != null)
-                        result(null, e.Error);
-                    else if (e.Cancelled)
-                        result(null, null);
-                    else
-                    {
-                        var addr = e.Result.FromJson<FindLocationResponse>().Location.Address;
-                        result(addr.AdminDistrict2, null);
-                    }
-                };
-                wc.DownloadStringAsync(new Uri(query));
-            });
+            var locations = from station in stations
+                            select new GeoCoordinate
+                            {
+                                Latitude = station.Latitude,
+                                Longitude = station.Longitude
+                            };
+            return LocationRect.CreateLocationRect(locations);
         }
 
         public static string GetDistanceString(double distance, bool imperial = false)
@@ -192,5 +255,7 @@ namespace Bicikelj.Model
             string result = travelSpeed.ToString() + label[idxImp];
             return result;
         }
+
+        #endregion
     }
 }

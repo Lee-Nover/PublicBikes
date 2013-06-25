@@ -3,23 +3,28 @@ using Bicikelj.Model;
 using System.Collections.Generic;
 using System.Threading;
 using System;
+using System.Linq;
 using Bicikelj.Views;
+using System.Windows.Data;
+using System.Reactive.Concurrency;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace Bicikelj.ViewModels
 {
-    public class StationsViewModel : Conductor<StationLocationViewModel>.Collection.OneActive, IHandle<SystemConfig>
+    public class StationsViewModel : Conductor<StationLocationViewModel>.Collection.OneActive, IDisposable
     {
         readonly IEventAggregator events;
         readonly SystemConfig config;
-        readonly StationLocationList stationList;
-        private IList<StationLocationViewModel> stations = new List<StationLocationViewModel>();
-        private string city = "";
+        readonly CityContextViewModel cityContext;
+        private List<StationLocationViewModel> stations = new List<StationLocationViewModel>();
 
-        public StationsViewModel(IEventAggregator events, SystemConfig config, StationLocationList sl)
+        public StationsViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
         {
             this.events = events;
             this.config = config;
-            this.stationList = sl;
+            this.cityContext = cityContext;
+            FilteredItems.Filter += (s, e) => { e.Accepted = MatchesFilter(e.Item as StationLocationViewModel); };
             events.Subscribe(this);
         }
 
@@ -36,17 +41,19 @@ namespace Bicikelj.ViewModels
             }
         }
 
-        protected override void OnActivate()
-        {
-            base.OnActivate();
-            UpdateStations(false);
-        }
+        public CollectionViewSource FilteredItems = new CollectionViewSource();
 
         private StationsView view;
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
             this.view = view as StationsView;
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            UpdateStations(false);
         }
 
         public override void ActivateItem(StationLocationViewModel item)
@@ -56,13 +63,15 @@ namespace Bicikelj.ViewModels
             this.ActiveItem = null;
             if (view != null)
                 view.Items.SelectedItem = null;
-            item.ViewRect = stationList.LocationRect;
+            item.ViewRect = LocationHelper.GetLocationRect(stations.Select(s => s.Location));
             StationViewModel svm = new StationViewModel(item);
             Bicikelj.NavigationExtension.NavigateTo(svm);
         }
 
         public bool MatchesFilter(StationLocationViewModel station)
         {
+            if (station == null)
+                return false;
             if (string.IsNullOrWhiteSpace(Filter))
                 return true;
             string filter = Filter.ToLower();
@@ -73,8 +82,8 @@ namespace Bicikelj.ViewModels
         {
             if (stations == null)
                 return;
-            
-            foreach (var station in stations)
+            this.Items.NotifyOfPropertyChange("");
+            /*foreach (var station in stations)
             {
                 bool isVisible = MatchesFilter(station);
                 bool hasItem = this.Items.IndexOf(station) >= 0;
@@ -82,71 +91,38 @@ namespace Bicikelj.ViewModels
                     this.Items.Remove(station);
                 else if (isVisible && !hasItem)
                     this.Items.Add(station);
-            }
+            }*/
         }
 
+        private IDisposable stationsObs = null;
         public void UpdateStations(bool forceUpdate)
         {
-            if (stations.Count > 0 && !forceUpdate) return;
-            events.Publish(BusyState.Busy("updating stations..."));
-            int waitAmount = forceUpdate ? 0 : 600;
-            var opStart = DateTime.Now;
-            city = stationList.City;
-            if (stationList.Stations == null || forceUpdate)
+            if (stationsObs == null)
             {
-                stationList.GetStations((s, e) =>
-                {
-                    this.stations.Clear();
-                    if (s == null)
-                    {
-                        events.Publish(BusyState.NotBusy());
-                        events.Publish(new ErrorState(e, "stations could not be loaded"));
-                        return;
-                    }
-
-                    stationList.SortByDistance(ss => {
-                        foreach (var st in s)
-                            stations.Add(new StationLocationViewModel(st));
-                        var elapsed = DateTime.Now - opStart;
-                        if (elapsed.Milliseconds < waitAmount)
-                            System.Threading.Thread.Sleep(waitAmount - elapsed.Milliseconds);
-                        Execute.OnUIThread(() =>
-                        {
-                            this.Items.Clear();
-                            FilterChanged();
-                        });
-                        events.Publish(BusyState.NotBusy());
-                    });
-                }, forceUpdate);
-            }
-            else
-            {
-                ThreadPool.QueueUserWorkItem((s) =>
-                {
-                    this.stations.Clear();
-                    foreach (var st in stationList.Stations)
-                        stations.Add(new StationLocationViewModel(st));
-                    var elapsed = DateTime.Now - opStart;
-                    if (elapsed.Milliseconds < waitAmount)
-                        System.Threading.Thread.Sleep(waitAmount - elapsed.Milliseconds);
-                    Execute.OnUIThread(() =>
+                stationsObs = cityContext.GetStations()
+                    .ObserveOn(ThreadPoolScheduler.Instance)
+                    .SelectMany(s => LocationHelper.SortByNearest(s))
+                    .Do(s => {
+                        this.stations.Clear();
+                        if (s != null)
+                            this.stations.AddRange(s.Select(station => new StationLocationViewModel(station)));
+                    })
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .ObserveOn(ReactiveExtensions.SyncScheduler)
+                    .Subscribe(s =>
                     {
                         this.Items.Clear();
+                        this.Items.AddRange(stations);
+                        FilteredItems.Source = this.Items;
                         FilterChanged();
-                    });
-                    events.Publish(BusyState.NotBusy());
-                });
+                    },
+                    e => events.Publish(new ErrorState(e, "could not update stations")));
             }
         }
 
-        #region IHandle<SystemConfig> Members
-
-        public void Handle(SystemConfig message)
+        public void Dispose()
         {
-            if (city != stationList.City && !string.IsNullOrEmpty(city))
-                UpdateStations(true);
+            ReactiveExtensions.Dispose(ref stationsObs);
         }
-
-        #endregion
     }
 }

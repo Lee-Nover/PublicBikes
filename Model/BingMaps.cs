@@ -64,13 +64,13 @@ namespace Bicikelj.Model.Bing
 		public List<RouteLeg> RouteLegs { get; set; }
 	}
 
-	public class Address
+	public class Address : IAddress
 	{
 		public string AddressLine { get; set; }
 		public string CountryRegion { get; set; }
 		public string FormattedAddress { get; set; }
-        public string AdminDistrict { get; set; }
-        public string AdminDistrict2 { get; set; }
+		public string AdminDistrict { get; set; }
+		public string AdminDistrict2 { get; set; }
 		public string PostalCode { get; set; }
 		public string Locality { get; set; }
 	}
@@ -120,6 +120,9 @@ namespace Bicikelj.Model.Bing
 
 	public class NavigationResponse : CommonResponse<RouteResource>
 	{
+		public static string ApiUrl = @"http://dev.virtualearth.net/REST/v1/Routes/Walking?"
+				+ @"travelMode=Walking&optimize=distance&routePathOutput=Points&tl=0.00000344978&maxSolutions=1"
+				+ "&key=" + BingMapsCredentials.Key;
 		private RouteResource route;
 		public RouteResource Route
 		{
@@ -135,12 +138,15 @@ namespace Bicikelj.Model.Bing
 
 	public class FindLocationResponse : CommonResponse<LocationResource>
 	{
+		public static string ApiUrl = @"http://dev.virtualearth.net/REST/v1/Locations/{0},{1}?key={2}";
+		public static string ApiUrlLocation = @"http://dev.virtualearth.net/REST/v1/Locations?q={0}&key={1}";
+
 		private LocationResource location;
 		public LocationResource Location
 		{
 			get
 			{
-				if (location == null)
+                if (location == null && ResourceSets != null && ResourceSets.Count > 0 && ResourceSets[0].Resources != null)
 					location = ResourceSets[0].Resources.FirstOrDefault<LocationResource>();
 				
 				return location;

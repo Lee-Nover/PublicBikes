@@ -9,4 +9,6 @@ namespace Bicikelj.Model
 		public bool Open { get; set; }
 		public bool Connected { get; set; }
 	}
+
+	public delegate bool StationCondition(StationLocation s, StationAvailability a);
 }

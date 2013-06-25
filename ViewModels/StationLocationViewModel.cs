@@ -1,22 +1,19 @@
-﻿using Caliburn.Micro;
-using Bicikelj.Model;
-using Bicikelj.Views.StationLocation;
+﻿using System;
 using System.Device.Location;
-using Microsoft.Phone.Controls.Maps;
-using System.Net;
-using System;
 using System.Linq;
-using System.Xml.Linq;
-using System.Windows.Media;
-using ServiceStack.Text;
-using Bicikelj.Model.Bing;
 using System.Threading;
-using System.Globalization;
-using System.Windows;
+using System.Windows.Media;
+using Bicikelj.Model;
+using Bicikelj.Model.Bing;
+using Bicikelj.Views.StationLocation;
+using Caliburn.Micro;
+using Microsoft.Phone.Controls.Maps;
+using System.Reactive.Linq;
+using System.Reactive.Concurrency;
 
 namespace Bicikelj.ViewModels
 {
-    public class StationLocationViewModel : Screen, IHandle<SystemConfig>
+    public class StationLocationViewModel : Screen
     {
         private StationLocation stationLocation;
         public StationLocation Location { get { return stationLocation; } set { SetLocation(value); } }
@@ -75,7 +72,7 @@ namespace Bicikelj.ViewModels
             get
             {
                 if (double.IsNaN(Distance))
-                    if (config.LocationEnabled)
+                    if (config.LocationEnabled.GetValueOrDefault())
                         return "no location information";
                     else
                         return "location services are turned off";
@@ -103,66 +100,62 @@ namespace Bicikelj.ViewModels
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
-            OptimumMapZoom(view);
+            OptimumMapZoom(view as Detail);
+        }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+
         }
 
         public LocationRect ViewRect;
         private Detail view;
-        private GeoCoordinateWatcher geoWatcher;
-        public void OptimumMapZoom(object ov)
+        public void OptimumMapZoom(Detail ov)
         {
-            if (ov is Detail)
+            view = ov;
+            if (view != null)
             {
-                view = (Detail)ov;
                 if (ViewRect != null) 
                     view.Map.SetView(ViewRect);
 
-                if (!config.LocationEnabled)
+                if (!config.LocationEnabled.GetValueOrDefault())
                 {
-                    var myPin = view.Map.Children.OfType<Pushpin>().Where(p => p.Name == "Me").FirstOrDefault();
+                    var myPin = view.Map.Children.OfType<Pushpin>().Where(p => p.Name == "CurrentLocation").FirstOrDefault();
                     if (myPin != null)
                         myPin.Visibility = System.Windows.Visibility.Collapsed;
                     return;
                 }
-
-                geoWatcher = new GeoCoordinateWatcher();
-                geoWatcher.PositionChanged += (s, e) => {
-                    if (((GeoCoordinateWatcher)s).Status != GeoPositionStatus.Ready)
-                        return;
-                    MyGeoLocation = e.Position.Location;
-                    NotifyOfPropertyChange(() => MyGeoLocation);
-                    NotifyOfPropertyChange(() => Distance);
-                    NotifyOfPropertyChange(() => DistanceString);
-                };
-                geoWatcher.StatusChanged += (s, e) =>
-                {
-                    if (e.Status == GeoPositionStatus.Ready)
-                        ThreadPool.QueueUserWorkItem((o) =>
-                        {
-                            CalculateRoute(geoWatcher.Position.Location, GeoLocation);
-                        });
-                };
-                geoWatcher.Start();
+                else
+                    LocationHelper.GetCurrentGeoAddress()
+                        .ObserveOn(ThreadPoolScheduler.Instance)
+                        .Subscribe(geoAddr => CalculateRoute(geoAddr.Coordinate, GeoLocation));
             }
         }
 
         public void CalculateRoute(GeoCoordinate from, GeoCoordinate to)
         {
             events.Publish(BusyState.Busy("calculating route..."));
-            LocationHelper.CalculateRoute(new GeoCoordinate[] { from, to }, MapRoute);
+            MyGeoLocation = from;
+            NotifyOfPropertyChange(() => MyGeoLocation);
+            LocationHelper.CalculateRoute(new GeoCoordinate[] { from, to })
+                //.ObserveOn(ReactiveExtensions.SyncScheduler)
+                .Subscribe(
+                    nav => MapRoute(nav),
+                    e => events.Publish(new ErrorState(e, "could not calculate route")));
         }
 
-        private void MapRoute(NavigationResponse routeResponse, Exception e)
+        private void MapRoute(NavigationResponse routeResponse)
         {
             try
             {
-                if (e != null)
-                    events.Publish(new ErrorState(e, "could not calculate route"));
                 if (routeResponse == null)
                     return;
 
                 travelDistance = 1000 * routeResponse.Route.TravelDistance;
-                travelDuration = routeResponse.Route.TravelDuration;
+                var walkingSpeed = LocationHelper.GetTravelSpeed(TravelType.Walking, config.WalkingSpeed, false);
+                travelDuration = 3.6 * travelDistance / walkingSpeed;
+                travelDuration = (int)travelDuration;
                 var points = from pt in routeResponse.Route.RoutePath.Points
                              select new GeoCoordinate
                              {
@@ -180,7 +173,8 @@ namespace Bicikelj.ViewModels
                     pl.StrokeThickness = 5;
                     pl.Opacity = 0.7;
                     pl.Locations = locCol;
-                    view.Map.Children.Insert(0, pl);
+                    view.RouteLayer.Children.Clear();
+                    view.RouteLayer.Children.Add(pl);
                     view.Map.SetView(LocationRect.CreateLocationRect(points));
                     NotifyOfPropertyChange(() => DistanceString);
                     NotifyOfPropertyChange(() => DurationString);
@@ -204,14 +198,5 @@ namespace Bicikelj.ViewModels
             events.Publish(new FavoriteState(new FavoriteLocation(this.Location), IsFavorite));
             NotifyOfPropertyChange(() => IsFavorite);
         }
-
-        #region IHandle<SystemConfig> Members
-
-        public void Handle(SystemConfig message)
-        {
-            
-        }
-
-        #endregion
     }
 }

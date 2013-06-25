@@ -15,5 +15,10 @@ namespace Bicikelj.ViewModels
 		{
 			Bicikelj.NavigationExtension.NavigateTo(IoC.Get<SystemConfigViewModel>());
 		}
+
+		public void OpenAbout()
+		{
+			Bicikelj.NavigationExtension.NavigateTo(IoC.Get<AboutViewModel>());
+		}
 	}
 }

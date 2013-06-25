@@ -1,30 +1,60 @@
-﻿using Caliburn.Micro;
-using System.Collections.Generic;
-using Bicikelj.Model;
-using System.Windows;
-using Microsoft.Phone.Controls.Maps;
+﻿using System.Collections.Generic;
 using System.Device.Location;
-using System.Linq;
+using Bicikelj.Model;
+using Caliburn.Micro;
+using System.Reactive.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Concurrency;
+using System.Reactive.Subjects;
 using System;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Bicikelj.ViewModels
 {
 	public class NavigationStartViewModel : Screen, IHandle<SystemConfig>
 	{
 		readonly IEventAggregator events;
-		public NavigationStartViewModel(IEventAggregator events)
+		readonly SystemConfig config;
+		readonly CityContextViewModel cityContext;
+		private IDisposable subCity;
+
+		public NavigationStartViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
 		{
 			this.events = events;
+			this.config = config;
+			this.cityContext = cityContext;
 			events.Subscribe(this);
 		}
-
-		private StationLocationList stationList;
 
 		protected override void OnActivate()
 		{
 			base.OnActivate();
-			IsEnabled = IoC.Get<SystemConfig>().LocationEnabled;
-			stationList = IoC.Get<StationLocationList>();
+			if (subCity == null)
+				subCity = cityContext.CityObservable
+					.ObserveOn(ReactiveExtensions.SyncScheduler)
+					.Subscribe(city => UpdateIsEnabled());
+			UpdateIsEnabled();
+		}
+
+		private void UpdateIsEnabled()
+		{
+			IsEnabled = config.LocationEnabled.GetValueOrDefault() && cityContext.IsCitySupported;
+			if (cityContext.IsCitySupported)
+			{
+				this.DisplayName = cityContext.City.ServiceName;
+				UsedLocation = string.Format("{0}, {1}", cityContext.City.CityName, cityContext.City.Country);
+			}
+			else if (cityContext.City != null)
+			{
+				this.DisplayName = "bikes N/A";
+				UsedLocation = string.Format("{0}, {1}", cityContext.City.CityName, cityContext.City.Country);
+			}
+			else
+			{
+				this.DisplayName = "city N/A";
+				UsedLocation = "";
+			}
 		}
 
 		private bool isEnabled;
@@ -36,22 +66,28 @@ namespace Bicikelj.ViewModels
 					return;
 				isEnabled = value;
 				NotifyOfPropertyChange(() => IsEnabled);
+				NotifyOfPropertyChange(() => IsLocationEnabled);
 				NotifyOfPropertyChange(() => CanFindNearestAvailableBike);
 				NotifyOfPropertyChange(() => CanFindNearestFreeStand);
 				NotifyOfPropertyChange(() => CanTakeMeTo);
 			}
 		}
 
+		public bool IsLocationEnabled { get { return config.LocationEnabled.GetValueOrDefault(); } }
+
 		public bool NavigationDisabled { get { return !IsEnabled; } }
 
-		private void SortStationsNearMe(IEnumerable<StationLocation> stations, System.Action<IEnumerable<StationLocation>> callback)
-		{
-			LocationHelper.SortByLocation(stations, callback);
-		}
+		private string usedLocation;
 
-		private void SortStationsNearTo(IEnumerable<StationLocation> stations, GeoCoordinate location, System.Action<IEnumerable<StationLocation>> callback)
+		public string UsedLocation
 		{
-			callback(LocationHelper.SortByLocation(stations, location));
+			get { return usedLocation; }
+			set {
+				if (value == usedLocation)
+					return;
+				usedLocation = value;
+				NotifyOfPropertyChange(() => UsedLocation);
+			}
 		}
 
 		public bool CanFindNearestAvailableBike { get { return IsEnabled; } }
@@ -69,55 +105,40 @@ namespace Bicikelj.ViewModels
 		private void FindNearestStationWithCondition(GeoCoordinate location, string msg, StationCondition condition)
 		{
 			events.Publish(BusyState.Busy(msg));
-			if (stationList.Stations == null)
-			{
-				stationList.GetStations((s, e) =>
-				{
-					if (e != null || s == null)
-						events.Publish(new ErrorState(e, "could not get stations"));
+			cityContext.GetStations()
+				.ObserveOn(ThreadPoolScheduler.Instance)
+				.Where(sl => sl != null)
+				.Take(1)
+				.Select(sl => {
+					if (location == null)
+						return LocationHelper.SortByNearest(sl).First();
 					else
-					{
-						var sNear = s.AsEnumerable();
-						if (location != null)
-							sNear = LocationHelper.SortByLocation(sNear, location);
-						FindNearest(sNear, condition);
-					}
-				});
-				return;
-			}
-			else
-				if (location != null)
-					SortStationsNearTo(stationList.Stations, location, (s) => { FindNearest(s, condition); });
-				else
-					SortStationsNearMe(stationList.Stations, (s) => { FindNearest(s, condition); });
+						return LocationHelper.SortByLocation(sl, location);
+				})
+				.Subscribe(sl => {
+					FindNearest(sl, condition); 
+				},
+				e => events.Publish(new ErrorState(e, "stations could not be loaded")));
 		}
 
 		private void FindNearest(IEnumerable<StationLocation> sortedStations, StationCondition condition)
 		{
-			StationAvailabilityHelper.CheckStations(sortedStations, (s, a) =>
-			{
-				bool result = a != null && condition(s, a);
-				if (result)
-				{
-					Execute.OnUIThread(() =>
+			sortedStations.ToObservable()
+					.Select(station => StationLocationList.GetAvailability2(station).First())
+					.Where(sa => condition(sa.Station, sa.Availability))
+					.Take(1)
+					.ObserveOn(ReactiveExtensions.SyncScheduler)
+					.Subscribe(sa =>
 					{
-						StationLocationViewModel vm = new StationLocationViewModel(s);
-						StationAvailabilityViewModel am = new StationAvailabilityViewModel(a);
-						vm.ViewRect = stationList.LocationRect;
+						StationLocationViewModel vm = new StationLocationViewModel(sa.Station);
+						StationAvailabilityViewModel am = new StationAvailabilityViewModel(sa.Availability);
+						vm.ViewRect = LocationHelper.GetLocationRect(sortedStations);
 						StationViewModel svm = new StationViewModel(vm, am);
 						Bicikelj.NavigationExtension.NavigateTo(svm);
 						events.Publish(BusyState.NotBusy());
-					});
-				}
-				return result;
-			},
-			(s1, r) =>
-			{
-				events.Publish(BusyState.NotBusy());
-				if (r.Error != null)
-					events.Publish(new ErrorState(r.Error, "could not check station availability"));
-			}
-			);
+					},
+					e => events.Publish(new ErrorState(e, "could not check station availability")),
+					() => events.Publish(BusyState.NotBusy()));
 		}
 
 		public bool CanTakeMeTo { get { return IsEnabled; } }
@@ -140,9 +161,9 @@ namespace Bicikelj.ViewModels
 			Bicikelj.NavigationExtension.NavigateTo(IoC.Get<SystemConfigViewModel>());
 		}
 
-		public void Handle(SystemConfig message)
+		public void Handle(SystemConfig config)
 		{
-			IsEnabled = message.LocationEnabled;
+			UpdateIsEnabled();
 		}
 	}
 }

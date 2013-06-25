@@ -12,6 +12,11 @@ using Bicikelj.Views;
 using Caliburn.Micro;
 using Caliburn.Micro.Contrib.Dialogs;
 using Microsoft.Phone.Controls.Maps;
+using System.Reactive.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.PlatformServices;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Bicikelj.ViewModels
 {
@@ -19,12 +24,12 @@ namespace Bicikelj.ViewModels
     {
         readonly IEventAggregator events;
         private SystemConfig config;
-        private StationLocationList stationList;
+        private CityContextViewModel cityContext;
 
-        public NavigationViewModel(IEventAggregator events, StationLocationList stationList, SystemConfig config)
+        public NavigationViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
         {
             this.events = events;
-            this.stationList = stationList;
+            this.cityContext = cityContext;
             this.config = config;
             this.CurrentLocation = new LocationViewModel();
             this.DestinationLocation = new LocationViewModel();
@@ -96,46 +101,24 @@ namespace Bicikelj.ViewModels
 
         public LocationViewModel CurrentLocation { get; set; }
         public LocationViewModel DestinationLocation { get; set; }
-        private GeoCoordinateWatcher gw = new GeoCoordinateWatcher();
+        private IDisposable currentGeo;
+        private IDisposable stationObs;
 
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
             this.view = view as NavigationView;
             this.view.Map.Tap += HandleMapTap;
-            stationList.GetStations((s, e) => {
-                Execute.OnUIThread(() => {
-                    if (stationList.LocationRect != null)
-                        this.view.Map.SetView(stationList.LocationRect);
-                });
-            });
-            if (stationList.LocationRect != null)
-                this.view.Map.SetView(stationList.LocationRect);
-
-            gw.PositionChanged += ((s, e) => {
-                if (CurrentLocation.Coordinate == null
-                    || (e.Position.Location.Latitude != CurrentLocation.Coordinate.Latitude
-                    && e.Position.Location.Longitude != CurrentLocation.Coordinate.Longitude))
-                {
-                    CurrentLocation.Coordinate = e.Position.Location;
-                    LocationHelper.FindAddress(e.Position.Location, (r, e2) =>
-                    {
-                        if (r != null && r.Location != null && r.Location.Address != null)
-                            FromLocation = r.Location.Address.FormattedAddress;
-                    });
-                }
-            });
-            CheckNavigateRequest();
         }
 
         void HandleMapTap(object sender, GestureEventArgs e)
         {
             var p = e.GetPosition(view.Map);
             var c = view.Map.ViewportPointToLocation(p);
-            LocationHelper.FindAddress(c, (r, e2) =>
+            LocationHelper.FindAddress(c).Subscribe(addr =>
             {
-                if (r != null && r.Location != null && r.Location.Address != null)
-                    ToLocation = r.Location.Address.FormattedAddress;
+                if (addr != null)
+                    ToLocation = addr.FormattedAddress;
             });
             TakeMeTo(c);
         }
@@ -158,36 +141,43 @@ namespace Bicikelj.ViewModels
                 NavigateRequest = null;
             }
         }
-
         protected override void OnActivate()
         {
             base.OnActivate();
-            if (config.LocationEnabled)
-                gw.Start();
+            var syncContext = ReactiveExtensions.SyncScheduler;
+            if (currentGeo == null)
+                currentGeo = LocationHelper.GetCurrentGeoAddress()
+                .Where(location => location != null)
+                .ObserveOn(syncContext)
+                .Subscribe(location =>
+                {
+                    CurrentLocation.Coordinate = location.Coordinate;
+                    FromLocation = location.Address.FormattedAddress;
+                });
+            
+            if (stationObs == null)
+                stationObs = cityContext.GetStations()
+                    .ObserveOn(ThreadPoolScheduler.Instance) // load stations in background
+                    .Where(s => s != null)
+                    .Select(s => LocationHelper.GetLocationRect(s))
+                    .Where(r => r != null)
+                    .ObserveOn(syncContext)
+                    .Subscribe(r => this.view.Map.SetView(r));
+
+            CheckNavigateRequest();
         }
 
         protected override void OnDeactivate(bool close)
         {
-            gw.Stop();
+            ReactiveExtensions.Dispose(ref currentGeo);
+            ReactiveExtensions.Dispose(ref stationObs);
             base.OnDeactivate(close);
         }
 
         private void FindBestRoute(GeoCoordinate fromLocation, GeoCoordinate toLocation)
         {
             events.Publish(BusyState.Busy("calculating route..."));
-            if (stationList.Stations == null)
-            {
-                stationList.GetStations((s, e) =>
-                {
-                    if (e != null)
-                        events.Publish(new ErrorState(e, "could not get stations"));
-                    else if (s != null)
-                        FindNearestStations(fromLocation, toLocation);
-                });
-                return;
-            }
-            else
-                FindNearestStations(fromLocation, toLocation);
+            FindNearestStations(fromLocation, toLocation);
         }
 
         private void HandleAvailabilityError(object sender, ResultCompletionEventArgs e)
@@ -199,37 +189,47 @@ namespace Bicikelj.ViewModels
 
         private void FindNearestStations(GeoCoordinate fromLocation, GeoCoordinate toLocation)
         {
-            // find closest available bike
-            StationAvailabilityHelper.CheckStations(stationList.SortByLocation(fromLocation, toLocation), (fromStation, fromAvail) =>
-            {
-                bool availableResult = fromAvail != null && fromAvail.Available > 0;
-                if (availableResult)
-                {
-                    // find closest free stand
-                    StationAvailabilityHelper.CheckStations(stationList.SortByLocation(toLocation, fromLocation), (toStation, toAvail) =>
+            cityContext.GetStations().Where(s => s != null)
+                .Take(1)
+                .ObserveOn(ThreadPoolScheduler.Instance)
+                .Subscribe(s  => {
+                    StationLocation fromStation = null;
+                    StationLocation toStation = null;
+
+                    var nearStart = LocationHelper.SortByLocation(s, fromLocation, toLocation).ToObservable()
+                        .ObserveOn(ThreadPoolScheduler.Instance)
+                        .Select(station => StationLocationList.GetAvailability2(station).First())
+                        .Where(avail => avail.Availability.Available > 0)
+                        .Do(avail => fromStation = avail.Station)
+                        .Take(1);
+
+                    var nearFinish = LocationHelper.SortByLocation(s, toLocation, fromLocation).ToObservable()
+                        .ObserveOn(ThreadPoolScheduler.Instance)
+                        .Select(station => StationLocationList.GetAvailability2(station).First())
+                        .Where(avail => avail.Availability.Free > 0)
+                        .Do(avail => toStation = avail.Station)
+                        .Take(1);
+
+                    var route = nearStart.Merge(nearFinish)
+                        .ObserveOn(ThreadPoolScheduler.Instance)
+                        .Subscribe(null,
+                        () =>
                         {
-                            bool freeResult = toAvail != null && toAvail.Free > 0;
-                            if (freeResult)
+                            IList<GeoCoordinate> navPoints = new List<GeoCoordinate>();
+                            navPoints.Add(fromLocation);
+                            // if closest bike station is the same as the destination station or the destination is closer than the station then don't use the bikes
+                            if (fromStation != toStation
+                                && fromLocation.GetDistanceTo(fromStation.Coordinate) < fromLocation.GetDistanceTo(toLocation)
+                                && toLocation.GetDistanceTo(toStation.Coordinate) < fromLocation.GetDistanceTo(toLocation))
                             {
-                                IList<GeoCoordinate> navPoints = new List<GeoCoordinate>();
-                                navPoints.Add(fromLocation);
-                                // if closest bike station is the same as the destination station or the destination is closer than the station then don't use the bikes
-                                if (fromStation != toStation 
-                                    && fromLocation.GetDistanceTo(fromStation.Coordinate) < fromLocation.GetDistanceTo(toLocation)
-                                    && toLocation.GetDistanceTo(toStation.Coordinate) < fromLocation.GetDistanceTo(toLocation))
-                                {
-                                    navPoints.Add(fromStation.Coordinate);
-                                    navPoints.Add(toStation.Coordinate);
-                                }
-                                navPoints.Add(toLocation);
-                                CalculateRoute(navPoints);
-                                events.Publish(BusyState.NotBusy());
+                                navPoints.Add(fromStation.Coordinate);
+                                navPoints.Add(toStation.Coordinate);
                             }
-                            return freeResult;
-                        }, HandleAvailabilityError);
-                }
-                return availableResult;
-            }, HandleAvailabilityError);
+                            navPoints.Add(toLocation);
+                            CalculateRoute(navPoints);
+                            events.Publish(BusyState.NotBusy());
+                        });
+                });
         }
 
         IEnumerable<GeoCoordinate> navPoints;
@@ -237,7 +237,11 @@ namespace Bicikelj.ViewModels
         private void CalculateRoute(IEnumerable<GeoCoordinate> navPoints)
         {
             this.navPoints = navPoints;
-            LocationHelper.CalculateRoute(navPoints, MapRoute);
+            LocationHelper.CalculateRoute(navPoints)
+                .Subscribe(
+                    n => MapRoute(n, null),
+                    e => events.Publish(new ErrorState(e, "could not calculate route")),
+                    () => events.Publish(BusyState.NotBusy()));
         }
 
         private void MapRoute(NavigationResponse routeResponse, Exception e)
@@ -356,44 +360,35 @@ namespace Bicikelj.ViewModels
             IsFavorite = false;
             events.Publish(BusyState.Busy("searching..."));
             var localAddress = address;
-            if (!string.IsNullOrWhiteSpace(config.City) && !localAddress.ToLower().Contains(config.City.ToLower()))
+            if (!string.IsNullOrWhiteSpace(config.City) && !localAddress.ToLowerInvariant().Contains(config.City.ToLowerInvariant()))
                 localAddress = localAddress + ", " + config.City;
-            LocationHelper.FindLocation(localAddress, CurrentLocation.Coordinate, (r, e) =>
+            LocationHelper.FindLocation(localAddress, CurrentLocation.Coordinate).Subscribe(r =>
             {
-                if (e != null || r == null || r.Location == null)
+                if (r == null || r.Location == null)
                 {
-                    events.Publish(BusyState.NotBusy());
-                    events.Publish(new ErrorState(e, "could not find location"));
+                    events.Publish(new ErrorState(new Exception(), "could not find location"));
+                    return;
                 }
-                else
-                {
-                    if (r.Location.Address != null)
-                        Address = r.Location.Address.FormattedAddress;
+                if (r.Location.Address != null)
+                    Address = r.Location.Address.FormattedAddress;
                     
-                    if (string.IsNullOrEmpty(Address))
-                        Address = address;
-                    this.DestinationLocation.LocationName = address;
-                    NotifyOfPropertyChange(() => CanToggleFavorite);
-                    TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
-                }
-            });
+                if (string.IsNullOrEmpty(Address))
+                    Address = address;
+                this.DestinationLocation.LocationName = address;
+                NotifyOfPropertyChange(() => CanToggleFavorite);
+                TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
+            },
+            e => events.Publish(new ErrorState(e, "could not find location")));
         }
 
         public void TakeMeTo(GeoCoordinate location)
         {
-            if (config.LocationEnabled)
-                GetCoordinate.Current((c, e) => {
-                    if (e != null)
-                    {
-                        events.Publish(BusyState.NotBusy());
-                        events.Publish(new ErrorState(e, "could not get current location"));
-                    }
-                    else
-                    {
-                        CurrentLocation.Coordinate = c;
-                        FindBestRoute(c, location);
-                    }
-                });
+            if (config.LocationEnabled.GetValueOrDefault())
+                LocationHelper.GetCurrentLocation().Take(1).Subscribe(c => {
+                        CurrentLocation.Coordinate = c.Coordinate;
+                        FindBestRoute(c.Coordinate, location);
+                },
+                e => events.Publish(new ErrorState(e, "could not get current location")));
             else if (CurrentLocation.Coordinate != null)
                 FindBestRoute(CurrentLocation.Coordinate, location);
         }
@@ -409,6 +404,7 @@ namespace Bicikelj.ViewModels
         {
             get { return !string.IsNullOrWhiteSpace(DestinationLocation.LocationName) || DestinationLocation.Coordinate != null; }
         }
+
         public void ToggleFavorite()
         {
             SetFavorite(!IsFavorite);
@@ -438,6 +434,7 @@ namespace Bicikelj.ViewModels
         {
             get { return IsFavorite; }
         }
+
         public void EditName_()
         {
             LocationViewModel lvm = new LocationViewModel();
