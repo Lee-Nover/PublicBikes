@@ -17,9 +17,10 @@ namespace Bicikelj.ViewModels
 
         protected override void OnInitialize()
         {
+            base.OnInitialize();
             App.CurrentApp.Events.Subscribe(this);
             App.CurrentApp.Config = IoC.Get<SystemConfig>();
-
+            
             var svm = IoC.Get<NavigationStartViewModel>();
             svm.DisplayName = "start";
             Items.Add(svm);
@@ -27,11 +28,11 @@ namespace Bicikelj.ViewModels
             var uvm = IoC.Get<FavoritesViewModel>();
             uvm.DisplayName = "favorites";
             Items.Add(uvm);
-
+            
             var lvm = IoC.Get<StationsViewModel>();
             lvm.DisplayName = "all stations";
             Items.Add(lvm);
-
+            
             var ivm = IoC.Get<InfoViewModel>();
             ivm.DisplayName = "info";
             Items.Add(ivm);
@@ -47,17 +48,16 @@ namespace Bicikelj.ViewModels
             ReactiveExtensions.SetSyncScheduler();
             viewChecked = true;
             ActivateItem(Items[0]);
-
-            Observable.Interval(TimeSpan.FromSeconds(1))
-                .SubscribeOn(ThreadPoolScheduler.Instance)
-                .Take(1)
-                .ObserveOn(ReactiveExtensions.SyncScheduler)
-                .Subscribe(_ =>
+            
+            NewThreadScheduler.Default.Schedule(TimeSpan.FromSeconds(3), () =>
                 {
                     var config = IoC.Get<SystemConfig>();
                     if (!config.LocationEnabled.HasValue)
                     {
-                        config.LocationEnabled = (MessageBox.Show("Location services are not enabled. They are needed to provide current location and routing. Is it ok to enable them?", "location services", MessageBoxButton.OKCancel) == MessageBoxResult.OK);
+                        Execute.OnUIThread(() => {
+                            config.LocationEnabled = (MessageBox.Show("Location services are not enabled. They are needed to provide current location and routing. Is it ok to enable them?", "location services", MessageBoxButton.OKCancel) == MessageBoxResult.OK);
+                        });
+                        
                         IoC.Get<IEventAggregator>().Publish(IoC.Get<SystemConfig>());
                     }
                     var cx = IoC.Get<CityContextViewModel>();

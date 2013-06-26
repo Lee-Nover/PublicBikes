@@ -141,6 +141,7 @@ namespace Bicikelj.ViewModels
                 NavigateRequest = null;
             }
         }
+
         protected override void OnActivate()
         {
             base.OnActivate();
@@ -156,8 +157,7 @@ namespace Bicikelj.ViewModels
                 });
             
             if (stationObs == null)
-                stationObs = cityContext.GetStations()
-                    .ObserveOn(ThreadPoolScheduler.Instance) // load stations in background
+                stationObs = cityContext.GetStations()// load stations in background
                     .Where(s => s != null)
                     .Select(s => LocationHelper.GetLocationRect(s))
                     .Where(r => r != null)
@@ -212,7 +212,7 @@ namespace Bicikelj.ViewModels
 
                     var route = nearStart.Merge(nearFinish)
                         .ObserveOn(ThreadPoolScheduler.Instance)
-                        .Subscribe(null,
+                        .Subscribe(_ => { },
                         () =>
                         {
                             IList<GeoCoordinate> navPoints = new List<GeoCoordinate>();

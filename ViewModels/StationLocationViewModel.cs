@@ -109,8 +109,16 @@ namespace Bicikelj.ViewModels
 
         }
 
+        protected override void OnDeactivate(bool close)
+        {
+            base.OnDeactivate(close);
+            ReactiveExtensions.Dispose(ref dispCurrentAddr);
+        }
+
         public LocationRect ViewRect;
         private Detail view;
+        private IDisposable dispCurrentAddr = null;
+
         public void OptimumMapZoom(Detail ov)
         {
             view = ov;
@@ -126,8 +134,8 @@ namespace Bicikelj.ViewModels
                         myPin.Visibility = System.Windows.Visibility.Collapsed;
                     return;
                 }
-                else
-                    LocationHelper.GetCurrentGeoAddress()
+                else if (dispCurrentAddr == null)
+                    dispCurrentAddr = LocationHelper.GetCurrentGeoAddress()
                         .ObserveOn(ThreadPoolScheduler.Instance)
                         .Subscribe(geoAddr => CalculateRoute(geoAddr.Coordinate, GeoLocation));
             }

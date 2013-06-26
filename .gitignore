@@ -162,7 +162,8 @@ pip-log.txt
 # Mac crap
 .DS_Store
 
-#nuget packages
+#nuget packages and others
 /packages/
 /submissioninfo
 /images/screenshots
+/PerformanceLogs/

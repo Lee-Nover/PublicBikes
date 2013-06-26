@@ -150,7 +150,7 @@ namespace Bicikelj.Model
                 return GetCurrentLocation()
                     .Where(pos => { 
                         return !pos.IsEmpty && pos.Status.GetValueOrDefault() != GeoPositionStatus.Initializing
-                            && pos.Coordinate.HorizontalAccuracy < 100;
+                            /*&& pos.Coordinate.HorizontalAccuracy < 100*/;
                     })
                     .Take(1)
                     .Select<GeoStatusAndPos, IEnumerable<StationLocation>>(pos => SortByLocation(stations, pos.Coordinate));

@@ -127,8 +127,8 @@ namespace Bicikelj.ViewModels
             else
             {
                 ReactiveExtensions.Dispose(ref dispCity);
-                config.CurrentCity = "";
-                NotifyOfPropertyChange(() => CurrentCity);
+                //config.CurrentCity = "";
+                //NotifyOfPropertyChange(() => CurrentCity);
             }
         }
 

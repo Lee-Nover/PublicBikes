@@ -15,6 +15,8 @@ using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Shell;
 using Wintellect.Sterling;
 using System.Windows.Data;
+using System.Reactive.Concurrency;
+using System.Diagnostics;
 
 namespace Bicikelj
 {
@@ -47,13 +49,18 @@ namespace Bicikelj
 
         private void InitBugSense()
         {
-            BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
+            //ThreadPoolScheduler.Instance.Schedule(() => {
+                DateTime start = DateTime.Now;
+                BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
                 /*new NotificationOptions()
                 {
                     Type = enNotificationType.MessageBoxConfirm,
                     Title = "uh-oh :(",
                     Text = "Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?"
                 });*/
+                var ts = DateTime.Now - start;
+                Debug.WriteLine("InitBugSense took {0}", ts);
+            //});
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
@@ -90,24 +97,30 @@ namespace Bicikelj
             if (IoC.Get<SystemConfig>() != null)
                 return;
 
-            database = Database.Activate();
-            container.Instance(database);
-            SystemConfig config;
-            try
-            {
-                config = database.Load<SystemConfig>(true);
-            }
-            catch (Exception)
-            {
-                config = null;
-            }
-            if (config == null)
-            {
-                config = new SystemConfig();
-                config.WalkingSpeed = TravelSpeed.Normal;
-                config.CyclingSpeed = TravelSpeed.Normal;
-            }
-            container.Instance(config);
+            //ThreadPoolScheduler.Instance.Schedule(() => {
+            DateTime start = DateTime.Now;
+                database = Database.Activate();
+
+                container.Instance(database);
+                SystemConfig config;
+                try
+                {
+                    config = database.Load<SystemConfig>(true);
+                }
+                catch (Exception)
+                {
+                    config = null;
+                }
+                if (config == null)
+                {
+                    config = new SystemConfig();
+                    config.WalkingSpeed = TravelSpeed.Normal;
+                    config.CyclingSpeed = TravelSpeed.Normal;
+                }
+                container.Instance(config);
+                var ts = DateTime.Now - start;
+                Debug.WriteLine("LoadDatabase took {0}", ts);
+            //});
         }
 
         private void SaveDatabase()
