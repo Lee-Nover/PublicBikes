@@ -175,6 +175,16 @@ namespace Bicikelj.Model
             return DownloadUrl.GetAsync<NavigationResponse>(query);
         }
 
+        public static IObservable<ObjectWithState<NavigationResponse>> CalculateRouteEx(IEnumerable<GeoCoordinate> points)
+        {
+            string query = Bing.NavigationResponse.ApiUrl;
+            int pointNum = 1;
+            foreach (var point in points)
+                query += string.Format(CultureInfo.InvariantCulture, "&wp.{0}={1},{2}", pointNum++, point.Latitude, point.Longitude);
+
+            return DownloadUrl.GetAsync<NavigationResponse>(query, points);
+        }
+
         #endregion
 
         #region Passive
@@ -198,6 +208,20 @@ namespace Bicikelj.Model
 
             var sortedStations = from station in stations
                                  orderby station.Coordinate.GetDistanceTo(location) * 2 + station.Coordinate.GetDistanceTo(location2)
+                                 select station;
+
+            return sortedStations;
+        }
+
+        public static IEnumerable<StationLocation> SortByLocation(IEnumerable<StationLocation> stations, GeoCoordinate location, double weight1, GeoCoordinate location2, double weight2)
+        {
+            if (location2 == null)
+                return SortByLocation(stations, location);
+            if (stations == null)
+                return null;
+
+            var sortedStations = from station in stations
+                                 orderby station.Coordinate.GetDistanceTo(location) * weight1 + station.Coordinate.GetDistanceTo(location2) * weight2
                                  select station;
 
             return sortedStations;

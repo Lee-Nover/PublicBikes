@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Device.Location;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -12,11 +14,6 @@ using Bicikelj.Views;
 using Caliburn.Micro;
 using Caliburn.Micro.Contrib.Dialogs;
 using Microsoft.Phone.Controls.Maps;
-using System.Reactive.Linq;
-using System.Reactive.Concurrency;
-using System.Reactive.PlatformServices;
-using System.Threading;
-using System.Diagnostics;
 
 namespace Bicikelj.ViewModels
 {
@@ -148,13 +145,13 @@ namespace Bicikelj.ViewModels
             var syncContext = ReactiveExtensions.SyncScheduler;
             if (currentGeo == null)
                 currentGeo = LocationHelper.GetCurrentGeoAddress()
-                .Where(location => location != null)
-                .ObserveOn(syncContext)
-                .Subscribe(location =>
-                {
-                    CurrentLocation.Coordinate = location.Coordinate;
-                    FromLocation = location.Address.FormattedAddress;
-                });
+                    .Where(location => location != null)
+                    .ObserveOn(syncContext)
+                    .Subscribe(location =>
+                    {
+                        CurrentLocation.Coordinate = location.Coordinate;
+                        FromLocation = location.Address.FormattedAddress;
+                    });
             
             if (stationObs == null)
                 stationObs = cityContext.GetStations()// load stations in background
@@ -195,27 +192,32 @@ namespace Bicikelj.ViewModels
                 .Subscribe(s  => {
                     StationLocation fromStation = null;
                     StationLocation toStation = null;
+                    var walkingSpeed = LocationHelper.GetTravelSpeed(TravelType.Walking, config.WalkingSpeed, false);
+                    var cyclingSpeed = LocationHelper.GetTravelSpeed(TravelType.Cycling, config.CyclingSpeed, false);
 
-                    var nearStart = LocationHelper.SortByLocation(s, fromLocation, toLocation).ToObservable()
+                    var nearStart = LocationHelper.SortByLocation(s, fromLocation, cyclingSpeed, toLocation, walkingSpeed).ToObservable()
                         .ObserveOn(ThreadPoolScheduler.Instance)
                         .Select(station => StationLocationList.GetAvailability2(station).First())
                         .Where(avail => avail.Availability.Available > 0)
                         .Do(avail => fromStation = avail.Station)
                         .Take(1);
 
-                    var nearFinish = LocationHelper.SortByLocation(s, toLocation, fromLocation).ToObservable()
+                    var nearFinish = LocationHelper.SortByLocation(s, toLocation, cyclingSpeed, fromLocation, walkingSpeed).ToObservable()
                         .ObserveOn(ThreadPoolScheduler.Instance)
                         .Select(station => StationLocationList.GetAvailability2(station).First())
                         .Where(avail => avail.Availability.Free > 0)
                         .Do(avail => toStation = avail.Station)
-                        .Take(1);
+                        .Take(1); // add to options how many stations to try
 
-                    var route = nearStart.Merge(nearFinish)
+                    List<ObjectWithState<NavigationResponse>> routes = new List<ObjectWithState<NavigationResponse>>();
+
+                    nearFinish
                         .ObserveOn(ThreadPoolScheduler.Instance)
-                        .Subscribe(_ => { },
-                        () =>
+                        .SelectMany(stationAvail =>
                         {
                             IList<GeoCoordinate> navPoints = new List<GeoCoordinate>();
+                            fromStation = nearStart.First().Station;
+                            toStation = stationAvail.Station;
                             navPoints.Add(fromLocation);
                             // if closest bike station is the same as the destination station or the destination is closer than the station then don't use the bikes
                             if (fromStation != toStation
@@ -226,17 +228,54 @@ namespace Bicikelj.ViewModels
                                 navPoints.Add(toStation.Coordinate);
                             }
                             navPoints.Add(toLocation);
-                            CalculateRoute(navPoints);
-                            events.Publish(BusyState.NotBusy());
+                            return LocationHelper.CalculateRouteEx(navPoints);
+                        })
+                        .Subscribe(nav => {
+                            routes.Add(nav);
+                        },
+                        () =>
+                        {
+                            var shortestRoute = routes.OrderBy(nav => GetTravelDuration(nav.Object, config)).FirstOrDefault();
+                            MapRoute(shortestRoute.Object, shortestRoute.State as IEnumerable<GeoCoordinate>);
+                            //events.Publish(BusyState.NotBusy());
                         });
                 });
         }
 
-        IEnumerable<GeoCoordinate> navPoints;
+        public static double GetTravelDuration(NavigationResponse routeResponse, SystemConfig config)
+        {
+            double travelDist;
+            return GetTravelDuration(routeResponse, config, out travelDist);
+        }
+
+        public static double GetTravelDuration(NavigationResponse routeResponse, SystemConfig config, out double travelDistance)
+        {
+            travelDistance = 1000 * routeResponse.Route.TravelDistance;
+            var travelDuration = routeResponse.Route.TravelDuration;
+            if (routeResponse.Route.RouteLegs != null)
+            {
+                var routeLegs = routeResponse.Route.RouteLegs;
+                if (routeLegs.Count == 1 || routeLegs.Count == 3)
+                {
+                    var walkingDistance = routeLegs[0].TravelDistance;
+                    if (routeLegs.Count == 3)
+                        walkingDistance += routeLegs[2].TravelDistance;
+                    var walkingSpeed = LocationHelper.GetTravelSpeed(TravelType.Walking, config.WalkingSpeed, false);
+                    travelDuration = 3600 * walkingDistance / walkingSpeed;
+                    if (routeLegs.Count == 3)
+                    {
+                        var cyclingDistance = routeLegs[1].TravelDistance;
+                        var cyclingSpeed = LocationHelper.GetTravelSpeed(TravelType.Cycling, config.CyclingSpeed, false);
+                        travelDuration += 3600 * cyclingDistance / cyclingSpeed;
+                    }
+                    travelDuration = (int)travelDuration;
+                }
+            }
+            return travelDuration;
+        }
 
         private void CalculateRoute(IEnumerable<GeoCoordinate> navPoints)
         {
-            this.navPoints = navPoints;
             LocationHelper.CalculateRoute(navPoints)
                 .Subscribe(
                     n => MapRoute(n, null),
@@ -244,36 +283,14 @@ namespace Bicikelj.ViewModels
                     () => events.Publish(BusyState.NotBusy()));
         }
 
-        private void MapRoute(NavigationResponse routeResponse, Exception e)
+        private void MapRoute(NavigationResponse routeResponse, IEnumerable<GeoCoordinate> navPoints)
         {
             try
             {
-                if (e != null)
-                    events.Publish(new ErrorState(e, "could not calculate route"));
                 if (routeResponse == null)
                     return;
 
-                travelDistance = 1000 * routeResponse.Route.TravelDistance;
-                travelDuration = routeResponse.Route.TravelDuration;
-                if (routeResponse.Route.RouteLegs != null)
-                {
-                    var routeLegs = routeResponse.Route.RouteLegs;
-                    if (routeLegs.Count == 1 || routeLegs.Count == 3)
-                    {
-                        var walkingDistance = routeLegs[0].TravelDistance;
-                        if (routeLegs.Count == 3)
-                            walkingDistance += routeLegs[2].TravelDistance;
-                        var walkingSpeed = LocationHelper.GetTravelSpeed(TravelType.Walking, config.WalkingSpeed, false);
-                        travelDuration = 3600 * walkingDistance / walkingSpeed;
-                        if (routeLegs.Count == 3)
-                        {
-                            var cyclingDistance = routeLegs[1].TravelDistance;
-                            var cyclingSpeed = LocationHelper.GetTravelSpeed(TravelType.Cycling, config.CyclingSpeed, false);
-                            travelDuration += 3600 * cyclingDistance / cyclingSpeed;
-                        }
-                        travelDuration = (int)travelDuration;
-                    }
-                }
+                travelDuration = GetTravelDuration(routeResponse, config, out travelDistance);
                 var points = from pt in routeResponse.Route.RoutePath.Points
                              select new GeoCoordinate
                              {
@@ -281,7 +298,7 @@ namespace Bicikelj.ViewModels
                                  Longitude = pt.Longitude
                              };
 
-                MapRoute(points);
+                MapRoute(points, navPoints);
             }
             finally
             {
@@ -289,7 +306,7 @@ namespace Bicikelj.ViewModels
             }
         }
 
-        private void MapRoute(IEnumerable<GeoCoordinate> points)
+        private void MapRoute(IEnumerable<GeoCoordinate> points, IEnumerable<GeoCoordinate> navPoints)
         {
             LocationCollection locCol = new LocationCollection();
             foreach (var loc in points)
