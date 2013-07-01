@@ -73,13 +73,41 @@ namespace Bicikelj.Model
 
         private static readonly GeoCoordinateWatcher geoCoordinateWatcher = new GeoCoordinateWatcher();
         private static IObservable<GeoStatusAndPos> observableGeo = null;
+        private static IObserver<GeoStatusAndPos> geoObserver = null;
         private static GeoStatusAndPos geoPos = new GeoStatusAndPos();
+
+        private static bool isLocationEnabled;
+
+        public static bool IsLocationEnabled
+        {
+            get { return isLocationEnabled; }
+            set {
+                if (value == isLocationEnabled)
+                    return;
+                isLocationEnabled = value;
+                if (geoObserver == null)
+                    return;
+                if (isLocationEnabled)
+                {
+                    if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromSeconds(15)))
+                        geoObserver.OnError(new Exception("GeoCoordinate service could not be started"));
+                }
+                else
+                {
+                    geoCoordinateWatcher.Stop();
+                    geoPos.Status = GeoPositionStatus.Disabled;
+                    geoObserver.OnNext(geoPos);
+                }
+            }
+        }
+        
         public static IObservable<GeoStatusAndPos> GetCurrentLocation()
         {
             if (observableGeo == null)
             {
                 observableGeo = Observable.Create<GeoStatusAndPos>(observer =>
                 {
+                    geoObserver = observer;
                     EventHandler<GeoPositionStatusChangedEventArgs> statusChanged = (sender, e) =>
                     {
                         geoPos.Status = e.Status;
@@ -94,7 +122,13 @@ namespace Bicikelj.Model
                     geoCoordinateWatcher.StatusChanged += statusChanged;
                     geoCoordinateWatcher.PositionChanged += positionChanged;
 
-                    if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromSeconds(15)))
+                    if (!IsLocationEnabled)
+                    {
+                        geoPos.Status = GeoPositionStatus.Disabled;
+                        geoPos.Coordinate = GeoCoordinate.Unknown;
+                        observer.OnNext(geoPos);
+                    }
+                    else if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromSeconds(15)))
                         observer.OnError(new Exception("GeoCoordinate service could not be started"));
 
                     return Disposable.Create(() =>
@@ -103,6 +137,7 @@ namespace Bicikelj.Model
                         geoCoordinateWatcher.PositionChanged -= positionChanged;
                         geoCoordinateWatcher.Stop();
                         observableGeo = null;
+                        geoObserver = null;
                     });
                 })
                 .ObserveOn(ThreadPoolScheduler.Instance)
@@ -192,6 +227,9 @@ namespace Bicikelj.Model
 
         public static IEnumerable<StationLocation> SortByLocation(IEnumerable<StationLocation> stations, GeoCoordinate location)
         {
+            if (location == null || location.IsUnknown)
+                return stations;
+
             var sortedStations = from station in stations
                                  orderby station.Coordinate.GetDistanceTo(location)
                                  select station;

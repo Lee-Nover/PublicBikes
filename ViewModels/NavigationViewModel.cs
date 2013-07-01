@@ -230,6 +230,7 @@ namespace Bicikelj.ViewModels
                             navPoints.Add(toLocation);
                             return LocationHelper.CalculateRouteEx(navPoints);
                         })
+                        .Finally(() => events.Publish(BusyState.NotBusy()))
                         .Subscribe(nav => {
                             routes.Add(nav);
                         },
@@ -237,7 +238,6 @@ namespace Bicikelj.ViewModels
                         {
                             var shortestRoute = routes.OrderBy(nav => GetTravelDuration(nav.Object, config)).FirstOrDefault();
                             MapRoute(shortestRoute.Object, shortestRoute.State as IEnumerable<GeoCoordinate>);
-                            //events.Publish(BusyState.NotBusy());
                         });
                 });
         }
@@ -285,25 +285,18 @@ namespace Bicikelj.ViewModels
 
         private void MapRoute(NavigationResponse routeResponse, IEnumerable<GeoCoordinate> navPoints)
         {
-            try
-            {
-                if (routeResponse == null)
-                    return;
+            if (routeResponse == null)
+                return;
 
-                travelDuration = GetTravelDuration(routeResponse, config, out travelDistance);
-                var points = from pt in routeResponse.Route.RoutePath.Points
-                             select new GeoCoordinate
-                             {
-                                 Latitude = pt.Latitude,
-                                 Longitude = pt.Longitude
-                             };
+            travelDuration = GetTravelDuration(routeResponse, config, out travelDistance);
+            var points = from pt in routeResponse.Route.RoutePath.Points
+                            select new GeoCoordinate
+                            {
+                                Latitude = pt.Latitude,
+                                Longitude = pt.Longitude
+                            };
 
-                MapRoute(points, navPoints);
-            }
-            finally
-            {
-                events.Publish(BusyState.NotBusy());
-            }
+            MapRoute(points, navPoints);
         }
 
         private void MapRoute(IEnumerable<GeoCoordinate> points, IEnumerable<GeoCoordinate> navPoints)
@@ -362,7 +355,6 @@ namespace Bicikelj.ViewModels
                 NotifyOfPropertyChange(() => DistanceString);
                 NotifyOfPropertyChange(() => DurationString);
                 NotifyOfPropertyChange(() => CanToggleFavorite);
-                events.Publish(BusyState.NotBusy());
             });
         }
 
@@ -395,7 +387,8 @@ namespace Bicikelj.ViewModels
                 NotifyOfPropertyChange(() => CanToggleFavorite);
                 TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
             },
-            e => events.Publish(new ErrorState(e, "could not find location")));
+            e => events.Publish(new ErrorState(e, "could not find location")),
+            () => events.Publish(BusyState.NotBusy()));
         }
 
         public void TakeMeTo(GeoCoordinate location)

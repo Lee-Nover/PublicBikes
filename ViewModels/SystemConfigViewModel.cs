@@ -35,6 +35,7 @@ namespace Bicikelj.ViewModels
                 if (value == config.LocationEnabled)
                     return;
                 config.LocationEnabled = value;
+                LocationHelper.IsLocationEnabled = value;
                 NotifyOfPropertyChange(() => LocationEnabled);
                 ObserveCurrentCity(value);
                 events.Publish(config);
