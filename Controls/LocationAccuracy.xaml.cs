@@ -39,10 +39,11 @@ namespace Bicikelj.Controls
             if (map == null)
                 throw new Exception("LocationAccuray must be placed inside a Map control");
 
-            map.ViewChangeEnd += map_ViewChangeEnd;
+            map.ViewChangeStart += map_ViewChange;
+            map.ViewChangeEnd += map_ViewChange;
         }
 
-        void map_ViewChangeEnd(object sender, MapEventArgs e)
+        void map_ViewChange(object sender, MapEventArgs e)
         {
             UpdateAccuracyCircle();
         }

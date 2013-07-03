@@ -9,6 +9,7 @@ using Microsoft.Phone.Controls.Maps;
 using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Data;
+using System.Device.Location;
 
 namespace Bicikelj.ViewModels
 {
@@ -82,7 +83,8 @@ namespace Bicikelj.ViewModels
                         view.Map.SetView(r);
                         if (CurrentLocation.Coordinate != null)
                             view.Map.Center = CurrentLocation.Coordinate;
-                        view.Map.ZoomLevel = 10;
+                        //view.Map.ZoomLevel = 10;
+                        GeoCoordinate gc; 
                         Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
                     });
 

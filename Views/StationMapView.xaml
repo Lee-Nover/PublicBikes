@@ -34,14 +34,19 @@
             </StackPanel>
             <maps:Map Grid.Row="3" x:Name="Map" Margin="12,12,12,0" 
                       Mode="Road" Center="{Binding CurrentLocation.Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
-                <maps:MapLayer x:Name="RouteLayer" />
-                <bctl:LocationAccuracy x:Name="Accuracy" DataContext="{Binding CurrentLocation}" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
+                <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
+                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
                     <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding Coordinate}" >
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
-                <maps:MapLayer x:Name="RoutePinsLayer" />
+                <maps:MapLayer x:Name="DestinationLocation" Visibility="Collapsed">
+                    <maps:Pushpin x:Name="DestinationLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}">
+                        <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
+                    </maps:Pushpin>
+                </maps:MapLayer>
+                <maps:MapLayer x:Name="RoutePins" />
                 <maps:MapItemsControl x:Name="Stations">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>

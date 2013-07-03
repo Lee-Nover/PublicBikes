@@ -52,7 +52,7 @@ namespace Bicikelj.ViewModels
         public bool IsFavorite { get { return stationLocation.IsFavorite; } set { SetFavorite(value); } }
 
         public GeoCoordinate GeoLocation { get; private set; }
-        public GeoCoordinate MyGeoLocation { get; private set; }
+        public GeoCoordinate CurrentLocation { get; private set; }
         private double travelDistance = double.NaN;
         private double travelDuration = double.NaN;
         public double Distance {
@@ -61,8 +61,8 @@ namespace Bicikelj.ViewModels
                 if (!double.IsNaN(travelDistance))
                     return travelDistance;
                 double result = double.NaN;
-                if (GeoLocation != null && MyGeoLocation != null)
-                    result = GeoLocation.GetDistanceTo(MyGeoLocation);
+                if (GeoLocation != null && CurrentLocation != null)
+                    result = GeoLocation.GetDistanceTo(CurrentLocation);
                 return result;
             }
         }
@@ -144,8 +144,8 @@ namespace Bicikelj.ViewModels
         public void CalculateRoute(GeoCoordinate from, GeoCoordinate to)
         {
             events.Publish(BusyState.Busy("calculating route..."));
-            MyGeoLocation = from;
-            NotifyOfPropertyChange(() => MyGeoLocation);
+            CurrentLocation = from;
+            NotifyOfPropertyChange(() => CurrentLocation);
             LocationHelper.CalculateRoute(new GeoCoordinate[] { from, to })
                 //.ObserveOn(ReactiveExtensions.SyncScheduler)
                 .Subscribe(
@@ -181,8 +181,8 @@ namespace Bicikelj.ViewModels
                     pl.StrokeThickness = 5;
                     pl.Opacity = 0.7;
                     pl.Locations = locCol;
-                    view.RouteLayer.Children.Clear();
-                    view.RouteLayer.Children.Add(pl);
+                    view.Route.Children.Clear();
+                    view.Route.Children.Add(pl);
                     view.Map.SetView(LocationRect.CreateLocationRect(points));
                     NotifyOfPropertyChange(() => DistanceString);
                     NotifyOfPropertyChange(() => DurationString);

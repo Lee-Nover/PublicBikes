@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:System_Globalization="clr-namespace:System.Globalization;assembly=mscorlib" 
+    xmlns:bctl="clr-namespace:Bicikelj.Controls"
     x:Class="Bicikelj.Views.StationLocation.Detail"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -30,15 +31,28 @@
             <TextBlock Grid.Row="1" x:Name="Address" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
             <maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" 
                       Mode="Road" Center="{Binding GeoLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
-                <maps:MapLayer x:Name="RouteLayer" />
-                <maps:MapLayer x:Name="PinsLayer">
-                    <maps:Pushpin x:Name="CurrentLocation" Location="{Binding MyGeoLocation}" Visibility="{Binding MyGeoLocation, Converter={StaticResource ValueToVisibilityConverter}}">
+                <maps:MapLayer x:Name="Route" />
+                <maps:MapLayer x:Name="CurrentLocation">
+                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding }" />
+                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}">
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
-                    <maps:Pushpin x:Name="DestinationLocation" Location="{Binding GeoLocation}" Visibility="{Binding GeoLocation, Converter={StaticResource ValueToVisibilityConverter}}">
-                        <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" />
+                </maps:MapLayer>
+                <maps:MapLayer x:Name="GeoLocation">
+                    <maps:Pushpin x:Name="DestinationLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}">
+                        <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
+                <maps:MapLayer x:Name="RoutePins" />
+                <maps:MapItemsControl x:Name="Stations">
+                    <maps:MapItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <maps:Pushpin Location="{Binding Coordinate}">
+                                <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" />
+                            </maps:Pushpin>
+                        </DataTemplate>
+                    </maps:MapItemsControl.ItemTemplate>
+                </maps:MapItemsControl>
             </maps:Map>
             <TextBlock Grid.Row="3" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
             <TextBlock Grid.Row="4" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />

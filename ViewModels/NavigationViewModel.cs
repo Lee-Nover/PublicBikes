@@ -316,9 +316,9 @@ namespace Bicikelj.ViewModels
                 pl.Locations = locCol;
                     
                 // clear the route and remove pins other than CurrentPos and Destination
-                view.RouteLayer.Children.Clear();
-                view.RouteLayer.Children.Add(pl);
-                view.RoutePinsLayer.Children.Clear();
+                view.Route.Children.Clear();
+                view.Route.Children.Add(pl);
+                view.RoutePins.Children.Clear();
                     
                 int idxPoint = 0;
                 int idxDest = navPoints.Count() - 1;
@@ -344,7 +344,7 @@ namespace Bicikelj.ViewModels
                         p.SetBinding(Path.DataProperty, b);
                         pp.Content = p;
 
-                        view.RoutePinsLayer.Children.Add(pp);
+                        view.RoutePins.Children.Add(pp);
                     }
                         
                     idxPoint++;
