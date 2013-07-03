@@ -71,8 +71,10 @@ namespace Bicikelj.Controls
                     2 * Math.PI * EARTH_RADIUS_METERS / (256 * Math.Pow(2, map.ZoomLevel));
 
                 //Update the accuracy circle dimensions
-                AccuracyCircle.Width = Coordinate.HorizontalAccuracy / groundResolution;
-                AccuracyCircle.Height = Coordinate.VerticalAccuracy / groundResolution;
+                var hAcc = double.IsNaN(Coordinate.HorizontalAccuracy) ? 500 : Coordinate.HorizontalAccuracy;
+                var vAcc = double.IsNaN(Coordinate.VerticalAccuracy) ? hAcc : Coordinate.VerticalAccuracy;
+                AccuracyCircle.Width = hAcc / groundResolution;
+                AccuracyCircle.Height = vAcc / groundResolution;
                 MapLayer.SetPosition(this, Coordinate);
                 //Use the margin property to center the accuracy circle
                 AccuracyCircle.Margin = new Thickness(-AccuracyCircle.Width / 2, -AccuracyCircle.Height / 2, 0, 0);
