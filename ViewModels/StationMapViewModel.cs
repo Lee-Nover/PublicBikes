@@ -4,6 +4,11 @@ using System.Reactive.Linq;
 using Bicikelj.Model;
 using Caliburn.Micro;
 using System.Collections.Generic;
+using Bicikelj.Views;
+using Microsoft.Phone.Controls.Maps;
+using System.Windows.Shapes;
+using System.Windows.Media;
+using System.Windows.Data;
 
 namespace Bicikelj.ViewModels
 {
@@ -12,7 +17,14 @@ namespace Bicikelj.ViewModels
         readonly IEventAggregator events;
         private SystemConfig config;
         private CityContextViewModel cityContext;
-        public IList<StationViewModel> Stations { get; private set; }
+        private IList<StationViewModel> stations = null;
+        public IList<StationViewModel> Stations {
+            get { return stations; }
+            private set {
+                stations = value;
+                NotifyOfPropertyChange(() => Stations);
+            }
+        }
 
         public StationMapViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
         {
@@ -22,13 +34,28 @@ namespace Bicikelj.ViewModels
             this.CurrentLocation = new LocationViewModel();
         }
 
+        private string fromLocation;
+        public string FromLocation
+        {
+            get { return fromLocation; }
+            set
+            {
+                if (value == fromLocation)
+                    return;
+                fromLocation = value;
+                NotifyOfPropertyChange(() => FromLocation);
+            }
+        }
+
         public LocationViewModel CurrentLocation { get; set; }
         private IDisposable currentGeo;
         private IDisposable stationObs;
 
+        private StationMapView view;
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
+            this.view = view as StationMapView;
         }
 
         protected override void OnActivate()
@@ -42,17 +69,22 @@ namespace Bicikelj.ViewModels
                     .Subscribe(location =>
                     {
                         CurrentLocation.Coordinate = location.Coordinate;
-                        //FromLocation = location.Address.FormattedAddress;
+                        FromLocation = location.Address.FormattedAddress;
                     });
             
             if (stationObs == null)
                 stationObs = cityContext.GetStations()
-                    .Do(sl => SetStations(sl))
-                    .Where(s => s != null)
-                    .Select(s => LocationHelper.GetLocationRect(s))
-                    .Where(r => r != null)
+                    .Where(sl => sl != null)
                     .ObserveOn(syncContext)
-                    .Subscribe(r => { /* update map view */ });
+                    .Subscribe(sl => {
+                        var r = LocationHelper.GetLocationRect(sl);
+                        view.Map.ZoomBarVisibility = System.Windows.Visibility.Visible;
+                        view.Map.SetView(r);
+                        if (CurrentLocation.Coordinate != null)
+                            view.Map.Center = CurrentLocation.Coordinate;
+                        view.Map.ZoomLevel = 10;
+                        Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
+                    });
 
         }
 
@@ -62,12 +94,5 @@ namespace Bicikelj.ViewModels
             ReactiveExtensions.Dispose(ref stationObs);
             base.OnDeactivate(close);
         }
-
-        private void SetStations(List<StationLocation> sl)
-        {
-            Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
-            NotifyOfPropertyChange(() => Stations);
-        }
-
     }
 }

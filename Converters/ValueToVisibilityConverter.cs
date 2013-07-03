@@ -30,7 +30,7 @@ namespace Bicikelj.Converters
                 return (bool)value ? Visibility.Visible : Visibility.Collapsed;
             else if (value is int)
                 return (int)value != 0 ? Visibility.Visible : Visibility.Collapsed;
-			else if (value is DateTime)
+            else if (value is DateTime)
                 return (DateTime)value != DateTime.MinValue ? Visibility.Visible : Visibility.Collapsed;
             else if (value is IList)
                 return (value as IList).Count > 0 ? Visibility.Visible : Visibility.Collapsed;

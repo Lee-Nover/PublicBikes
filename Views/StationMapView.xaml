@@ -33,27 +33,26 @@
                 <TextBlock x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
             </StackPanel>
             <maps:Map Grid.Row="3" x:Name="Map" Margin="12,12,12,0" 
-                      Mode="Road" Center="{Binding CurrentLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
+                      Mode="Road" Center="{Binding CurrentLocation.Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
                 <maps:MapLayer x:Name="RouteLayer" />
-                <maps:MapLayer x:Name="PinsLayer">
-                    <maps:Pushpin x:Name="CurrentLocation" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}">
+                <bctl:LocationAccuracy x:Name="Accuracy" DataContext="{Binding CurrentLocation}" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
+                <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
+                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding Coordinate}" >
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
-                    </maps:Pushpin>
-                    <maps:Pushpin x:Name="DestinationLocation" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}">
-                        <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
                 <maps:MapLayer x:Name="RoutePinsLayer" />
+                <maps:MapItemsControl x:Name="Stations">
+                    <maps:MapItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <maps:Pushpin Location="{Binding Coordinate}">
+                                <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" />
+                            </maps:Pushpin>
+                        </DataTemplate>
+                    </maps:MapItemsControl.ItemTemplate>
+                </maps:MapItemsControl>
             </maps:Map>
         </Grid>
-        <bab:AppBarCM x:Name="AppBar" IsVisible="True" >
-            <bab:BindableApplicationBar.Buttons>
-                <bab:BindableApplicationBarButton x:Name="ToggleFavorite" Text="favorite" IsEnabled="{Binding CanToggleFavorite}"
-                                                  IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
-                <bab:BindableApplicationBarButton x:Name="EditName" Text="rename" IsEnabled="{Binding CanEditName}"
-                                                  IconUri="/Images/appbar.edit.png" />
-            </bab:BindableApplicationBar.Buttons>
-        </bab:AppBarCM>
     </Grid>
  
 </UserControl>

@@ -153,7 +153,7 @@ namespace Bicikelj.ViewModels
 
 		public void OpenMap()
 		{
-			//Bicikelj.NavigationExtension.NavigateTo(IoC.Get<SystemConfigViewModel>());
+			Bicikelj.NavigationExtension.NavigateTo(IoC.Get<StationMapViewModel>());
 		}
 
 		public void OpenConfig()
