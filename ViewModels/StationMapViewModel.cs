@@ -64,7 +64,7 @@ namespace Bicikelj.ViewModels
             base.OnActivate();
             var syncContext = ReactiveExtensions.SyncScheduler;
             if (currentGeo == null)
-                currentGeo = LocationHelper.GetCurrentGeoAddress()
+                currentGeo = LocationHelper.GetCurrentGeoAddress(false)
                     .Where(location => location != null)
                     .ObserveOn(syncContext)
                     .Subscribe(location =>
@@ -84,7 +84,6 @@ namespace Bicikelj.ViewModels
                         if (CurrentLocation.Coordinate != null)
                             view.Map.Center = CurrentLocation.Coordinate;
                         //view.Map.ZoomLevel = 10;
-                        GeoCoordinate gc; 
                         Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
                     });
 

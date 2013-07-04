@@ -153,18 +153,26 @@ namespace Bicikelj.Model
             string query = string.Format(CultureInfo.InvariantCulture, Google.FindLocationResponse.ApiUrl, coordinate.Latitude, coordinate.Longitude);
 
             return DownloadUrl.GetAsync<Google.FindLocationResponse>(query)
-                .Select<Google.FindLocationResponse, IAddress>(addr => addr.FirstAddress());
+                .Select(addr => addr.FirstAddress() as IAddress);
         }
 
-        public static IObservable<GeoAddress> GetCurrentGeoAddress()
+        public static IObservable<GeoAddress> GetCurrentGeoAddress(bool distinctOnly = true)
         {
-            return GetCurrentLocation()
-                .Where(pos => { return !pos.IsEmpty && pos.Status.GetValueOrDefault() == GeoPositionStatus.Ready; })
-                .DistinctUntilChanged(pos => pos.Coordinate)
-                .SelectMany(pos =>
-                    FindAddress(pos.Coordinate)
-                       .Select(addr => new GeoAddress(pos, addr))
-                );
+            if (distinctOnly)
+                return GetCurrentLocation()
+                    .Where(pos => { return !pos.IsEmpty && pos.Status.GetValueOrDefault() == GeoPositionStatus.Ready; })
+                    .DistinctUntilChanged(pos => pos.Coordinate)
+                    .SelectMany(pos =>
+                        FindAddress(pos.Coordinate)
+                           .Select(addr => new GeoAddress(pos, addr))
+                    );
+            else
+                return GetCurrentLocation()
+                    .Where(pos => { return !pos.IsEmpty && pos.Status.GetValueOrDefault() == GeoPositionStatus.Ready; })
+                    .SelectMany(pos =>
+                        FindAddress(pos.Coordinate)
+                           .Select(addr => new GeoAddress(pos, addr))
+                    );
         }
 
         public static IObservable<IAddress> GetCurrentAddress()
