@@ -49,7 +49,7 @@ namespace Bicikelj.ViewModels
             if (view != null)
                 view.Items.SelectedItem = null;
             if (item.Location.Station != null)
-                Bicikelj.NavigationExtension.NavigateTo(new StationViewModel(new StationLocationViewModel(item.Location.Station)));
+                Bicikelj.NavigationExtension.NavigateTo(new StationViewModel(new StationLocationViewModel(item.Location.Station)), "Detail");
             else
             {
                 NavigationViewModel nvm = IoC.Get<NavigationViewModel>();

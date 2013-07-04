@@ -6,6 +6,8 @@
     xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
     xmlns:bab="clr-namespace:BindableApplicationBar"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     x:Class="Bicikelj.Views.NavigationView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -65,6 +67,12 @@
                         </DataTemplate>
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
+                
+                <toolkit:ContextMenuService.ContextMenu>
+                    <toolkit:ContextMenu>
+                        <toolkit:MenuItem Header="navigate to here" cal:Message.Attach="NavigateToLastCoordinate" />
+                    </toolkit:ContextMenu>
+                </toolkit:ContextMenuService.ContextMenu>
             </maps:Map>
             <TextBlock Grid.Row="4" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
             <TextBlock Grid.Row="5" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
@@ -73,7 +81,7 @@
             <bab:BindableApplicationBar.Buttons>
                 <bab:BindableApplicationBarButton x:Name="ToggleFavorite" Text="favorite" IsEnabled="{Binding CanToggleFavorite}"
                                                   IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
-                <bab:BindableApplicationBarButton x:Name="EditName" Text="rename" IsEnabled="{Binding CanEditName}"
+                <bab:BindableApplicationBarButton x:Name="EditName" Text="edit" IsEnabled="{Binding CanEditName}"
                                                   IconUri="/Images/appbar.edit.png" />
             </bab:BindableApplicationBar.Buttons>
         </bab:AppBarCM>

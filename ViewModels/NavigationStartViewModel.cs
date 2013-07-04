@@ -134,7 +134,7 @@ namespace Bicikelj.ViewModels
 						StationAvailabilityViewModel am = new StationAvailabilityViewModel(sa.Availability);
 						vm.ViewRect = LocationHelper.GetLocationRect(sortedStations);
 						StationViewModel svm = new StationViewModel(vm, am);
-						Bicikelj.NavigationExtension.NavigateTo(svm);
+						Bicikelj.NavigationExtension.NavigateTo(svm, "Detail");
 						events.Publish(BusyState.NotBusy());
 					},
 					e => events.Publish(new ErrorState(e, "could not check station availability")),

@@ -100,24 +100,50 @@ namespace Bicikelj.ViewModels
         public LocationViewModel DestinationLocation { get; set; }
         private IDisposable currentGeo;
         private IDisposable stationObs;
+        private GeoCoordinate lastCoordinate = null;
+        private Map map;
 
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
-            this.view = view as NavigationView;
-            this.view.Map.Tap += HandleMapTap;
+            var navView = view as NavigationView;
+            if (this.view == navView || navView == null)
+                return;
+            this.view = navView;
+            this.map = navView.Map;
+            map.Tap += HandleMapTap;
+            map.MouseLeftButtonDown += HandleMapMouseLeftButtonDown;
+        }
+
+        void HandleMapMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var p = e.GetPosition(map);
+            var c = map.ViewportPointToLocation(p);
+            lastCoordinate = c;
         }
 
         void HandleMapTap(object sender, GestureEventArgs e)
         {
-            var p = e.GetPosition(view.Map);
-            var c = view.Map.ViewportPointToLocation(p);
+            var p = e.GetPosition(map);
+            var c = map.ViewportPointToLocation(p);
+            lastCoordinate = c;
+            // maybe show a popup with location info and a command for navigate to
+        }
+
+        private void NavigateTo(GeoCoordinate c)
+        {
             LocationHelper.FindAddress(c).Subscribe(addr =>
             {
                 if (addr != null)
                     ToLocation = addr.FormattedAddress;
             });
             TakeMeTo(c);
+        }
+
+        public void NavigateToLastCoordinate()
+        {
+            if (lastCoordinate != null)
+                NavigateTo(lastCoordinate);
         }
 
         private void CheckNavigateRequest()

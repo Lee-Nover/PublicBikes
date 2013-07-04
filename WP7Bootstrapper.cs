@@ -31,7 +31,8 @@ namespace Bicikelj
             container.RegisterPhoneServices();
             container.Singleton<MainViewModel>();
             container.Singleton<StationsViewModel>();
-            container.Singleton<HostPageViewModel>();
+            //container.Singleton<HostPageViewModel>();
+            container.PerRequest<HostPageViewModel>();
             container.Singleton<FavoritesViewModel>();
             container.Singleton<InfoViewModel>();
             container.Singleton<NavigationStartViewModel>();
@@ -43,7 +44,7 @@ namespace Bicikelj
             container.Singleton<CityContextViewModel>();
 
 #if DEBUG
-            //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
+            Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
             AddCustomConventions();
         }
@@ -174,12 +175,12 @@ namespace Bicikelj
             ConventionManager.AddElementConvention<ToggleSwitch>(ToggleSwitch.IsCheckedProperty, "IsChecked", "Checked");
             ConventionManager.AddElementConvention<MapItemsControl>(ItemsControl.ItemsSourceProperty, "DataContext", "Loaded");
             ConventionManager.AddElementConvention<Pushpin>(ContentControl.ContentProperty, "DataContext", "MouseLeftButtonDown");
-            //ConventionManager.AddElementConvention<Pushpin>(ContentControl.DataContextProperty, "DataContext", "MouseLeftButtonDown");
             ConventionManager.AddElementConvention<MapLayer>(MapLayer.DataContextProperty, "DataContext", "Tap");
             ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
             ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
             ConventionManager.AddElementConvention<AppBarCM>(FrameworkElement.DataContextProperty, "DataContext", "Loaded");
-            ConventionManager.AddElementConvention<MenuItem>(ItemsControl.ItemsSourceProperty, "DataContext", "Click");
+            //ConventionManager.AddElementConvention<MenuItem>(ItemsControl.ItemsSourceProperty, "DataContext", "Click");
+            ConventionManager.AddElementConvention<MenuItem>(MenuItem.DataContextProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<TravelSpeedControl>(TravelSpeedControl.SpeedProperty, "Speed", "Change");
             
