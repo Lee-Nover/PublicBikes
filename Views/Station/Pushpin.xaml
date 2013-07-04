@@ -11,28 +11,19 @@
     xmlns:b="clr-namespace:Bicikelj" 
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
 
-        <Grid x:Name="ContentGrid" Margin="12,0,12,12" >
-            <Grid.ColumnDefinitions>
-                <!--ColumnDefinition Width="Auto" /-->
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <!--Rectangle Width="2" Grid.RowSpan="2" HorizontalAlignment="Left" StrokeThickness="0" Margin="0,4,0,0">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{StaticResource PhoneAccentColor}"/>
-                </Rectangle.Fill>
-            </Rectangle-->
-
-            <!--Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource LogoLightGreenBrush}">
-                <Border CornerRadius="12" BorderThickness="0" Margin="2" Background="{StaticResource LogoDarkGreenBrush}">
-            		<TextBlock x:Name="Number" Style="{StaticResource PhoneTextLargeStyle}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" />
-            	</Border>
-            </Border-->
-            <TextBlock Grid.Column="1" x:Name="StationName" Style="{StaticResource PhoneTextLargeStyle}" />
-            <TextBlock Grid.Column="1" Grid.Row="1" x:Name="Address" Style="{StaticResource PhoneTextSubtleStyle}" />
-        </Grid>
+    <Grid x:Name="ContentGrid" Margin="12,0,12,12" >
+        <Grid.ColumnDefinitions>
+            <!--ColumnDefinition Width="Auto" /-->
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="1" x:Name="StationName" Style="{StaticResource PhoneTextNormalStyle}" />
+        <TextBlock Grid.Column="1" Grid.Row="1" x:Name="Address" Style="{StaticResource PhoneTextSubtleStyle}" />
+        <HyperlinkButton Grid.Column="1" Grid.Row="1" x:Name="RefreshAvailability" Content="check availability" FontSize="{StaticResource PhoneFontSizeSmall}" />
+    </Grid>
 
 </UserControl>

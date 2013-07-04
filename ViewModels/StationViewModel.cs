@@ -1,10 +1,8 @@
 ﻿using Bicikelj.Model;
 using Caliburn.Micro;
-using System.Reactive.Linq;
-using System.Reactive.Concurrency;
-using System.Threading;
 using System;
 using System.Device.Location;
+using System.Reactive.Linq;
 
 namespace Bicikelj.ViewModels
 {

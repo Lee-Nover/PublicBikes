@@ -83,7 +83,7 @@ namespace Bicikelj.ViewModels
                         view.Map.SetView(r);
                         if (CurrentLocation.Coordinate != null)
                             view.Map.Center = CurrentLocation.Coordinate;
-                        //view.Map.ZoomLevel = 10;
+                        view.Map.ZoomLevel = 15;
                         Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
                     });
 
