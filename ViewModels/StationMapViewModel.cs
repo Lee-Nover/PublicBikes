@@ -81,7 +81,14 @@ namespace Bicikelj.ViewModels
 
         protected override void OnActivate()
         {
+            // remove the Items because AllActive will Activate all of them
+            Items.Clear();
             base.OnActivate();
+            if (stations != null)
+                Items.AddRange(stations);
+            if (activeItem != null)
+                ActivateItem(activeItem);
+
             var syncContext = ReactiveExtensions.SyncScheduler;
             if (currentGeo == null)
                 currentGeo = LocationHelper.GetCurrentGeoAddress(false)
