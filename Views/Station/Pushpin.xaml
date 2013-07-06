@@ -11,19 +11,24 @@
     xmlns:b="clr-namespace:Bicikelj" 
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
 
-    <Grid x:Name="ContentGrid" Margin="12,0,12,12" >
-        <Grid.ColumnDefinitions>
-            <!--ColumnDefinition Width="Auto" /-->
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Column="1" x:Name="StationName" Style="{StaticResource PhoneTextNormalStyle}" />
-        <TextBlock Grid.Column="1" Grid.Row="1" x:Name="Address" Style="{StaticResource PhoneTextSubtleStyle}" />
-        <HyperlinkButton Grid.Column="1" Grid.Row="1" x:Name="RefreshAvailability" Content="check availability" FontSize="{StaticResource PhoneFontSizeSmall}" />
-    </Grid>
+    <StackPanel x:Name="ContentGrid" Margin="12,0,12,12" >
+        <StackPanel Orientation="Horizontal">
+            <TextBlock x:Name="Number" Text="{Binding Location.Number}" />
+            <TextBlock x:Name="StationName" Text="{Binding Location.StationName}" Margin="12,0,0,0" Style="{StaticResource PhoneTextNormalStyle}" Visibility="{Binding IsActive, Converter={StaticResource ValueToVisibilityConverter}}"/>
+        </StackPanel>
+        <Grid Visibility="{Binding IsActive, Converter={StaticResource ValueToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="28" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="28" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Path Width="24" Height="24" Data="{StaticResource CyclingIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" x:Name="Available" Text="{Binding Availability.Available}" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" />
+            <Path Grid.Column="2" Width="24" Height="24" Data="{StaticResource ParkingIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="3" x:Name="Free" Text="{Binding Availability.Free}" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" />
+        </Grid>
+    </StackPanel>
 
 </UserControl>

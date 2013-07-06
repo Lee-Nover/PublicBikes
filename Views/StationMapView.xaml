@@ -6,6 +6,8 @@
     xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
     xmlns:bab="clr-namespace:BindableApplicationBar"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     x:Class="Bicikelj.Views.StationMapView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -18,22 +20,18 @@
         <Grid x:Name="ContentGrid" Margin="12,0,12,12" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+                
             <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Stretch="Uniform" Margin="12,0,0,0" >
-                    <Path.Fill>
-                        <SolidColorBrush Color="{StaticResource PhoneForegroundColor}"/>
-                    </Path.Fill>
-                </Path>
+                <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Stretch="Uniform" Margin="12,0,0,0" Fill="{StaticResource PhoneForegroundBrush}" />
                 <TextBlock x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
             </StackPanel>
-            <maps:Map Grid.Row="3" x:Name="Map" Margin="12,12,12,0" 
-                      Mode="Road" Center="{Binding CurrentLocation.Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
+            
+            <maps:Map Grid.Row="1" x:Name="Map" Margin="12,12,12,0" 
+                      Mode="Road" Center="{Binding CurrentLocation.Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" 
+                      CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)">
                 <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
                     <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
@@ -41,22 +39,34 @@
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
-                <maps:MapLayer x:Name="DestinationLocation" Visibility="Collapsed">
+                <!--maps:MapLayer x:Name="DestinationLocation" Visibility="Collapsed">
                     <maps:Pushpin x:Name="DestinationLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}">
                         <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
-                </maps:MapLayer>
+                </maps:MapLayer-->
                 <maps:MapLayer x:Name="RoutePins" />
-                <maps:MapItemsControl x:Name="Stations">
+                <maps:MapItemsControl x:Name="Items">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Location="{Binding Coordinate}">
-                                <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" />
+                            <maps:Pushpin Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)">
+                                
+                                    <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False" />
+                                
+                                    <!--Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" /-->
+                                    
+                                
                             </maps:Pushpin>
                         </DataTemplate>
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
             </maps:Map>
+
+            <!-- down here so it's on top of the Map -->
+            <Border Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                    Visibility="{Binding ActiveItem, Converter={StaticResource ValueToVisibilityConverter}}">
+                <ContentControl x:Name="ActiveItem" cal:View.Context="InfoBar" 
+                            HorizontalContentAlignment="Stretch" />
+            </Border>
         </Grid>
     </Grid>
  

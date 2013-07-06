@@ -31,7 +31,6 @@ namespace Bicikelj
             container.RegisterPhoneServices();
             container.Singleton<MainViewModel>();
             container.Singleton<StationsViewModel>();
-            //container.Singleton<HostPageViewModel>();
             container.PerRequest<HostPageViewModel>();
             container.Singleton<FavoritesViewModel>();
             container.Singleton<InfoViewModel>();
@@ -44,7 +43,7 @@ namespace Bicikelj
             container.Singleton<CityContextViewModel>();
 
 #if DEBUG
-            Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
+            //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
             AddCustomConventions();
         }
@@ -186,7 +185,8 @@ namespace Bicikelj
 
             ConventionManager.AddElementConvention<ToggleSwitch>(ToggleSwitch.IsCheckedProperty, "IsChecked", "Checked");
             ConventionManager.AddElementConvention<MapItemsControl>(ItemsControl.ItemsSourceProperty, "DataContext", "Loaded");
-            ConventionManager.AddElementConvention<Pushpin>(ContentControl.ContentProperty, "DataContext", "MouseLeftButtonDown");
+            ConventionManager.AddElementConvention<Pushpin>(ContentControl.ContentProperty, "DataContext", "Tap");
+            ConventionManager.AddElementConvention<Map>(Map.DataContextProperty, "DataContext", "Tap");
             ConventionManager.AddElementConvention<MapLayer>(MapLayer.DataContextProperty, "DataContext", "Tap");
             ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
             ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");

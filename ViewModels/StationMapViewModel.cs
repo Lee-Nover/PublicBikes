@@ -10,10 +10,12 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Data;
 using System.Device.Location;
+using System.Windows.Input;
+using System.Windows;
 
 namespace Bicikelj.ViewModels
 {
-    public class StationMapViewModel : Screen
+    public class StationMapViewModel : Conductor<StationViewModel>.Collection.AllActive
     {
         readonly IEventAggregator events;
         private SystemConfig config;
@@ -23,7 +25,10 @@ namespace Bicikelj.ViewModels
             get { return stations; }
             private set {
                 stations = value;
+                this.Items.Clear();
+                this.Items.AddRange(stations);
                 NotifyOfPropertyChange(() => Stations);
+                NotifyOfPropertyChange(() => Items);
             }
         }
 
@@ -52,6 +57,21 @@ namespace Bicikelj.ViewModels
         private IDisposable currentGeo;
         private IDisposable stationObs;
 
+        private StationViewModel activeItem;
+        public StationViewModel ActiveItem {
+            get { return activeItem; }
+            set {
+                if (value == activeItem)
+                    return;
+                if (activeItem != null)
+                    DeactivateItem(activeItem, false);
+                activeItem = value;
+                if (activeItem != null)
+                    ActivateItem(activeItem);
+                NotifyOfPropertyChange(() => ActiveItem);
+            }
+        }
+
         private StationMapView view;
         protected override void OnViewAttached(object view, object context)
         {
@@ -79,7 +99,8 @@ namespace Bicikelj.ViewModels
                     .ObserveOn(syncContext)
                     .Subscribe(sl => {
                         var r = LocationHelper.GetLocationRect(sl);
-                        view.Map.ZoomBarVisibility = System.Windows.Visibility.Visible;
+                        view.Map.ZoomBarVisibility = Visibility.Visible;
+                        view.Map.ScaleVisibility = Visibility.Visible;
                         view.Map.SetView(r);
                         if (CurrentLocation.Coordinate != null)
                             view.Map.Center = CurrentLocation.Coordinate;
@@ -91,9 +112,26 @@ namespace Bicikelj.ViewModels
 
         protected override void OnDeactivate(bool close)
         {
-            ReactiveExtensions.Dispose(ref currentGeo);
-            ReactiveExtensions.Dispose(ref stationObs);
+            if (close)
+            {
+                ReactiveExtensions.Dispose(ref currentGeo);
+                ReactiveExtensions.Dispose(ref stationObs);
+            }
             base.OnDeactivate(close);
+        }
+
+        public void TapPin(StationViewModel sender, GestureEventArgs e)
+        {
+            e.Handled = true;
+            
+            if (sender != null && sender != ActiveItem)
+            {
+                Items.Remove(sender);
+                Items.Add(sender);
+                ActiveItem = sender;
+            }
+            else
+                ActiveItem = null;
         }
     }
 }

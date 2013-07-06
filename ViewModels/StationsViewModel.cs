@@ -65,7 +65,7 @@ namespace Bicikelj.ViewModels
                 view.Items.SelectedItem = null;
             item.ViewRect = LocationHelper.GetLocationRect(stations.Select(s => s.Location));
             StationViewModel svm = new StationViewModel(item);
-            Bicikelj.NavigationExtension.NavigateTo(svm);
+            Bicikelj.NavigationExtension.NavigateTo(svm, "Detail");
         }
 
         public bool MatchesFilter(StationLocationViewModel station)

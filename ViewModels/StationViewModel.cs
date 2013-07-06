@@ -15,7 +15,7 @@ namespace Bicikelj.ViewModels
         {
             get
             {
-                CheckAvailability(false);
+                //CheckAvailability(false);
                 return availability;
             }
             
@@ -42,6 +42,12 @@ namespace Bicikelj.ViewModels
         }
 
         public GeoCoordinate Coordinate { get { return Location.GeoLocation; } }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            CheckAvailability(false);
+        }
 
         private void CheckAvailability(bool forceUpdate)
         {
@@ -77,5 +83,10 @@ namespace Bicikelj.ViewModels
         }
 
         public bool IsFavorite { get { return Location != null ? Location.IsFavorite : false; } }
+
+        public void OpenDetails()
+        {
+            Bicikelj.NavigationExtension.NavigateTo(this, "Detail");
+        }
     }
 }

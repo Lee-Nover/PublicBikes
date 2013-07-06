@@ -1,0 +1,51 @@
+﻿<UserControl 
+    x:Class="Bicikelj.Views.Station.InfoBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    xmlns:cvt="clr-namespace:Bicikelj.Converters" 
+    xmlns:b="clr-namespace:Bicikelj" 
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <!--Border x:Name="DetailIcon" Background="{StaticResource PhoneAccentBrush}" HorizontalAlignment="Left" Width="{Binding ActualHeight, ElementName=DetailIcon}">
+            <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" UseLayoutRounding="False" />
+        </Border-->
+        <StackPanel Grid.Column="1">
+            <TextBlock x:Name="StationName" Text="{Binding Location.StationName}" Style="{StaticResource PhoneTextNormalStyle}" />
+            <TextBlock x:Name="Address" Text="{Binding Location.Address}" Style="{StaticResource PhoneTextSubtleStyle}" />
+        </StackPanel>
+        <Grid Grid.Column="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="28" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="28" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Path Width="24" Height="24" Data="{StaticResource CyclingIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" x:Name="Available" Text="{Binding Availability.Available}" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" />
+            <Path Grid.Column="2" Width="24" Height="24" Data="{StaticResource ParkingIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="3" x:Name="Free" Text="{Binding Availability.Free}" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" />
+
+            <Button Grid.Column="4" VerticalAlignment="Center" x:Name="RefreshAvailability" BorderThickness="0" BorderBrush="{x:Null}" Padding="0" Margin="0">
+                <Path Width="24" Height="24" Data="{StaticResource RefreshIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" />
+            </Button>
+            <Button Grid.Column="5" VerticalAlignment="Center" x:Name="OpenDetails" BorderThickness="0" BorderBrush="{x:Null}" Padding="0" Margin="0">
+                <Path Width="24" Height="24" Data="{StaticResource InfoIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" />
+            </Button>
+        </Grid>
+    </Grid>
+
+</UserControl>

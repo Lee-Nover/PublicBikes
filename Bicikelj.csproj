@@ -233,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Station\InfoBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Station\Pushpin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
