@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Bicikelj.Model;
 using Caliburn.Micro;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 
 namespace Bicikelj.ViewModels
 {
@@ -119,6 +121,7 @@ namespace Bicikelj.ViewModels
             {
                 if (dispCity == null)
                     dispCity = LocationHelper.GetCurrentCity()
+                        .SubscribeOn(ThreadPoolScheduler.Instance)
                         .Subscribe(city =>
                         {
                             config.CurrentCity = city;

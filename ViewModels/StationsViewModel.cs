@@ -50,9 +50,11 @@ namespace Bicikelj.ViewModels
             this.view = view as StationsView;
         }
 
+        DateTimeOffset dueTime;
         protected override void OnActivate()
         {
             base.OnActivate();
+            dueTime = DateTime.Now.AddMilliseconds(700);
             UpdateStations(false);
         }
 
@@ -100,13 +102,14 @@ namespace Bicikelj.ViewModels
             if (stationsObs == null)
             {
                 stationsObs = cityContext.GetStations()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .Delay(dueTime)
                     .SelectMany(s => LocationHelper.SortByNearest(s))
                     .Do(s => {
                         this.stations.Clear();
                         if (s != null)
                             this.stations.AddRange(s.Select(station => new StationLocationViewModel(station)));
                     })
-                    .SubscribeOn(ThreadPoolScheduler.Instance)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(s =>
                     {

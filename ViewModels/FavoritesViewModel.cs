@@ -22,11 +22,16 @@ namespace Bicikelj.ViewModels
         }
 
         private IDisposable dispFavorites = null;
+        DateTimeOffset dueTime;
         protected override void OnActivate()
         {
             base.OnActivate();
             if (dispFavorites == null)
+            {
+                dueTime = DateTime.Now.AddMilliseconds(700);
                 dispFavorites = cityContext.GetFavorites()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .Delay(dueTime)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(favorites =>
                     {
@@ -39,6 +44,7 @@ namespace Bicikelj.ViewModels
                         var favVMs = favorites.Select(fav => new FavoriteViewModel(fav));
                         this.Items.AddRange(favVMs);
                     });
+            }
         }
 
         public override void ActivateItem(FavoriteViewModel item)

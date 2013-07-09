@@ -23,11 +23,6 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-                
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Stretch="Uniform" Margin="12,0,0,0" Fill="{StaticResource PhoneForegroundBrush}" />
-                <TextBlock x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
-            </StackPanel>
             
             <maps:Map Grid.Row="1" x:Name="Map" Margin="12,12,12,0" 
                       Mode="Road" Center="{Binding CurrentLocation.Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" 
@@ -62,10 +57,16 @@
             </maps:Map>
 
             <!-- down here so it's on top of the Map -->
-            <Border Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                    Visibility="{Binding ActiveItem, Converter={StaticResource ValueToVisibilityConverter}}">
-                <ContentControl x:Name="ActiveItem" cal:View.Context="InfoBar" 
-                            HorizontalContentAlignment="Stretch" />
+            <Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                <ContentControl x:Name="ActiveItem" cal:View.Context="InfoBar" HorizontalContentAlignment="Stretch" />
+            </Border>
+            
+            <!-- down here so the ActiveItemContainer is animated under this -->
+            <Border Grid.Row="0" Background="{StaticResource PhoneBackgroundBrush}">
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Stretch="Uniform" Margin="12,0,0,0" Fill="{StaticResource PhoneForegroundBrush}" />
+                    <TextBlock x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
+                </StackPanel>
             </Border>
         </Grid>
     </Grid>

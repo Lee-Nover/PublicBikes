@@ -12,6 +12,8 @@ using System.Windows.Data;
 using System.Device.Location;
 using System.Windows.Input;
 using System.Windows;
+using Microsoft.Phone.Controls;
+using System.Reactive.Concurrency;
 
 namespace Bicikelj.ViewModels
 {
@@ -63,12 +65,35 @@ namespace Bicikelj.ViewModels
             set {
                 if (value == activeItem)
                     return;
+                
+                bool? doShow = null;
+                if (activeItem == null && value != null)
+                    doShow = true;
+                else if (activeItem != null && value == null)
+                    doShow = false;
+
+                if (doShow.HasValue)
+                {
+                    SlideTransition slideTransition;
+                    if (doShow.Value)
+                        slideTransition = new SlideTransition { Mode = SlideTransitionMode.SlideDownFadeIn };
+                    else
+                        slideTransition = new SlideTransition { Mode = SlideTransitionMode.SlideUpFadeOut };
+                    ITransition transition = slideTransition.GetTransition(view.ActiveItemContainer);
+                    transition.Completed += delegate {
+                        transition.Stop();
+                        if (!doShow.Value)
+                            NotifyOfPropertyChange(() => ActiveItem);
+                    };
+                    transition.Begin();
+                }
                 if (activeItem != null)
                     DeactivateItem(activeItem, false);
                 activeItem = value;
                 if (activeItem != null)
                     ActivateItem(activeItem);
-                NotifyOfPropertyChange(() => ActiveItem);
+                if (!doShow.HasValue || doShow.Value)
+                    NotifyOfPropertyChange(() => ActiveItem);
             }
         }
 
@@ -92,6 +117,7 @@ namespace Bicikelj.ViewModels
             var syncContext = ReactiveExtensions.SyncScheduler;
             if (currentGeo == null)
                 currentGeo = LocationHelper.GetCurrentGeoAddress(false)
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Where(location => location != null)
                     .ObserveOn(syncContext)
                     .Subscribe(location =>
@@ -102,6 +128,7 @@ namespace Bicikelj.ViewModels
             
             if (stationObs == null)
                 stationObs = cityContext.GetStations()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Where(sl => sl != null)
                     .ObserveOn(syncContext)
                     .Subscribe(sl => {
@@ -127,7 +154,7 @@ namespace Bicikelj.ViewModels
             base.OnDeactivate(close);
         }
 
-        public void TapPin(StationViewModel sender, GestureEventArgs e)
+        public void TapPin(StationViewModel sender, System.Windows.Input.GestureEventArgs e)
         {
             e.Handled = true;
             

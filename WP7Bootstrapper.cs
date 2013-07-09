@@ -53,6 +53,7 @@ namespace Bicikelj
             //ThreadPoolScheduler.Instance.Schedule(() => {
                 DateTime start = DateTime.Now;
                 BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
+            
                 /*new NotificationOptions()
                 {
                     Type = enNotificationType.MessageBoxConfirm,

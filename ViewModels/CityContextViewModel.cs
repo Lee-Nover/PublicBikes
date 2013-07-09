@@ -63,6 +63,7 @@ namespace Bicikelj.ViewModels
             }
             else if (dispCurrentCity == null)
                 dispCurrentCity = LocationHelper.GetCurrentAddress()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Select(addr => new { addr.CountryRegion, addr.Locality })
                     .DistinctUntilChanged()
                     .Subscribe(city => {
