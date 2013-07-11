@@ -171,6 +171,7 @@ namespace Bicikelj.ViewModels
             var syncContext = ReactiveExtensions.SyncScheduler;
             if (currentGeo == null)
                 currentGeo = LocationHelper.GetCurrentGeoAddress()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Where(location => location != null)
                     .ObserveOn(syncContext)
                     .Subscribe(location =>
@@ -181,6 +182,7 @@ namespace Bicikelj.ViewModels
             
             if (stationObs == null)
                 stationObs = cityContext.GetStations()// load stations in background
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Where(s => s != null)
                     .Select(s => LocationHelper.GetLocationRect(s))
                     .Where(r => r != null)
