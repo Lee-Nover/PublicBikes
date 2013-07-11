@@ -9,6 +9,8 @@ using System.Windows.Data;
 using System.Reactive.Concurrency;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Subjects;
 
 namespace Bicikelj.ViewModels
 {
@@ -24,11 +26,11 @@ namespace Bicikelj.ViewModels
             this.events = events;
             this.config = config;
             this.cityContext = cityContext;
-            FilteredItems.Filter += (s, e) => { e.Accepted = MatchesFilter(e.Item as StationLocationViewModel); };
             events.Subscribe(this);
         }
 
         private string filter = "";
+        private string filterLC = "";
         public string Filter
         {
             get { return filter; }
@@ -36,12 +38,12 @@ namespace Bicikelj.ViewModels
                 if (value == filter)
                     return;
                 filter = value;
+                filterLC = filter.ToLower();
+                if (filterOb != null)
+                    filterOb.OnNext(filterLC);
                 NotifyOfPropertyChange(() => Filter);
-                FilterChanged();
             }
         }
-
-        public CollectionViewSource FilteredItems = new CollectionViewSource();
 
         private StationsView view;
         protected override void OnViewAttached(object view, object context)
@@ -70,56 +72,70 @@ namespace Bicikelj.ViewModels
             Bicikelj.NavigationExtension.NavigateTo(svm, "Detail");
         }
 
-        public bool MatchesFilter(StationLocationViewModel station)
+        public bool MatchesFilter(StationLocationViewModel station, string filterLower = "")
         {
             if (station == null)
                 return false;
-            if (string.IsNullOrWhiteSpace(Filter))
+            if (string.IsNullOrWhiteSpace(filterLower))
+                filterLower = filterLC;
+            if (string.IsNullOrWhiteSpace(filterLower))
                 return true;
-            string filter = Filter.ToLower();
-            return station.Address.ToLower().Contains(Filter) || station.StationName.ToLower().Contains(Filter);
-        }
-
-        public void FilterChanged()
-        {
-            if (stations == null)
-                return;
-            this.Items.NotifyOfPropertyChange("");
-            /*foreach (var station in stations)
-            {
-                bool isVisible = MatchesFilter(station);
-                bool hasItem = this.Items.IndexOf(station) >= 0;
-                if (!isVisible)
-                    this.Items.Remove(station);
-                else if (isVisible && !hasItem)
-                    this.Items.Add(station);
-            }*/
+            return station.Address.ToLower().Contains(filterLower) || station.StationName.ToLower().Contains(filterLower);
         }
 
         private IDisposable stationsObs = null;
+        private IObserver<string> filterOb = null;
+        private IObservable<string> filterObs = null;
         public void UpdateStations(bool forceUpdate)
         {
+            if (filterObs == null)
+            {
+                filterObs = Observable.Create<string>(observer =>
+                {
+                    filterOb = observer;
+                    filterOb.OnNext(filterLC);
+                    return Disposable.Create(() => { });
+                }).Publish().RefCount();
+            }
+
             if (stationsObs == null)
             {
-                stationsObs = cityContext.GetStations()
+                stationsObs = 
+                    filterObs
+                    .Throttle(TimeSpan.FromMilliseconds(200))
+                    .SelectMany(cityContext.GetStations())
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Delay(dueTime)
                     .SelectMany(s => LocationHelper.SortByNearest(s))
-                    .Do(s => {
-                        this.stations.Clear();
-                        if (s != null)
-                            this.stations.AddRange(s.Select(station => new StationLocationViewModel(station)));
-                    })
+                    .Select(s => s.Select(station => new StationLocationViewModel(station)))
+                    .Do(s => this.stations = s.ToList())
+                    .Select(s => s.Where(sl => MatchesFilter(sl)))
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(s =>
                     {
                         this.Items.Clear();
-                        this.Items.AddRange(stations);
-                        FilteredItems.Source = this.Items;
-                        FilterChanged();
+                        this.Items.AddRange(s);
                     },
                     e => events.Publish(new ErrorState(e, "could not update stations")));
             }
+        }
+
+        public delegate void IsEnabledEventHandler(bool isEnabled);
+        public event IsEnabledEventHandler FilterFocused;
+        public void SetFilterFocused(bool isFocused)
+        {
+            if (FilterFocused != null)
+                FilterFocused(isFocused);
+        }
+
+        public void GotFocus()
+        {
+            SetFilterFocused(true);
+        }
+
+        public void LostFocus()
+        {
+            SetFilterFocused(false);
         }
 
         public void Dispose()

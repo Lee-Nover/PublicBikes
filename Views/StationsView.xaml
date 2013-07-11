@@ -16,7 +16,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBox x:Name="Filter" cal:Message.Attach="[Event KeyUp] = [Action FilterChanged()]" Style="{StaticResource FilterTextBoxStyle}" />
+        <TextBox x:Name="Filter" Style="{StaticResource FilterTextBoxStyle}" 
+                 cal:Message.Attach="[Event GotFocus] = [Action GotFocus]; [Event LostFocus] = [Action LostFocus]"/>
         <ListBox x:Name="Items" Grid.Row="1" ItemContainerStyle="{StaticResource StationListItemContainerStyle}">
             <ListBox.ItemTemplate>
                 <DataTemplate>

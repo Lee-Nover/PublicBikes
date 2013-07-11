@@ -6,6 +6,7 @@ using System.Windows;
 using System.Threading;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
+using Bicikelj.Views;
 
 namespace Bicikelj.ViewModels
 {
@@ -36,6 +37,8 @@ namespace Bicikelj.ViewModels
             var ivm = IoC.Get<InfoViewModel>();
             ivm.DisplayName = "info";
             Items.Add(ivm);
+
+            lvm.FilterFocused += (isFocused) => { this.IsTitleVisible = !isFocused; };
         }
 
         private bool viewChecked = false;
@@ -65,6 +68,20 @@ namespace Bicikelj.ViewModels
                     if (cx.City == null)
                         cx.SetCity(config.UseCity);
                 });
+        }
+
+        private bool isTitleVisible = true;
+        public bool IsTitleVisible {
+            get { return isTitleVisible; }
+            set {
+                if (value == isTitleVisible) return;
+                isTitleVisible = value;
+                var panorama = (GetView() as MainView).Items;
+                if (isTitleVisible)
+                    panorama.TitleTemplate = null;
+                else
+                    panorama.TitleTemplate = new DataTemplate();
+            }
         }
 
         public void Handle(BusyState message)
