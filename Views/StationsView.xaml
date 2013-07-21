@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -18,8 +19,8 @@
         </Grid.RowDefinitions>
         <TextBox x:Name="Filter" Style="{StaticResource FilterTextBoxStyle}" 
                  cal:Message.Attach="[Event GotFocus] = [Action GotFocus]; [Event LostFocus] = [Action LostFocus]"/>
-        <ListBox x:Name="Items" Grid.Row="1" ItemContainerStyle="{StaticResource StationListItemContainerStyle}">
-            <ListBox.ItemTemplate>
+        <toolkit:LongListSelector x:Name="Items" Grid.Row="1" Background="{x:Null}" IsFlatList="True">
+            <toolkit:LongListSelector.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="12,0,12,12" >
                         <Grid.RowDefinitions>
@@ -41,7 +42,7 @@
                         <TextBlock Grid.Column="0" Grid.Row="1" x:Name="Address" Text="{Binding Address}" Style="{StaticResource PhoneTextSubtleStyle}" />
                     </Grid>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </toolkit:LongListSelector.ItemTemplate>
+        </toolkit:LongListSelector>
     </Grid>
 </UserControl>

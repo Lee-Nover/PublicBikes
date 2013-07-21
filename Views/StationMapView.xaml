@@ -57,9 +57,9 @@
             </maps:Map>
 
             <!-- down here so it's on top of the Map -->
-            <Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+            <!--Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                 <ContentControl x:Name="ActiveItem" cal:View.Context="InfoBar" HorizontalContentAlignment="Stretch" />
-            </Border>
+            </Border-->
             
             <!-- down here so the ActiveItemContainer is animated under this -->
             <Border Grid.Row="0" Background="{StaticResource PhoneBackgroundBrush}">

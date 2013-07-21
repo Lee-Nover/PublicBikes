@@ -71,7 +71,7 @@ namespace Bicikelj.ViewModels
                     doShow = true;
                 else if (activeItem != null && value == null)
                     doShow = false;
-
+                /*
                 if (doShow.HasValue)
                 {
                     SlideTransition slideTransition;
@@ -87,6 +87,7 @@ namespace Bicikelj.ViewModels
                     };
                     transition.Begin();
                 }
+                 * */
                 if (activeItem != null)
                     DeactivateItem(activeItem, false);
                 activeItem = value;

@@ -116,7 +116,11 @@ namespace Bicikelj.ViewModels
                         this.Items.Clear();
                         this.Items.AddRange(s);
                     },
-                    e => events.Publish(new ErrorState(e, "could not update stations")));
+                    e =>
+                    {
+                        BugSense.BugSenseHandler.Instance.SendExceptionMessage("UpdateStations", e.Message, e);
+                        events.Publish(new ErrorState(e, "could not update stations"));
+                    });
             }
         }
 
