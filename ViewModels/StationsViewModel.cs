@@ -106,6 +106,7 @@ namespace Bicikelj.ViewModels
                     .SelectMany(cityContext.GetStations())
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Delay(dueTime)
+                    .Select(s => { if (s == null) return new List<StationLocation>(); else return s; })
                     .SelectMany(s => LocationHelper.SortByNearest(s))
                     .Select(s => s.Select(station => new StationLocationViewModel(station)))
                     .Do(s => this.stations = s.ToList())
