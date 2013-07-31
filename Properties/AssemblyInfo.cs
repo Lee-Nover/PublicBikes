@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Resources;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Public Bikes")]
-[assembly: AssemblyDescription("Public Bikes and station availability")]
+[assembly: AssemblyDescription("Public bikes and station availability with navigation")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Twocans")]
 [assembly: AssemblyProduct("Public Bikes")]
@@ -33,3 +34,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 [assembly: AssemblyVersion("1.0.0.5")]
 [assembly: AssemblyFileVersion("1.0.0.5")]
+[assembly: NeutralResourcesLanguageAttribute("en")]

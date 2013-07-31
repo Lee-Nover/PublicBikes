@@ -17,9 +17,16 @@
         <ScrollViewer>
             <StackPanel>
                 <TextBlock Text="about" Style="{StaticResource PhoneTextTitle1Style}" />
-                <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextSmallStyle}" 
+                <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" 
                        Text="This application uses the CycloCity service to provide bike and station availability information. Maps and routing are provided by Bing Maps."  />
-
+                <TextBlock Margin="12,12,12,0" Text="Currently supported cities are:" Style="{StaticResource PhoneTextNormalStyle}" />
+                <TextBlock x:Name="SupportedCities" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
+                <RichTextBox Margin="0,12,0,0">
+                    <Paragraph>
+                        <Run Text="Please report bugs and leave suggestions at the application's " />
+                        <Hyperlink TargetName="_blank" NavigateUri="https://github.com/Lee-Nover/Bicikelj/issues">project page</Hyperlink>
+                    </Paragraph>
+                </RichTextBox>
             </StackPanel>
         </ScrollViewer>
     </Grid>
