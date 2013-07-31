@@ -131,7 +131,7 @@ namespace Bicikelj
             database.Save(config);
             var cityCtx = IoC.Get<CityContextViewModel>();
             if (cityCtx.City != null)
-                database.Save(cityCtx.City);
+                cityCtx.SaveToDB(cityCtx.City);
             database.Flush();
             Database.Deactivate();
         }

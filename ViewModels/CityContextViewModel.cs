@@ -84,7 +84,7 @@ namespace Bicikelj.ViewModels
             subCity.OnNext(this.city);
         }
 
-        private void SaveToDB(City saveCity)
+        public void SaveToDB(City saveCity)
         {
             if (saveCity == null || string.IsNullOrEmpty(saveCity.UrlCityName) || saveCity.Favorites == null || saveCity.Stations == null)
                 return;
