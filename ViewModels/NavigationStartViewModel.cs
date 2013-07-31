@@ -18,6 +18,7 @@ namespace Bicikelj.ViewModels
         readonly SystemConfig config;
         readonly CityContextViewModel cityContext;
         private IDisposable subCity;
+        private IDisposable subLocation;
 
         public NavigationStartViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
         {
@@ -34,12 +35,21 @@ namespace Bicikelj.ViewModels
                 subCity = cityContext.CityObservable
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(city => UpdateIsEnabled());
+
+            if (subLocation == null)
+                subLocation = LocationHelper.GetCurrentLocation()
+                    .ObserveOn(ReactiveExtensions.SyncScheduler)
+                    .Subscribe(location => {
+                        isLocationEnabled = location != null && !location.IsEmpty && location.Status != GeoPositionStatus.Disabled;
+                        UpdateIsEnabled();
+                    });
+
             UpdateIsEnabled();
         }
 
         private void UpdateIsEnabled()
         {
-            IsEnabled = config.LocationEnabled.GetValueOrDefault() && cityContext.IsCitySupported;
+            isEnabled = isLocationEnabled && cityContext.IsCitySupported;
             if (cityContext.IsCitySupported)
             {
                 this.DisplayName = cityContext.City.ServiceName;
@@ -80,7 +90,8 @@ namespace Bicikelj.ViewModels
             NotifyOfPropertyChange(() => CanOpenMap);
         }
 
-        public bool IsLocationEnabled { get { return config.LocationEnabled.GetValueOrDefault(); } }
+        private bool isLocationEnabled = false;
+        public bool IsLocationEnabled { get { return isLocationEnabled; } }
 
         public bool NavigationDisabled { get { return !IsEnabled; } }
 

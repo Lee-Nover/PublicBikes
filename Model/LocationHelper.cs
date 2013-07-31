@@ -87,10 +87,15 @@ namespace Bicikelj.Model
                 isLocationEnabled = value;
                 if (geoObserver == null)
                     return;
+
                 if (isLocationEnabled)
                 {
-                    if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromSeconds(15)))
-                        geoObserver.OnError(new Exception("GeoCoordinate service could not be started"));
+                    if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromMilliseconds(10)))
+                    {
+                        geoPos.Status = GeoPositionStatus.Disabled;
+                        geoPos.Coordinate = GeoCoordinate.Unknown;
+                        geoObserver.OnNext(geoPos);
+                    }
                 }
                 else
                 {
@@ -100,7 +105,7 @@ namespace Bicikelj.Model
                 }
             }
         }
-        
+
         public static IObservable<GeoStatusAndPos> GetCurrentLocation()
         {
             if (observableGeo == null)
@@ -122,14 +127,13 @@ namespace Bicikelj.Model
                     geoCoordinateWatcher.StatusChanged += statusChanged;
                     geoCoordinateWatcher.PositionChanged += positionChanged;
 
-                    if (!IsLocationEnabled)
+                    var isEnabled = isLocationEnabled && geoCoordinateWatcher.TryStart(false, TimeSpan.FromMilliseconds(10));
+                    if (!isEnabled)
                     {
                         geoPos.Status = GeoPositionStatus.Disabled;
                         geoPos.Coordinate = GeoCoordinate.Unknown;
                         observer.OnNext(geoPos);
                     }
-                    else if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromSeconds(15)))
-                        observer.OnError(new Exception("GeoCoordinate service could not be started"));
 
                     return Disposable.Create(() =>
                     {
