@@ -27,8 +27,8 @@ namespace Bicikelj
 
         protected override void Configure()
         {
-            container = new PhoneContainer(RootFrame);
-            container.RegisterPhoneServices();
+            container = new PhoneContainer();
+            container.RegisterPhoneServices(RootFrame);
             container.Singleton<MainViewModel>();
             container.Singleton<StationsViewModel>();
             container.PerRequest<HostPageViewModel>();
