@@ -53,7 +53,14 @@ namespace Bicikelj
             //ThreadPoolScheduler.Instance.Schedule(() => {
                 DateTime start = DateTime.Now;
                 BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
-            
+                BugSenseHandler.Instance.UnhandledException += (sender, e) =>
+                {
+                    e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
+                        "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
+                    if (!e.Cancel)
+                        BugSenseHandler.Instance.SendException(e.ExceptionObject);
+                    e.Handled = true;
+                };
                 /*new NotificationOptions()
                 {
                     Type = enNotificationType.MessageBoxConfirm,

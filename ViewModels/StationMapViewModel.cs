@@ -58,6 +58,7 @@ namespace Bicikelj.ViewModels
         public LocationViewModel CurrentLocation { get; set; }
         private IDisposable currentGeo;
         private IDisposable stationObs;
+        private IDisposable compassObs;
 
         private StationViewModel activeItem;
         public StationViewModel ActiveItem {
@@ -142,7 +143,16 @@ namespace Bicikelj.ViewModels
                         view.Map.ZoomLevel = 15;
                         Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
                     });
-
+            
+            if (compassObs == null)
+                compassObs = LocationHelper.GetCurrentHeading()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .ObserveOn(syncContext)
+                    .Subscribe(heading =>
+                    {
+                        CurrentHeading = heading;
+                        //view.Map.Heading = heading;
+                    });
         }
 
         protected override void OnDeactivate(bool close)
@@ -151,6 +161,7 @@ namespace Bicikelj.ViewModels
             {
                 ReactiveExtensions.Dispose(ref currentGeo);
                 ReactiveExtensions.Dispose(ref stationObs);
+                ReactiveExtensions.Dispose(ref compassObs);
             }
             base.OnDeactivate(close);
         }
@@ -167,6 +178,25 @@ namespace Bicikelj.ViewModels
             }
             else
                 ActiveItem = null;
+        }
+
+        private double currentHeading = 0;
+        public double CurrentHeading
+        {
+            get { return currentHeading; }
+            set
+            {
+                if (value == currentHeading) return;
+                currentHeading = value;
+                if (view != null)
+                {
+                    view.daAnimateHeading.To = currentHeading;
+                    view.sbAnimateHeading.Begin();
+                    //view.ArrowRotation.Angle = currentHeading;
+                }
+                
+                NotifyOfPropertyChange(() => CurrentHeading);
+            }
         }
     }
 }

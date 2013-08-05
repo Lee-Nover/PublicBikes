@@ -14,6 +14,16 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
     <!--LayoutRoot is the root grid where all page content is placed-->
+    <UserControl.Resources>
+        <Storyboard x:Name="sbAnimateHeading">
+            <DoubleAnimation
+                x:Name="daAnimateHeading"
+                Duration="0:0:1"
+                EasingFunction="EaseInEaseOut"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                Storyboard.TargetName="OrientationArrow" />
+        </Storyboard>
+    </UserControl.Resources>
     <Grid x:Name="LayoutRoot" Background="Transparent" >
        
         <!--ContentPanel - place additional content here-->
@@ -29,8 +39,8 @@
                       CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)">
                 <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
-                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
-                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding Coordinate}" >
+                    <bctl:LocationAccuracy x:Name="Accuracy" CacheMode="BitmapCache" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
+                    <maps:Pushpin x:Name="CurrentLocationPin" CacheMode="BitmapCache" Location="{Binding Coordinate}" >
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
@@ -43,7 +53,7 @@
                 <maps:MapItemsControl x:Name="Items">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)">
+                            <maps:Pushpin Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" CacheMode="BitmapCache">
                                 
                                     <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False" />
                                 
@@ -60,11 +70,17 @@
             <!--Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                 <ContentControl x:Name="ActiveItem" cal:View.Context="InfoBar" HorizontalContentAlignment="Stretch" />
             </Border-->
-            
+
+            <Path Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,12,12,12" x:Name="OrientationArrow" Opacity="0.7" CacheMode="BitmapCache" Width="36" Height="48" Data="{StaticResource Navigation2IconData}" Fill="LightSkyBlue" Stroke="{StaticResource PhoneAccentBrush}" StrokeThickness="4" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <RotateTransform x:Name="ArrowRotation" CenterX="0.5" CenterY="0.5" />
+                </Path.RenderTransform>
+            </Path>
+
             <!-- down here so the ActiveItemContainer is animated under this -->
             <Border Grid.Row="0" Background="{StaticResource PhoneBackgroundBrush}">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Stretch="Uniform" Margin="12,0,0,0" Fill="{StaticResource PhoneForegroundBrush}" />
+                    <Path Data="{StaticResource CurrentPositionIconData}" Width="24" Height="24" Stretch="Uniform" Margin="12,0,0,0" Fill="{StaticResource PhoneForegroundBrush}" CacheMode="BitmapCache" />
                     <TextBlock x:Name="FromLocation" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
                 </StackPanel>
             </Border>

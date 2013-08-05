@@ -11,6 +11,7 @@ using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Concurrency;
 using System.Diagnostics;
+using Microsoft.Devices.Sensors;
 
 namespace Bicikelj.Model
 {
@@ -71,6 +72,51 @@ namespace Bicikelj.Model
     {
         #region Reactive
 
+        #region Compass
+        private static double lastHeading = 0;
+        private static Compass compass = new Compass();
+        private static IObservable<double> observableCompass = null;
+        public static IObservable<double> GetCurrentHeading()
+        {
+            if (observableCompass == null)
+            {
+                observableCompass = Observable.Create<double>(observer =>
+                {
+                    if (Compass.IsSupported)
+                    {
+                        EventHandler<SensorReadingEventArgs<CompassReading>> compassChanged = (sender, e) =>
+                        {
+                            lastHeading = e.SensorReading.TrueHeading;
+                            observer.OnNext(lastHeading);
+                        };
+                        compass.CurrentValueChanged += compassChanged;
+                        compass.Start();
+                        return Disposable.Create(() =>
+                        {
+                            compass.CurrentValueChanged -= compassChanged;
+                            compass.Stop();
+                            observableCompass = null;
+                        });
+                    }
+                    else
+                    {
+                        observer.OnNext(0);
+                        observer.OnCompleted();
+                        return Disposable.Create(() => observableCompass = null);
+                    }
+                })
+                  .Buffer(TimeSpan.FromSeconds(2))
+                  .Select(headings => headings.Average())
+                  .Where(heading => !double.IsNaN(heading))
+                  .Publish(lastHeading)
+                  .RefCount();
+                compass.Start();
+            }
+            return observableCompass;
+        }
+        #endregion
+
+        #region Location
         private static readonly GeoCoordinateWatcher geoCoordinateWatcher = new GeoCoordinateWatcher();
         private static IObservable<GeoStatusAndPos> observableGeo = null;
         private static IObserver<GeoStatusAndPos> geoObserver = null;
@@ -126,7 +172,6 @@ namespace Bicikelj.Model
                     };
                     geoCoordinateWatcher.StatusChanged += statusChanged;
                     geoCoordinateWatcher.PositionChanged += positionChanged;
-
                     var isEnabled = isLocationEnabled && geoCoordinateWatcher.TryStart(false, TimeSpan.FromMilliseconds(10));
                     if (!isEnabled)
                     {
@@ -188,6 +233,8 @@ namespace Bicikelj.Model
         {
             return GetCurrentAddress().Select(addr => addr.Locality);
         }
+        
+        #endregion
 
         public static IObservable<IEnumerable<StationLocation>> SortByNearest(IEnumerable<StationLocation> stations)
         {
