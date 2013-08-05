@@ -38,6 +38,8 @@ namespace Bicikelj.ViewModels
         private IDisposable dispCurrentCity = null;
         ILog rxLog = new DebugLog(typeof(Observable));
 
+        public string CurrentCity { get; set; }
+
         public CityContextViewModel(IEventAggregator events, SystemConfig config)
         {
             this.events = events;
@@ -48,6 +50,11 @@ namespace Bicikelj.ViewModels
                 .RefCount()
                 .SubscribeOn(ThreadPoolScheduler.Instance)
                 .ObserveOn(ThreadPoolScheduler.Instance);
+
+            if (this.config.LocationEnabled.GetValueOrDefault())
+                LocationHelper.GetCurrentCity().Subscribe(c => {
+                    this.CurrentCity = c;
+                });
         }
 
         public void SetCity(string cityName)
@@ -215,5 +222,10 @@ namespace Bicikelj.ViewModels
         }
 
         #endregion
+
+        public bool IsCurrentCitySelected()
+        {
+            return city != null && string.Equals(CurrentCity, City.CityName, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }

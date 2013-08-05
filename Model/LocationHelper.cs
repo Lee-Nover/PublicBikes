@@ -106,6 +106,7 @@ namespace Bicikelj.Model
                     }
                 })
                   .Buffer(TimeSpan.FromSeconds(2))
+                  .Where(headings => headings.Count > 0)
                   .Select(headings => headings.Average())
                   .Where(heading => !double.IsNaN(heading))
                   .Publish(lastHeading)

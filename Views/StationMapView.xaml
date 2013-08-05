@@ -19,7 +19,7 @@
             <DoubleAnimation
                 x:Name="daAnimateHeading"
                 Duration="0:0:1"
-                EasingFunction="EaseInEaseOut"
+                FillBehavior="HoldEnd"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
                 Storyboard.TargetName="OrientationArrow" />
         </Storyboard>
@@ -34,8 +34,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
-            <maps:Map Grid.Row="1" x:Name="Map" Margin="12,12,12,0" 
-                      Mode="Road" Center="{Binding CurrentLocation.Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" 
+            <maps:Map Grid.Row="1" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache"
+                      Mode="Road" 
+                      LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" ZoomBarVisibility="Visible" ScaleVisibility="Visible"
                       CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)">
                 <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
@@ -53,13 +54,21 @@
                 <maps:MapItemsControl x:Name="Items">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" CacheMode="BitmapCache">
+                            <maps:Pushpin Name="Pin" Opacity="0" Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" CacheMode="BitmapCache">
                                 
                                     <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False" />
                                 
                                     <!--Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" /-->
-                                    
-                                
+
+                                <maps:Pushpin.Triggers>
+                                    <EventTrigger RoutedEvent="Canvas.Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="0:0:0.2" To="1" Storyboard.TargetProperty="Canvas.Opacity" Storyboard.TargetName="Pin" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </maps:Pushpin.Triggers>
                             </maps:Pushpin>
                         </DataTemplate>
                     </maps:MapItemsControl.ItemTemplate>
