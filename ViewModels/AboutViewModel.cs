@@ -29,8 +29,7 @@ namespace Bicikelj.ViewModels
                 }
                 list += city.CityName + ", ";
             }
-            list.Remove(list.Length - 2, 2);
-            SupportedCities = list;
+            SupportedCities = list.Remove(list.Length - 2, 2);
             NotifyOfPropertyChange(() => SupportedCities);
         }
     }

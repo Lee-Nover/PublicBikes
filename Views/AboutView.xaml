@@ -18,15 +18,18 @@
             <StackPanel>
                 <TextBlock Text="about" Style="{StaticResource PhoneTextTitle1Style}" />
                 <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" 
-                       Text="This application uses the CycloCity service to provide bike and station availability information. Maps and routing are provided by Bing Maps."  />
-                <TextBlock Margin="12,12,12,0" Text="Currently supported cities are:" Style="{StaticResource PhoneTextNormalStyle}" />
+                       Text="A simple to use app to get around the city using public bikes. You can find the nearest free bike or dock, map a route using the most appropriate bike stations.
+The application uses the CycloCity service to provide bike and station availability information, currently supporting:"  />
                 <TextBlock x:Name="SupportedCities" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
+                <TextBlock Margin="12,12,12,0" TextWrapping="Wrap" Text="Maps and routing are provided by Bing Maps.
+*soon to provide many other cities*" Style="{StaticResource PhoneTextNormalStyle}" />
                 <RichTextBox Margin="0,12,0,0">
                     <Paragraph>
                         <Run Text="Please report bugs and leave suggestions at the application's " />
-                        <Hyperlink TargetName="_blank" NavigateUri="https://github.com/Lee-Nover/Bicikelj/issues">project page</Hyperlink>
+                        <Hyperlink TargetName="_blank" NavigateUri="https://github.com/Lee-Nover/PublicBikes/issues">project page</Hyperlink>
                     </Paragraph>
                 </RichTextBox>
+                
             </StackPanel>
         </ScrollViewer>
     </Grid>
