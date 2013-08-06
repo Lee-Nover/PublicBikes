@@ -110,13 +110,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
-    <Reference Include="Wintellect.Sterling.WindowsPhone, Version=1.6.2.32154, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\SterlingPhone.1.6.2\lib\sl3-wp\Wintellect.Sterling.WindowsPhone.dll</HintPath>
-    </Reference>
-    <Reference Include="Wintellect.Sterling.WindowsPhone.IsolatedStorage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\SterlingPhone.1.6.2\lib\sl3-wp\Wintellect.Sterling.WindowsPhone.IsolatedStorage.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -171,10 +164,10 @@
     <Compile Include="Model\StationLocationList.cs" />
     <Compile Include="Model\SystemConfig.cs" />
     <Compile Include="NavigationExtension.cs" />
+    <Compile Include="Persistence\SystemConfigStorage.cs" />
     <Compile Include="Persistence\MainViewModelStorage.cs" />
     <Compile Include="Persistence\Database.cs" />
     <Compile Include="Persistence\StationsViewModelStorage.cs" />
-    <Compile Include="Persistence\TypeSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentModel.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />

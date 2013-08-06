@@ -1,4 +1,4 @@
-﻿using Wintellect.Sterling.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace Bicikelj.Model
 {
@@ -7,10 +7,11 @@ namespace Bicikelj.Model
         public bool? LocationEnabled { get; set; }
         public bool UseImperialUnits { get; set; }
         public string City { get; set; }
-        [SterlingIgnore]
+        [IgnoreDataMember]
         public string CurrentCity { get; set; }
         public TravelSpeed WalkingSpeed { get; set; }
         public TravelSpeed CyclingSpeed { get; set; }
+        [IgnoreDataMember]
         public string UseCity { get {
             if (!string.IsNullOrEmpty(City))
                 return City.ToLowerInvariant();

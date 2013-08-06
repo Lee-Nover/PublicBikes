@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using Bicikelj.Model;
 using Caliburn.Micro;
 using System.Reactive;
-using Wintellect.Sterling;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
+using System.Diagnostics;
+using ServiceStack.Text;
+using System.IO.IsolatedStorage;
+using System.IO;
 
 namespace Bicikelj.ViewModels
 {
@@ -96,13 +99,23 @@ namespace Bicikelj.ViewModels
             if (saveCity == null || string.IsNullOrEmpty(saveCity.UrlCityName) || saveCity.Favorites == null || saveCity.Stations == null)
                 return;
             
-            ISterlingDatabaseInstance db = IoC.Get<ISterlingDatabaseInstance>();
             saveCity.Favorites.Apply((f) =>
             {
                 if (f != null)
                     f.City = saveCity.UrlCityName;
             });
-            db.Save(saveCity);
+            var cityJson = saveCity.ToJson();
+            using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                if (!myIsolatedStorage.DirectoryExists("Cities"))
+                    myIsolatedStorage.CreateDirectory("Cities");
+                var cityFile = "Cities\\" + saveCity.UrlCityName;
+                using (var fileStream = new IsolatedStorageFileStream(cityFile, FileMode.Create, myIsolatedStorage))
+                using (var writer = new StreamWriter(fileStream))
+                {
+                    writer.Write(cityJson);
+                }
+            }
         }
 
         private void LoadFromDB()
@@ -116,12 +129,19 @@ namespace Bicikelj.ViewModels
 
                 cityLoadStates[city] = CityLoadState.ReadingCache;
             }
-            
+
             City storedCity = null;
-            ISterlingDatabaseInstance db = IoC.Get<ISterlingDatabaseInstance>();
             try
             {
-                storedCity = db.Load<City>(city.UrlCityName);
+                var cityFile = "Cities\\" + city.UrlCityName;
+                using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+                    if (myIsolatedStorage.FileExists(cityFile))
+                        using (var fileStream = new IsolatedStorageFileStream(cityFile, FileMode.Open, myIsolatedStorage))
+                        using (var reader = new StreamReader(fileStream))
+                        {
+                            var cityJson = reader.ReadToEnd();
+                            storedCity = cityJson.FromJson<City>();
+                        }
             }
             catch (Exception)
             {
@@ -135,6 +155,7 @@ namespace Bicikelj.ViewModels
                 city.Favorites = storedCity.Favorites;
                 cityLoadStates[city] = CityLoadState.CacheRead;
             }
+
             if (city.Stations == null)
                 city.Stations = new List<StationLocation>();
             if (city.Favorites == null)

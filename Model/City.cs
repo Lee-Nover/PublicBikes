@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Wintellect.Sterling.Serialization;
+using System.Runtime.Serialization;
 
 namespace Bicikelj.Model
 {
@@ -9,7 +9,7 @@ namespace Bicikelj.Model
         public string Country { get; set; }
         public string ServiceName { get; set; }
         public string UrlCityName { get; set; }
-        [SterlingIgnore]
+        [IgnoreDataMember]
         public string AlternateCityName { get; set; }
         public List<StationLocation> Stations { get; set; }
         public List<FavoriteLocation> Favorites { get; set; }

@@ -13,7 +13,6 @@ using Caliburn.Micro;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Shell;
-using Wintellect.Sterling;
 using System.Windows.Data;
 using System.Reactive.Concurrency;
 using System.Diagnostics;
@@ -23,7 +22,6 @@ namespace Bicikelj
     public class WP7Bootstrapper : PhoneBootstrapper
     {
         PhoneContainer container;
-        ISterlingDatabaseInstance database;
 
         protected override void Configure()
         {
@@ -53,6 +51,7 @@ namespace Bicikelj
             //ThreadPoolScheduler.Instance.Schedule(() => {
                 DateTime start = DateTime.Now;
                 BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
+                BugSenseHandler.Instance.HandleWhileDebugging = true;
                 BugSenseHandler.Instance.UnhandledException += (sender, e) =>
                 {
                     e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
@@ -106,41 +105,31 @@ namespace Bicikelj
             if (IoC.Get<SystemConfig>() != null)
                 return;
 
-            //ThreadPoolScheduler.Instance.Schedule(() => {
-            DateTime start = DateTime.Now;
-                database = Database.Activate();
-
-                container.Instance(database);
-                SystemConfig config;
-                try
-                {
-                    config = database.Load<SystemConfig>(true);
-                }
-                catch (Exception)
-                {
-                    config = null;
-                }
-                if (config == null)
-                {
-                    config = new SystemConfig();
-                    config.WalkingSpeed = TravelSpeed.Normal;
-                    config.CyclingSpeed = TravelSpeed.Normal;
-                }
-                container.Instance(config);
-                var ts = DateTime.Now - start;
-                Debug.WriteLine("LoadDatabase took {0}", ts);
-            //});
+            SystemConfig config = null;
+            try
+            {
+                // todo: load config
+            }
+            catch (Exception)
+            {
+                config = null;
+            }
+            if (config == null)
+            {
+                config = new SystemConfig();
+                config.WalkingSpeed = TravelSpeed.Normal;
+                config.CyclingSpeed = TravelSpeed.Normal;
+            }
+            container.Instance(config);
         }
 
         private void SaveDatabase()
         {
             var config = IoC.Get<SystemConfig>();
-            database.Save(config);
+            
             var cityCtx = IoC.Get<CityContextViewModel>();
             if (cityCtx.City != null)
                 cityCtx.SaveToDB(cityCtx.City);
-            database.Flush();
-            Database.Deactivate();
         }
 
         static void AddCustomConventions()
