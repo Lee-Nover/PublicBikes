@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows;
 using Microsoft.Phone.Controls;
 using System.Reactive.Concurrency;
+using System.Windows.Media.Animation;
 
 namespace Bicikelj.ViewModels
 {
@@ -27,11 +28,48 @@ namespace Bicikelj.ViewModels
             get { return stations; }
             private set {
                 stations = value;
-                this.Items.Clear();
-                this.Items.AddRange(stations);
+                UpdateVisiblePins();
                 NotifyOfPropertyChange(() => Stations);
-                NotifyOfPropertyChange(() => Items);
             }
+        }
+
+        private IDisposable addingItemsDisp;
+        private void UpdateVisiblePins()
+        {
+            if (!tilesLoaded || !zoomDone) return;
+
+            if (stations == null)
+            {
+                this.Items.Clear();
+                return;
+            }
+            
+            var newCenter = this.view.Map.TargetCenter;
+            var mapRect = this.view.Map.TargetBoundingRectangle;
+            var visibleStations = stations.Where(s => 
+                s.Coordinate.Latitude <= mapRect.North &&
+                s.Coordinate.Latitude >= mapRect.South &&
+                s.Coordinate.Longitude >= mapRect.West &&
+                s.Coordinate.Longitude <= mapRect.East
+            ).Distinct();
+            
+            var toKeep = visibleStations.Intersect(this.Items);
+            var toAdd = visibleStations.Except(toKeep).ToList();
+            var toRemove = this.Items.Except(toKeep).ToList();
+            this.Items.RemoveRange(toRemove);
+            if (addingItemsDisp != null)
+            {
+                addingItemsDisp.Dispose();
+            }
+            
+            addingItemsDisp = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter))
+                .ToObservable()
+                .SubscribeOn(NewThreadScheduler.Default)
+                .Do(s => { System.Threading.Thread.Sleep(40); })
+                .ObserveOn(ReactiveExtensions.SyncScheduler)
+                .Subscribe(s => this.Items.Add(s));
+            //this.Items.AddRange(toAdd);
+            NotifyOfPropertyChange(() => Items);
         }
 
         public StationMapViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
@@ -100,10 +138,29 @@ namespace Bicikelj.ViewModels
         }
 
         private StationMapView view;
+        private bool zoomDone = false;
+        private bool tilesLoaded = false;
         protected override void OnViewAttached(object view, object context)
         {
             base.OnViewAttached(view, context);
             this.view = view as StationMapView;
+            if (view != null)
+            {
+                var map = this.view.Map;
+                map.ViewChangeStart += (sender, e) => {
+                    zoomDone = false;
+                    tilesLoaded = false;
+                };
+                map.ViewChangeEnd += (sender, e) =>
+                {
+                    zoomDone = map.ZoomLevel == map.TargetZoomLevel;
+                    UpdateVisiblePins();
+                };
+                map.MapResolved += (sender, e) => {
+                    tilesLoaded = true;
+                    UpdateVisiblePins();
+                };
+            }
         }
 
         protected override void OnActivate()
@@ -111,8 +168,7 @@ namespace Bicikelj.ViewModels
             // remove the Items because AllActive will Activate all of them
             Items.Clear();
             base.OnActivate();
-            if (stations != null)
-                Items.AddRange(stations);
+            UpdateVisiblePins();
             if (activeItem != null)
                 ActivateItem(activeItem);
 
@@ -135,12 +191,14 @@ namespace Bicikelj.ViewModels
                     .ObserveOn(syncContext)
                     .Subscribe(sl => {
                         var r = LocationHelper.GetLocationRect(sl);
-                        view.Map.ZoomBarVisibility = Visibility.Visible;
-                        view.Map.ScaleVisibility = Visibility.Visible;
+                        var oneKmAway = sl.Where(s => s.Coordinate.GetDistanceTo(r.Center) < 500).ToList();
+                        r = LocationHelper.GetLocationRect(oneKmAway);
                         view.Map.SetView(r);
-                        if (CurrentLocation.Coordinate != null)
+                        if (CurrentLocation.Coordinate != null && cityContext.IsCurrentCitySelected())
                             view.Map.Center = CurrentLocation.Coordinate;
-                        view.Map.ZoomLevel = 15;
+                        // todo: else use City.Center (GeoCoordinate)
+                            
+                        //view.Map.ZoomLevel = 15;
                         Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
                     });
             
@@ -151,7 +209,6 @@ namespace Bicikelj.ViewModels
                     .Subscribe(heading =>
                     {
                         CurrentHeading = heading;
-                        //view.Map.Heading = heading;
                     });
         }
 
@@ -191,8 +248,9 @@ namespace Bicikelj.ViewModels
                 if (view != null)
                 {
                     view.daAnimateHeading.To = currentHeading;
+                    if (view.sbAnimateHeading.GetCurrentState() == ClockState.Stopped)
+                        view.sbAnimateHeading.Stop();
                     view.sbAnimateHeading.Begin();
-                    //view.ArrowRotation.Angle = currentHeading;
                 }
                 
                 NotifyOfPropertyChange(() => CurrentHeading);
