@@ -378,5 +378,13 @@ namespace Bicikelj.Model
         }
 
         #endregion
+
+        public static bool ContainsPoint(this LocationRect rect, GeoCoordinate point)
+        {
+            return point.Latitude <= rect.North &&
+                point.Latitude >= rect.South &&
+                point.Longitude >= rect.West &&
+                point.Longitude <= rect.East;
+        }
     }
 }

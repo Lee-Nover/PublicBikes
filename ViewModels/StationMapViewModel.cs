@@ -41,12 +41,7 @@ namespace Bicikelj.ViewModels
             
             var newCenter = this.view.Map.TargetCenter;
             var mapRect = this.view.Map.TargetBoundingRectangle;
-            var visibleStations = stations.Where(s => 
-                s.Coordinate.Latitude <= mapRect.North &&
-                s.Coordinate.Latitude >= mapRect.South &&
-                s.Coordinate.Longitude >= mapRect.West &&
-                s.Coordinate.Longitude <= mapRect.East
-            ).Distinct();
+            var visibleStations = stations.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct();
             
             var toKeep = visibleStations.Intersect(this.Items);
             var toAdd = visibleStations.Except(toKeep).ToList();
@@ -60,10 +55,9 @@ namespace Bicikelj.ViewModels
             addingItemsDisp = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter))
                 .ToObservable()
                 .SubscribeOn(NewThreadScheduler.Default)
-                .Do(s => { System.Threading.Thread.Sleep(40); })
+                .Do(s => { System.Threading.Thread.Sleep(30); })
                 .ObserveOn(ReactiveExtensions.SyncScheduler)
                 .Subscribe(s => this.Items.Add(s));
-            //this.Items.AddRange(toAdd);
             NotifyOfPropertyChange(() => Items);
         }
 
@@ -194,11 +188,19 @@ namespace Bicikelj.ViewModels
                             centerPoint = CurrentLocation.Coordinate;
                         else
                             centerPoint = r.Center;
-                        var oneKmAway = sl.Where(s => s.Coordinate.GetDistanceTo(centerPoint) < 500).ToList();
+                        var stationsWithDistance = from s in sl select new { Distance = s.Coordinate.GetDistanceTo(centerPoint), Station = s };
+                        var oneKmAway = (from s in stationsWithDistance where s.Distance < 500 orderby s.Distance select s.Station).ToList();
                         if (oneKmAway.Count > 1)
                         {
                             r = LocationHelper.GetLocationRect(oneKmAway);
                             view.Map.SetView(r);
+
+                            r = view.Map.TargetBoundingRectangle;
+                            var visibleStations = sl.Where(s => r.ContainsPoint(s.Coordinate)).Distinct().ToList();
+                            if (visibleStations.Count > 30)
+                            {
+                                view.Map.ZoomLevel = view.Map.TargetZoomLevel + 1;
+                            }
                         }
                         else
                             view.Map.ZoomLevel = 15;
