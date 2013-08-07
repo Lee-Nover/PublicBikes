@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
-using Bicikelj.Model;
-using Caliburn.Micro;
 using System.Collections.Generic;
-using Bicikelj.Views;
-using Microsoft.Phone.Controls.Maps;
-using System.Windows.Shapes;
-using System.Windows.Media;
-using System.Windows.Data;
-using System.Device.Location;
-using System.Windows.Input;
-using System.Windows;
-using Microsoft.Phone.Controls;
+using System.Linq;
 using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Windows.Media.Animation;
+using Bicikelj.Model;
+using Bicikelj.Views;
+using Caliburn.Micro;
 
 namespace Bicikelj.ViewModels
 {

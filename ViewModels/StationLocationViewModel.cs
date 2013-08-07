@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Device.Location;
 using System.Linq;
-using System.Threading;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Windows.Media;
 using Bicikelj.Model;
 using Bicikelj.Model.Bing;
 using Bicikelj.Views.StationLocation;
 using Caliburn.Micro;
 using Microsoft.Phone.Controls.Maps;
-using System.Reactive.Linq;
-using System.Reactive.Concurrency;
 
 namespace Bicikelj.ViewModels
 {

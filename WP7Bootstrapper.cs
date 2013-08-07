@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Bicikelj.Controls;
 using Bicikelj.Model;
-using Bicikelj.Persistence;
 using Bicikelj.ViewModels;
 using BindableApplicationBar;
 using BugSense;
@@ -13,9 +11,6 @@ using Caliburn.Micro;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Shell;
-using System.Windows.Data;
-using System.Reactive.Concurrency;
-using System.Diagnostics;
 
 namespace Bicikelj
 {
@@ -48,27 +43,16 @@ namespace Bicikelj
 
         private void InitBugSense()
         {
-            //ThreadPoolScheduler.Instance.Schedule(() => {
-                DateTime start = DateTime.Now;
-                BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
-                BugSenseHandler.Instance.HandleWhileDebugging = true;
-                BugSenseHandler.Instance.UnhandledException += (sender, e) =>
-                {
-                    e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
-                        "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
-                    if (!e.Cancel)
-                        BugSenseHandler.Instance.SendException(e.ExceptionObject);
-                    e.Handled = true;
-                };
-                /*new NotificationOptions()
-                {
-                    Type = enNotificationType.MessageBoxConfirm,
-                    Title = "uh-oh :(",
-                    Text = "Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?"
-                });*/
-                var ts = DateTime.Now - start;
-                Debug.WriteLine("InitBugSense took {0}", ts);
-            //});
+            BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
+            BugSenseHandler.Instance.HandleWhileDebugging = true;
+            BugSenseHandler.Instance.UnhandledException += (sender, e) =>
+            {
+                e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
+                    "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
+                if (!e.Cancel)
+                    BugSenseHandler.Instance.SendException(e.ExceptionObject);
+                e.Handled = true;
+            };
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
@@ -102,31 +86,19 @@ namespace Bicikelj
 
         private void LoadDatabase()
         {
-            if (IoC.Get<SystemConfig>() != null)
+            SystemConfig config = IoC.Get<SystemConfig>();
+            if (config != null && config.LocationEnabled.HasValue)
                 return;
-
-            SystemConfig config = null;
-            try
-            {
-                // todo: load config
-            }
-            catch (Exception)
-            {
-                config = null;
-            }
+            // CM handles this so it's always instantiated (as a singleton)
             if (config == null)
             {
                 config = new SystemConfig();
-                config.WalkingSpeed = TravelSpeed.Normal;
-                config.CyclingSpeed = TravelSpeed.Normal;
+                container.Instance(config);
             }
-            container.Instance(config);
         }
 
         private void SaveDatabase()
         {
-            var config = IoC.Get<SystemConfig>();
-            
             var cityCtx = IoC.Get<CityContextViewModel>();
             if (cityCtx.City != null)
                 cityCtx.SaveToDB(cityCtx.City);

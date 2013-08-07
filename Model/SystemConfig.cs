@@ -20,5 +20,11 @@ namespace Bicikelj.Model
             else 
                 return null;
         } }
+
+        public SystemConfig()
+        {
+            WalkingSpeed = TravelSpeed.Normal;
+            CyclingSpeed = TravelSpeed.Normal;
+        }
     }
 }

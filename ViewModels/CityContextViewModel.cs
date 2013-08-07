@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Bicikelj.Model;
 using Caliburn.Micro;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Reactive.Disposables;
-using System.Reactive.Concurrency;
-using System.Reactive.Subjects;
-using System.Diagnostics;
 using ServiceStack.Text;
-using System.IO.IsolatedStorage;
-using System.IO;
 
 namespace Bicikelj.ViewModels
 {
