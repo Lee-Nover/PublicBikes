@@ -38,10 +38,10 @@
                       Mode="Road" 
                       LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" ZoomBarVisibility="Visible" ScaleVisibility="Visible"
                       CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)">
-                <maps:MapLayer x:Name="Route" />
+            	<maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
                     <bctl:LocationAccuracy x:Name="Accuracy" CacheMode="BitmapCache" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
-                    <maps:Pushpin x:Name="CurrentLocationPin" CacheMode="BitmapCache" Location="{Binding Coordinate}" >
+                    <maps:Pushpin PositionOrigin="BottomCenter" x:Name="CurrentLocationPin" CacheMode="BitmapCache" Location="{Binding Coordinate}" Style="{StaticResource PushpinTemplateNormal}" >
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
@@ -54,7 +54,7 @@
                 <maps:MapItemsControl x:Name="Items">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Name="Pin" Opacity="0" Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" CacheMode="BitmapCache">
+                            <maps:Pushpin Name="Pin" Opacity="0" PositionOrigin="BottomCenter" Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" Style="{StaticResource PushpinTemplateNormal}" CacheMode="BitmapCache">
                                 
                                     <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False" />
                                 
@@ -80,7 +80,7 @@
                 <ContentControl x:Name="ActiveItem" cal:View.Context="InfoBar" HorizontalContentAlignment="Stretch" />
             </Border-->
 
-            <Path Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,12,12,12" x:Name="OrientationArrow" Opacity="0.7" CacheMode="BitmapCache" Width="36" Height="48" Data="{StaticResource Navigation2IconData}" Fill="LightSkyBlue" Stroke="{StaticResource PhoneAccentBrush}" StrokeThickness="4" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
+            <Path Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,12,12,12" x:Name="OrientationArrow" Opacity="0.7" CacheMode="BitmapCache" Width="36" Height="48" Data="{StaticResource Navigation2IconData}" Fill="{StaticResource PhoneAccentTransparentBrush}" Stroke="{StaticResource PhoneAccentBrush}" StrokeThickness="4" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
                 <Path.RenderTransform>
                     <RotateTransform x:Name="ArrowRotation" CenterX="0.5" CenterY="0.5" />
                 </Path.RenderTransform>

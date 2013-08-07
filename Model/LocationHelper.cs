@@ -105,13 +105,12 @@ namespace Bicikelj.Model
                         return Disposable.Create(() => observableCompass = null);
                     }
                 })
-                  .Buffer(TimeSpan.FromSeconds(2))
-                  .Where(headings => headings.Count > 0)
-                  .Select(headings => headings.Average())
-                  .Where(heading => !double.IsNaN(heading))
-                  .Publish(lastHeading)
-                  .RefCount();
-                compass.Start();
+                .Buffer(TimeSpan.FromSeconds(2))
+                .Where(headings => headings.Count > 0)
+                .Select(headings => headings.Average())
+                .Where(heading => !double.IsNaN(heading))
+                .Publish(lastHeading)
+                .RefCount();
             }
             return observableCompass;
         }

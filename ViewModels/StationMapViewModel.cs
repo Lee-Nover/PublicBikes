@@ -7,6 +7,9 @@ using System.Windows.Media.Animation;
 using Bicikelj.Model;
 using Bicikelj.Views;
 using Caliburn.Micro;
+using Microsoft.Devices.Sensors;
+using System.Windows;
+using System.Device.Location;
 
 namespace Bicikelj.ViewModels
 {
@@ -139,6 +142,9 @@ namespace Bicikelj.ViewModels
             if (view != null)
             {
                 var map = this.view.Map;
+                if (!Compass.IsSupported)
+                    this.view.OrientationArrow.Visibility = Visibility.Collapsed;
+
                 map.ViewChangeStart += (sender, e) => {
                     zoomDone = false;
                     tilesLoaded = false;
@@ -183,14 +189,21 @@ namespace Bicikelj.ViewModels
                     .ObserveOn(syncContext)
                     .Subscribe(sl => {
                         var r = LocationHelper.GetLocationRect(sl);
-                        var oneKmAway = sl.Where(s => s.Coordinate.GetDistanceTo(r.Center) < 500).ToList();
-                        r = LocationHelper.GetLocationRect(oneKmAway);
-                        view.Map.SetView(r);
+                        GeoCoordinate centerPoint;
                         if (CurrentLocation.Coordinate != null && cityContext.IsCurrentCitySelected())
-                            view.Map.Center = CurrentLocation.Coordinate;
-                        // todo: else use City.Center (GeoCoordinate)
-                            
-                        //view.Map.ZoomLevel = 15;
+                            centerPoint = CurrentLocation.Coordinate;
+                        else
+                            centerPoint = r.Center;
+                        var oneKmAway = sl.Where(s => s.Coordinate.GetDistanceTo(centerPoint) < 500).ToList();
+                        if (oneKmAway.Count > 1)
+                        {
+                            r = LocationHelper.GetLocationRect(oneKmAway);
+                            view.Map.SetView(r);
+                        }
+                        else
+                            view.Map.ZoomLevel = 15;
+                        view.Map.Center = centerPoint;
+
                         Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
                     });
             
