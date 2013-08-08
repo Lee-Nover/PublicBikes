@@ -15,6 +15,7 @@ using Caliburn.Micro;
 using Caliburn.Micro.Contrib.Dialogs;
 using Microsoft.Phone.Controls.Maps;
 using System.Windows;
+using System.Collections.ObjectModel;
 
 namespace Bicikelj.ViewModels
 {
@@ -31,6 +32,7 @@ namespace Bicikelj.ViewModels
             this.config = config;
             this.CurrentLocation = new LocationViewModel();
             this.DestinationLocation = new LocationViewModel();
+            this.RouteLegs = new ObservableCollection<NavigationRouteLegViewModel>();
         }
 
         private double travelDistance = double.NaN;
@@ -328,6 +330,8 @@ namespace Bicikelj.ViewModels
             MapRoute(points, navPoints);
         }
 
+        public ObservableCollection<NavigationRouteLegViewModel> RouteLegs { get; set; }
+
         private void MapRoute(IEnumerable<GeoCoordinate> points, IEnumerable<GeoCoordinate> navPoints)
         {
             LocationCollection locCol = new LocationCollection();
@@ -347,7 +351,7 @@ namespace Bicikelj.ViewModels
                 // clear the route and remove pins other than CurrentPos and Destination
                 view.Route.Children.Clear();
                 view.Route.Children.Add(pl);
-                view.RoutePins.Children.Clear();
+                RouteLegs.Clear();
                     
                 int idxPoint = 0;
                 int idxDest = navPoints.Count() - 1;
@@ -359,26 +363,11 @@ namespace Bicikelj.ViewModels
                         DestinationLocation.Coordinate = point;
                     else
                     {
-                        // todo: replace with a RouteLegVM class and add to a RouteLegs list property
-                        Pushpin pp = new Pushpin();
-                        pp.Location = point;
-                        double pinWidth = 28;// App.Current.RootVisual.RenderSize.Width * 0.06;
-                        Path p = new Path() { Stretch = Stretch.Uniform, Width = pinWidth, Height = pinWidth, Fill = new SolidColorBrush(Colors.White) };
-                        Binding b = new Binding();
-                        b.Converter = App.Current.Resources["PinTypeToIconConverter"] as IValueConverter;
-
-                        if (idxPoint == 1)
-                            pp.DataContext = PinType.BikeStand;
-                        else if (idxPoint == 2)
-                            pp.DataContext = PinType.Walking;
-                        p.SetBinding(Path.DataProperty, b);
-                        pp.Content = p;
-                        pp.Style = App.Current.Resources["PushpinTemplateNormal"] as Style;
-                        pp.PositionOrigin = PositionOrigin.BottomCenter;
-
-                        view.RoutePins.Children.Add(pp);
+                        PinType pinType = PinType.BikeStand;
+                        if (idxPoint == idxDest - 1)
+                            pinType = PinType.Walking;
+                        RouteLegs.Add(new NavigationRouteLegViewModel() { Coordinate = point, LegType = pinType });
                     }
-                        
                     idxPoint++;
                 }
                 view.Map.SetView(viewRect);

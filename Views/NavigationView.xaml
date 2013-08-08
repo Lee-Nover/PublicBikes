@@ -57,12 +57,11 @@
                         <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
-                <maps:MapLayer x:Name="RoutePins" />
-                <maps:MapItemsControl x:Name="Stations">
+                <maps:MapItemsControl x:Name="RouteLegs">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
                             <maps:Pushpin Location="{Binding Coordinate}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
-                                <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" />
+                                <Path Width="28" Height="28" Data="{Binding LegType, Converter={StaticResource PinTypeToIconConverter}}" Fill="White" Stretch="Uniform" />
                             </maps:Pushpin>
                         </DataTemplate>
                     </maps:MapItemsControl.ItemTemplate>
