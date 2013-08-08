@@ -53,6 +53,7 @@ namespace Bicikelj
                     BugSenseHandler.Instance.SendException(e.ExceptionObject);
                 e.Handled = true;
             };
+            App.Current.UnhandledException += (s, e) => { e.Handled = true; };
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)

@@ -23,7 +23,11 @@ namespace Bicikelj.Model
                     coordinate = new GeoCoordinate(Latitude, Longitude);
                 return coordinate;
             }
-            set { coordinate = value; }
+            set {
+                coordinate = value;
+                Latitude = coordinate.Latitude;
+                Longitude = coordinate.Longitude;
+            }
         }
 
 

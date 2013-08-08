@@ -7,6 +7,7 @@
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
     xmlns:bab="clr-namespace:BindableApplicationBar"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:conv="clr-namespace:Bicikelj.Converters"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     x:Class="Bicikelj.Views.StationMapView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
@@ -23,6 +24,7 @@
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
                 Storyboard.TargetName="OrientationArrow" />
         </Storyboard>
+        <conv:StationStyleConverter x:Name="stationStyleConverter" SingleStyle="{StaticResource PushpinTemplateNormal}" ClusterStyle="{StaticResource PushpinClusterTemplateNormal}" />
     </UserControl.Resources>
     <Grid x:Name="LayoutRoot" Background="Transparent" >
        
@@ -54,12 +56,8 @@
                 <maps:MapItemsControl x:Name="Items">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Name="Pin" Opacity="0" PositionOrigin="BottomCenter" Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" Style="{StaticResource PushpinTemplateNormal}" CacheMode="BitmapCache">
-                                
-                                    <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False" />
-                                
-                                    <!--Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" /-->
-
+                            <maps:Pushpin Name="Pin" Style="{Binding ., Converter={StaticResource stationStyleConverter}}" Opacity="0" PositionOrigin="BottomCenter" Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" CacheMode="BitmapCache" >
+                                <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False"  />
                                 <maps:Pushpin.Triggers>
                                     <EventTrigger RoutedEvent="Canvas.Loaded">
                                         <BeginStoryboard>

@@ -18,8 +18,8 @@ namespace Bicikelj.ViewModels
         readonly IEventAggregator events;
         private SystemConfig config;
         private CityContextViewModel cityContext;
-        private IList<StationViewModel> stations = null;
-        public IList<StationViewModel> Stations {
+        private List<StationViewModel> stations = null;
+        public List<StationViewModel> Stations {
             get { return stations; }
             private set {
                 stations = value;
@@ -39,9 +39,11 @@ namespace Bicikelj.ViewModels
                 return;
             }
             
+            var map = this.view.Map;
+            var clusters = StationClusterer.ClusterStations(stations, map, Math.Min(map.ActualWidth, map.ActualHeight) / 6);
             var newCenter = this.view.Map.TargetCenter;
             var mapRect = this.view.Map.TargetBoundingRectangle;
-            var visibleStations = stations.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct();
+            var visibleStations = clusters.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct();
             
             var toKeep = visibleStations.Intersect(this.Items);
             var toAdd = visibleStations.Except(toKeep).ToList();
@@ -93,12 +95,15 @@ namespace Bicikelj.ViewModels
             set {
                 if (value == activeItem)
                     return;
-                
+                if (value != null && !value.CanOpenDetails())
+                    return;
+
                 bool? doShow = null;
                 if (activeItem == null && value != null)
                     doShow = true;
                 else if (activeItem != null && value == null)
                     doShow = false;
+                
                 /*
                 if (doShow.HasValue)
                 {

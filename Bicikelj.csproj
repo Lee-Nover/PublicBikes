@@ -139,6 +139,7 @@
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="Controls\TravelSpeedControl.cs" />
     <Compile Include="Converters\BoolToStringConverter.cs" />
+    <Compile Include="Converters\StationStyleConverter.cs" />
     <Compile Include="Converters\TravelSpeedConverters.cs" />
     <Compile Include="Converters\HubTileConverters.cs" />
     <Compile Include="Converters\PinTypeToIconConverter.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="ComponentModel.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\CityContextViewModel.cs" />
+    <Compile Include="ViewModels\ClusteredStationViewModel.cs" />
     <Compile Include="ViewModels\StationMapViewModel.cs" />
     <Compile Include="ViewModels\FavoriteViewModel.cs" />
     <Compile Include="ViewModels\LocationViewModel.cs" />
@@ -222,6 +224,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\AboutView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ClusteredStation\Pushpin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
