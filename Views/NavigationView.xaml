@@ -48,12 +48,12 @@
                 <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation">
                     <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding Coordinate}" />
-                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}">
+                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
                 <maps:MapLayer x:Name="DestinationLocation">
-                    <maps:Pushpin x:Name="DestinationLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}">
+                    <maps:Pushpin x:Name="DestinationLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                         <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
@@ -61,7 +61,7 @@
                 <maps:MapItemsControl x:Name="Stations">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Location="{Binding Coordinate}">
+                            <maps:Pushpin Location="{Binding Coordinate}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                                 <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" />
                             </maps:Pushpin>
                         </DataTemplate>

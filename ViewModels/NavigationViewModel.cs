@@ -14,6 +14,7 @@ using Bicikelj.Views;
 using Caliburn.Micro;
 using Caliburn.Micro.Contrib.Dialogs;
 using Microsoft.Phone.Controls.Maps;
+using System.Windows;
 
 namespace Bicikelj.ViewModels
 {
@@ -358,6 +359,7 @@ namespace Bicikelj.ViewModels
                         DestinationLocation.Coordinate = point;
                     else
                     {
+                        // todo: replace with a RouteLegVM class and add to a RouteLegs list property
                         Pushpin pp = new Pushpin();
                         pp.Location = point;
                         double pinWidth = 28;// App.Current.RootVisual.RenderSize.Width * 0.06;
@@ -371,6 +373,8 @@ namespace Bicikelj.ViewModels
                             pp.DataContext = PinType.Walking;
                         p.SetBinding(Path.DataProperty, b);
                         pp.Content = p;
+                        pp.Style = App.Current.Resources["PushpinTemplateNormal"] as Style;
+                        pp.PositionOrigin = PositionOrigin.BottomCenter;
 
                         view.RoutePins.Children.Add(pp);
                     }

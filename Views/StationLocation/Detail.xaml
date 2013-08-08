@@ -34,12 +34,12 @@
                 <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation">
                     <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding }" />
-                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}">
+                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
                 <maps:MapLayer x:Name="GeoLocation">
-                    <maps:Pushpin x:Name="DestinationLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}">
+                    <maps:Pushpin x:Name="DestinationLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                         <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
