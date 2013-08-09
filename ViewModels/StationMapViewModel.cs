@@ -43,9 +43,9 @@ namespace Bicikelj.ViewModels
             var clusters = StationClusterer.ClusterStations(stations, map, Math.Min(map.ActualWidth, map.ActualHeight) / 6);
             var newCenter = this.view.Map.TargetCenter;
             var mapRect = this.view.Map.TargetBoundingRectangle;
-            var visibleStations = clusters.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct();
+            var visibleStations = clusters.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct().ToList();
             
-            var toKeep = visibleStations.Intersect(this.Items);
+            var toKeep = visibleStations.Intersect(this.Items).ToList();
             var toAdd = visibleStations.Except(toKeep).ToList();
             var toRemove = this.Items.Except(toKeep).ToList();
             this.Items.RemoveRange(toRemove);

@@ -67,6 +67,17 @@ namespace Bicikelj.ViewModels
 
         public override bool CanOpenDetails() { return false; }
         public override bool CanToggleFavorite() { return false; }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as ClusteredStationViewModel;
+            bool result;
+            if (other != null)
+                result = this.items.SequenceEqual(other.items);
+            else
+                result = base.Equals(obj);
+            return result;
+        }
     }
 
     public class ClusterContainer

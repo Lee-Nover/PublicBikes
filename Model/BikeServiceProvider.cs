@@ -28,6 +28,8 @@ namespace Bicikelj.Model
         public static City FindByCityName(string cityName)
         {
             City result = null;
+            if (string.IsNullOrEmpty(cityName))
+                return result;
 
             var allCities = GetAllCities();
             result = allCities.Where(c =>

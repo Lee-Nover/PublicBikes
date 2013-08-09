@@ -43,6 +43,9 @@ namespace Bicikelj
 
         private void InitBugSense()
         {
+#if DEBUG
+            return;
+#endif
             BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {
