@@ -386,6 +386,8 @@ namespace Bicikelj.ViewModels
 
         public void TakeMeTo(string address)
         {
+            if (string.IsNullOrEmpty(address)) return;
+
             Address = "";
             IsFavorite = false;
             events.Publish(BusyState.Busy("searching..."));

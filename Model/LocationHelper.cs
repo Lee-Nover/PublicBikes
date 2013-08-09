@@ -136,7 +136,8 @@ namespace Bicikelj.Model
 
                 if (isLocationEnabled)
                 {
-                    if (!geoCoordinateWatcher.TryStart(false, TimeSpan.FromMilliseconds(10)))
+                    geoCoordinateWatcher.Start();
+                    if (geoCoordinateWatcher.Status == GeoPositionStatus.Disabled)
                     {
                         geoPos.Status = GeoPositionStatus.Disabled;
                         geoPos.Coordinate = GeoCoordinate.Unknown;
@@ -172,7 +173,8 @@ namespace Bicikelj.Model
                     };
                     geoCoordinateWatcher.StatusChanged += statusChanged;
                     geoCoordinateWatcher.PositionChanged += positionChanged;
-                    var isEnabled = isLocationEnabled && geoCoordinateWatcher.TryStart(false, TimeSpan.FromMilliseconds(10));
+                    geoCoordinateWatcher.Start(false);
+                    var isEnabled = isLocationEnabled && geoPos.Status != GeoPositionStatus.Disabled;
                     if (!isEnabled)
                     {
                         geoPos.Status = GeoPositionStatus.Disabled;
