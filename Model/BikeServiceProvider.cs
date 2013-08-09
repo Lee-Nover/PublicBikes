@@ -51,6 +51,7 @@ namespace Bicikelj.Model
             new City(){ CityName = "Dublin", Country = "Ireland", ServiceName = "dublinbikes", UrlCityName = "dublin" },
             //new City(){ CityName = "Gijón", Country = "Spain", ServiceName = "Gijón-Bici", UrlCityName = "gijon" },
             new City(){ CityName = "Göteborg", Country = "Sweden", ServiceName = "styr & ställ", UrlCityName = "goteborg", AlternateCityName = "Gothenburg" },
+            new City(){ CityName = "Lillestrøm", Country = "Norway", ServiceName = "Bysykkel", UrlCityName = "lillestrom" },
             new City(){ CityName = "Ljubljana", Country = "Slovenia", ServiceName = "Bicikelj", UrlCityName = "ljubljana" },
             new City(){ CityName = "Luxembourg", Country = "Luxembourg", ServiceName = "vel’oh!", UrlCityName = "luxembourg" },
             new City(){ CityName = "Lyon", Country = "France", ServiceName = "vélo'v", UrlCityName = "lyon" },
