@@ -240,7 +240,7 @@
             <Ellipse Grid.Row="2" Width="12" Height="3" Stretch="Fill" StrokeThickness="1" Fill="{StaticResource PhoneChromeBrush}" Opacity="0.1" />
             <Polyline Grid.Row="1" Grid.RowSpan="2" Width="16" Height="10" StrokeThickness="3" Fill="{TemplateBinding BorderBrush}" Stroke="{TemplateBinding BorderBrush}" Points="0,0 100,0 50,2 0,0" Margin="0,2,0,6" HorizontalAlignment="Center" StrokeLineJoin="Round" StrokeStartLineCap="Round" Stretch="Fill" VerticalAlignment="Bottom" StrokeEndLineCap="Round"/>
             <Grid VerticalAlignment="Center" HorizontalAlignment="Center" >
-                <Rectangle x:Name="ContentBorder_" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding Background}" StrokeThickness="4"  RadiusX="3" RadiusY="3" MinWidth="{Binding ActualHeight}" />
+                <Rectangle x:Name="ContentBorder_" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding Background}" StrokeThickness="4"  RadiusX="3" RadiusY="3" MinWidth="{Binding ActualHeight, ElementName=ContentBorder_}" />
                 <ContentPresenter x:Name="Content" Margin="6" HorizontalAlignment="Center" VerticalAlignment="Top"/>
             </Grid>
         </Grid>

@@ -68,51 +68,77 @@ namespace Bicikelj.Model
         }
     }
 
+    public class CompassData
+    {
+        public CompassReading? Reading;
+        public bool IsSupported;
+        public bool IsAccurate;
+        public bool IsValid;
+    }
+
     public static class LocationHelper
     {
         #region Reactive
 
         #region Compass
-        private static double lastHeading = 0;
+        private static CompassData lastCompassData = new CompassData();
         private static Compass compass = new Compass();
-        private static IObservable<double> observableCompass = null;
-        public static IObservable<double> GetCurrentHeading()
+        private static IObservable<CompassData> observableCompass = null;
+        public static IObservable<CompassData> GetCurrentCompass()
         {
             if (observableCompass == null)
             {
-                observableCompass = Observable.Create<double>(observer =>
+                observableCompass = Observable.Create<CompassData>(observer =>
                 {
                     if (Compass.IsSupported)
                     {
+                        lastCompassData.IsSupported = true;
                         EventHandler<SensorReadingEventArgs<CompassReading>> compassChanged = (sender, e) =>
                         {
-                            lastHeading = e.SensorReading.TrueHeading;
-                            observer.OnNext(lastHeading);
+                            lastCompassData.Reading = e.SensorReading;
+                            lastCompassData.IsAccurate = e.SensorReading.HeadingAccuracy < 20;
+                            lastCompassData.IsValid = compass.IsDataValid;
+                            observer.OnNext(lastCompassData);
+                        };
+                        EventHandler<CalibrationEventArgs> compassCalibration = (sender, e) => {
+                            lastCompassData.IsAccurate = false;
+                            observer.OnNext(lastCompassData);
                         };
                         compass.CurrentValueChanged += compassChanged;
+                        compass.Calibrate += compassCalibration;
+                        compass.TimeBetweenUpdates = TimeSpan.FromMilliseconds(120);
                         compass.Start();
                         return Disposable.Create(() =>
                         {
                             compass.CurrentValueChanged -= compassChanged;
+                            compass.Calibrate -= compassCalibration;
                             compass.Stop();
                             observableCompass = null;
                         });
                     }
                     else
                     {
-                        observer.OnNext(0);
+                        lastCompassData.IsSupported = false;
+                        observer.OnNext(lastCompassData);
                         observer.OnCompleted();
                         return Disposable.Create(() => observableCompass = null);
                     }
                 })
-                .Buffer(TimeSpan.FromSeconds(2))
-                .Where(headings => headings.Count > 0)
-                .Select(headings => headings.Average())
-                .Where(heading => !double.IsNaN(heading))
-                .Publish(lastHeading)
+                .Publish(lastCompassData)
                 .RefCount();
             }
             return observableCompass;
+        }
+
+        public static IObservable<double> GetCurrentHeading()
+        {
+            return GetCurrentCompass()
+                .Where(data => data.IsValid && data.IsAccurate)
+                .Select(data => data.Reading.GetValueOrDefault().TrueHeading)
+                .Buffer(TimeSpan.FromSeconds(1))
+                .Where(headings => headings.Count > 0)
+                .Select(headings => headings.Average())
+                .Where(heading => !double.IsNaN(heading));
         }
         #endregion
 

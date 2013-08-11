@@ -1,6 +1,7 @@
 ﻿using Bicikelj.Model;
 using Caliburn.Micro;
 using System;
+using System.Linq;
 using System.Device.Location;
 using System.Reactive.Linq;
 

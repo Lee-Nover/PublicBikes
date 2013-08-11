@@ -44,16 +44,19 @@ namespace Bicikelj.ViewModels
             var newCenter = this.view.Map.TargetCenter;
             var mapRect = this.view.Map.TargetBoundingRectangle;
             var visibleStations = clusters.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct().ToList();
-            
-            var toKeep = visibleStations.Intersect(this.Items).ToList();
-            var toAdd = visibleStations.Except(toKeep).ToList();
-            var toRemove = this.Items.Except(toKeep).ToList();
+
+            var cc = new ClusterComparer();
+
+            var toKeep = visibleStations.Intersect(this.Items, cc).ToList();
+            var toAdd = visibleStations.Except(toKeep, cc).ToList();
+            var toRemove = this.Items.Except(toKeep, cc).ToList();
+
             this.Items.RemoveRange(toRemove);
             if (addingItemsDisp != null)
             {
                 addingItemsDisp.Dispose();
             }
-            
+
             addingItemsDisp = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter))
                 .ToObservable()
                 .SubscribeOn(NewThreadScheduler.Default)

@@ -11,6 +11,7 @@ using Caliburn.Micro;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Shell;
+using Microsoft.Phone.Info;
 
 namespace Bicikelj
 {
@@ -43,9 +44,13 @@ namespace Bicikelj
 
         private void InitBugSense()
         {
+            // debug versions and running on emulator shouldn't report exceptions
 #if DEBUG
             return;
 #endif
+            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
+                return;
+
             BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {

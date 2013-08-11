@@ -13,6 +13,7 @@ namespace Bicikelj.ViewModels
     public class ClusteredStationViewModel : StationViewModel
     {
         private List<StationViewModel> items = new List<StationViewModel>();
+        public List<StationViewModel> Items { get { return items; } }
 
         public ClusteredStationViewModel(StationViewModel station)
         {
@@ -67,17 +68,40 @@ namespace Bicikelj.ViewModels
 
         public override bool CanOpenDetails() { return false; }
         public override bool CanToggleFavorite() { return false; }
+    }
 
-        public override bool Equals(object obj)
+    public class ClusterComparer : IEqualityComparer<StationViewModel>
+    {
+        #region IEqualityComparer<StationViewModel> Members
+
+        public bool Equals(StationViewModel x, StationViewModel y)
         {
-            var other = obj as ClusteredStationViewModel;
+            var xc = x as ClusteredStationViewModel;
+            var yc = y as ClusteredStationViewModel;
             bool result;
-            if (other != null)
-                result = this.items.SequenceEqual(other.items);
+            if (xc != null && yc != null)
+                result = xc.Items.SequenceEqual(yc.Items);
             else
-                result = base.Equals(obj);
+                result = x.Equals(y);
             return result;
         }
+
+        public int GetHashCode(StationViewModel obj)
+        {
+            var cluster = obj as ClusteredStationViewModel;
+            if (cluster == null)
+                return obj.GetHashCode();
+            else
+            {
+                string str = "";
+                var allNum = cluster.Items.Select(s => s.Location.Number).OrderBy(n => n).Select(n => n.ToString());
+                foreach (var num in allNum)
+                    str += num + " ";
+                return str.GetHashCode();
+            }
+        }
+
+        #endregion
     }
 
     public class ClusterContainer
