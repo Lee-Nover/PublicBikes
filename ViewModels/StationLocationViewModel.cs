@@ -18,11 +18,13 @@ namespace Bicikelj.ViewModels
         public StationLocation Location { get { return stationLocation; } set { SetLocation(value); } }
         private IEventAggregator events;
         private SystemConfig config;
+        private CityContextViewModel cityCtx;
 
         public StationLocationViewModel(StationLocation stationLocation)
         {
             events = IoC.Get<IEventAggregator>();
             config = IoC.Get<SystemConfig>();
+            cityCtx = IoC.Get<CityContextViewModel>();
             InternalSetLocation(stationLocation);
         }
 
@@ -72,7 +74,12 @@ namespace Bicikelj.ViewModels
             {
                 if (double.IsNaN(Distance))
                     if (config.LocationEnabled.GetValueOrDefault())
-                        return "no location information";
+                    {
+                        if (cityCtx.IsCurrentCitySelected())
+                            return "no location information";
+                        else
+                            return "currently not in the selected city";
+                    }
                     else
                         return "location services are turned off";
                 else
@@ -142,9 +149,13 @@ namespace Bicikelj.ViewModels
 
         public void CalculateRoute(GeoCoordinate from, GeoCoordinate to)
         {
-            events.Publish(BusyState.Busy("calculating route..."));
             CurrentLocation = from;
             NotifyOfPropertyChange(() => CurrentLocation);
+
+            if (!cityCtx.IsCurrentCitySelected())
+                return;
+
+            events.Publish(BusyState.Busy("calculating route..."));
             LocationHelper.CalculateRoute(new GeoCoordinate[] { from, to })
                 //.ObserveOn(ReactiveExtensions.SyncScheduler)
                 .Subscribe(
