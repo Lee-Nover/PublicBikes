@@ -29,15 +29,8 @@ namespace Caliburn.Micro.Contrib.Dialogs
         public string Message { get { return Dialog != null ? Dialog.Message : ""; } }
 
         public DialogViewModel()
-            : this(null)
-        {
-        }
-
-        public DialogViewModel(Dialog<TResponse> dialog)
         {
             Responses = new BindableCollection<BindableResponse<TResponse>>();
-            Dialog = dialog;
-            this.DisplayName = dialog.Subject;
         }
 
         #region IDialogViewModel<TResponse> Members
@@ -48,7 +41,8 @@ namespace Caliburn.Micro.Contrib.Dialogs
             set
             {
                 _dialog = value;
-
+                if (_dialog != null)
+                    this.DisplayName = _dialog.Subject;
                 CreateResponses();
             }
         }
