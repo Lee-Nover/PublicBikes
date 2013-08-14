@@ -8,6 +8,7 @@ namespace Bicikelj.Model
     {
         Station,
         Coordinate,
+        Address,
         Name
     }
 
@@ -21,16 +22,40 @@ namespace Bicikelj.Model
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         private GeoCoordinate coordinate;
+
+        public FavoriteType GetFavoriteType()
+        {
+            var c = Coordinate;
+            if (Station != null)
+                return Model.FavoriteType.Station;
+            if (c.IsUnknown || (c.Latitude == 0 && c.Longitude == 0))
+            {
+                if (string.IsNullOrEmpty(Address))
+                    return Model.FavoriteType.Name;
+                else
+                    return Model.FavoriteType.Address;
+            }
+            else
+                return Model.FavoriteType.Coordinate;
+        }
+
         [IgnoreDataMember]
         public GeoCoordinate Coordinate
         {
             get
             {
-                if (coordinate == null)
+                if (coordinate == null || coordinate.IsUnknown || (coordinate.Longitude == 0 && coordinate.Latitude == 0))
                     coordinate = new GeoCoordinate(Latitude, Longitude);
                 return coordinate;
             }
-            set { coordinate = value; }
+            set { 
+                coordinate = value;
+                if (coordinate != null)
+                {
+                    Latitude = coordinate.Latitude;
+                    Longitude = coordinate.Longitude;
+                }
+            }
         }
 
         public FavoriteLocation()

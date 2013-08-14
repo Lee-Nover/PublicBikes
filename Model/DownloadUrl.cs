@@ -4,6 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
 using ServiceStack.Text;
+using System.IO;
 
 namespace Bicikelj.Model
 {
@@ -11,7 +12,7 @@ namespace Bicikelj.Model
     {
         public T Object;
         public object State;
-        
+
         public ObjectWithState(T obj, object state)
         {
             this.Object = obj;
@@ -30,23 +31,42 @@ namespace Bicikelj.Model
         {
             return Observable.Create<ObjectWithState<string>>(observer =>
             {
-                var wc = new SharpGIS.GZipWebClient();
-                DownloadStringCompletedEventHandler evh = (s, e) =>
+                IAsyncResult iar = null;
+                WebResponse response = null;
+                HttpWebRequest wr = WebRequest.CreateHttp(url);
+                wr.BeginGetResponse(ar =>
                 {
-                    if (e.Error != null)
-                        observer.OnError(e.Error);
-                    else
+                    iar = ar;
+                    try
                     {
-                        observer.OnNext(new ObjectWithState<string>(e.Result, e.UserState));
+                        response = wr.EndGetResponse(ar);
+                    }
+                    catch (WebException we)
+                    {
+                        if (we.Status == WebExceptionStatus.RequestCanceled)
+                            return;
+                        response = we.Response;
+                        if (response == null || response.ContentType != "application/json")
+                        {
+                            response = null;
+                            observer.OnError(we);
+                            return;
+                        }
+                    }
+                    using (response)
+                    using (Stream responseStream = response.GetResponseStream())
+                    {
+                        var reader = new StreamReader(responseStream);
+                        var content = reader.ReadToEnd();
+                        observer.OnNext(new ObjectWithState<string>(content, user));
                         observer.OnCompleted();
                     }
-                };
-                wc.DownloadStringCompleted += evh;
-                wc.DownloadStringAsync(new Uri(url), user);
+                }, user);
+
                 return Disposable.Create(() =>
                 {
-                    wc.DownloadStringCompleted -= evh;
-                    wc.CancelAsync();
+                    if (iar != null && !iar.IsCompleted)
+                        wr.Abort();
                 });
             })
             .ObserveOn(ThreadPoolScheduler.Instance);

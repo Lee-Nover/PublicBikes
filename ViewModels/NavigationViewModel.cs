@@ -138,7 +138,10 @@ namespace Bicikelj.ViewModels
             LocationHelper.FindAddress(c).Subscribe(addr =>
             {
                 if (addr != null)
+                {
                     ToLocation = addr.FormattedAddress;
+                    Address = ToLocation;
+                }
             });
             TakeMeTo(c);
         }
@@ -160,8 +163,12 @@ namespace Bicikelj.ViewModels
                 Address = NavigateRequest.Address;
                 DestinationLocation.LocationName = NavigateRequest.LocationName;
                 DestinationLocation.Coordinate = NavigateRequest.Coordinate;
-                if (NavigateRequest.Coordinate != null)
+
+                var c = NavigateRequest.Coordinate;
+                if (c != null && !c.IsUnknown && !(c.Latitude == 0 && c.Longitude == 0))
                     TakeMeTo(NavigateRequest.Coordinate);
+                else if (!string.IsNullOrEmpty(NavigateRequest.Address))
+                    TakeMeTo(NavigateRequest.Address);
                 else
                     TakeMeTo(NavigateRequest.LocationName);
                 NavigateRequest = null;
@@ -217,7 +224,9 @@ namespace Bicikelj.ViewModels
 
         private void FindNearestStations(GeoCoordinate fromLocation, GeoCoordinate toLocation)
         {
-            cityContext.GetStations().Where(s => s != null)
+            cityContext.GetStations()
+                .SubscribeOn(ThreadPoolScheduler.Instance)
+                .Where(s => s != null)
                 .Take(1)
                 .ObserveOn(ThreadPoolScheduler.Instance)
                 .Subscribe(s  => {
@@ -267,8 +276,21 @@ namespace Bicikelj.ViewModels
                         },
                         () =>
                         {
-                            var shortestRoute = routes.OrderBy(nav => GetTravelDuration(nav.Object, config)).FirstOrDefault();
-                            MapRoute(shortestRoute.Object, shortestRoute.State as IEnumerable<GeoCoordinate>);
+                            var validRoutes = routes.Where(r => !r.Object.HasErrors).ToList();
+                            var navErrors = routes.Where(r => r.Object.HasErrors).ToList();
+                            if (validRoutes.Count > 0)
+                            {
+                                var shortestRoute = validRoutes.OrderBy(nav => GetTravelDuration(nav.Object, config)).FirstOrDefault();
+                                MapRoute(shortestRoute.Object, shortestRoute.State as IEnumerable<GeoCoordinate>);
+                            }
+                            else if (navErrors.Count > 0)
+                            {
+                                string errorStr = "";
+                                foreach (var err in navErrors)
+                                    errorStr += err.Object.ErrorString;
+                                
+                                events.Publish(new ErrorState(new Exception(errorStr), "could not calculate route"));
+                            }
                         });
                 });
         }
@@ -303,15 +325,6 @@ namespace Bicikelj.ViewModels
                 }
             }
             return travelDuration;
-        }
-
-        private void CalculateRoute(IEnumerable<GeoCoordinate> navPoints)
-        {
-            LocationHelper.CalculateRoute(navPoints)
-                .Subscribe(
-                    n => MapRoute(n, null),
-                    e => events.Publish(new ErrorState(e, "could not calculate route")),
-                    () => events.Publish(BusyState.NotBusy()));
         }
 
         private void MapRoute(NavigationResponse routeResponse, IEnumerable<GeoCoordinate> navPoints)
@@ -387,7 +400,7 @@ namespace Bicikelj.ViewModels
         public void TakeMeTo(string address)
         {
             if (string.IsNullOrEmpty(address)) return;
-
+            var wasFavorite = IsFavorite;
             Address = "";
             IsFavorite = false;
             events.Publish(BusyState.Busy("searching..."));
@@ -398,7 +411,10 @@ namespace Bicikelj.ViewModels
             {
                 if (r == null || r.Location == null)
                 {
-                    events.Publish(new ErrorState(new Exception(), "could not find location"));
+                    string errorStr = "";
+                    if (r.HasErrors)
+                        errorStr = r.ErrorString;
+                    events.Publish(new ErrorState(new Exception(errorStr), "could not find location"));
                     return;
                 }
                 if (r.Location.Address != null)
@@ -408,7 +424,13 @@ namespace Bicikelj.ViewModels
                     Address = address;
                 this.DestinationLocation.LocationName = address;
                 NotifyOfPropertyChange(() => CanToggleFavorite);
-                TakeMeTo(new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude));
+                var coordinate = new GeoCoordinate(r.Location.Point.Latitude, r.Location.Point.Longitude);
+                if (wasFavorite)
+                {
+                    DestinationLocation.Coordinate = coordinate;
+                    events.Publish(new FavoriteState(GetFavorite(DestinationLocation), true));
+                }
+                TakeMeTo(coordinate);
             },
             e => events.Publish(new ErrorState(e, "could not find location")),
             () => events.Publish(BusyState.NotBusy()));
@@ -417,7 +439,11 @@ namespace Bicikelj.ViewModels
         public void TakeMeTo(GeoCoordinate location)
         {
             if (config.LocationEnabled.GetValueOrDefault())
-                LocationHelper.GetCurrentLocation().Take(1).Subscribe(c => {
+                LocationHelper.GetCurrentLocation()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .Take(1)
+                    .Timeout(TimeSpan.FromSeconds(5))
+                    .Subscribe(c => {
                         CurrentLocation.Coordinate = c.Coordinate;
                         FindBestRoute(c.Coordinate, location);
                 },
@@ -466,14 +492,6 @@ namespace Bicikelj.ViewModels
         public bool CanEditName
         {
             get { return IsFavorite; }
-        }
-
-        public void EditName_()
-        {
-            LocationViewModel lvm = new LocationViewModel();
-            lvm.Address = DestinationLocation.Address;
-            lvm.LocationName = DestinationLocation.LocationName;
-            IWindowManager wm = IoC.Get<IWindowManager>();
         }
 
         public IEnumerable<IResult> EditName()
