@@ -23,6 +23,49 @@ namespace Bicikelj.Model
 
     public static class DownloadUrl
     {
+        #region Helpers
+
+        private static string GetContent(WebResponse response, Stream responseStream)
+        {
+            var memStr = new MemoryStream();
+            responseStream.CopyTo(memStr);
+            memStr.Position = 0;
+
+            var enc = Encoding.UTF8;
+            // get correct charset and encoding from the server's header
+            var charset = GetCharset(response.ContentType);
+            if (charset != "")
+                enc = Encoding.GetEncoding(charset);
+            var reader = new StreamReader(memStr, enc);
+            var content = reader.ReadToEnd();
+
+            if (response.ContentType.Contains("text/html") && charset == "")
+            {
+                memStr.Position = 0;
+                charset = GetCharset(content);
+                if (charset != "")
+                    enc = Encoding.GetEncoding(charset);
+                var reader2 = new StreamReader(memStr, enc);
+                content = reader2.ReadToEnd();
+            }
+            return content;
+        }
+
+        private static string GetCharset(string ct)
+        {
+            var posCharset = ct.IndexOf("charset=");
+            if (posCharset > 0)
+            {
+                posCharset += 8;
+                int posCharsetEnd = ct.IndexOfAny(new[] { ' ', '\"', ';' }, posCharset);
+                if (posCharsetEnd < 0)
+                    posCharsetEnd = ct.Length;
+                return ct.Substring(posCharset, posCharsetEnd - posCharset);
+            }
+            return "";
+        }
+        #endregion
+
         public static IObservable<string> GetAsync(string url)
         {
             return GetAsync(url, null).Select(r => r.Object);
@@ -59,8 +102,8 @@ namespace Bicikelj.Model
                     using (response)
                     using (Stream responseStream = response.GetResponseStream())
                     {
-                        var reader = new StreamReader(responseStream);
-                        var content = reader.ReadToEnd();
+                        var content = GetContent(response, responseStream);
+                        
                         observer.OnNext(new ObjectWithState<string>(content, user));
                         observer.OnCompleted();
                     }
@@ -125,8 +168,7 @@ namespace Bicikelj.Model
                         using (response)
                         using (Stream responseStream = response.GetResponseStream())
                         {
-                            var reader = new StreamReader(responseStream);
-                            var content = reader.ReadToEnd();
+                            var content = GetContent(response, responseStream);
                             observer.OnNext(new ObjectWithState<string>(content, user));
                             observer.OnCompleted();
                         }
