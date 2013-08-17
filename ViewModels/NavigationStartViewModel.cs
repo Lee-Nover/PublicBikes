@@ -144,7 +144,7 @@ namespace Bicikelj.ViewModels
         private void FindNearest(IEnumerable<StationLocation> sortedStations, StationCondition condition)
         {
             sortedStations.ToObservable()
-                    .Select(station => StationLocationList.GetAvailability2(station).First())
+                    .Select(station => cityContext.GetAvailability2(station).First())
                     .Where(sa => condition(sa.Station, sa.Availability))
                     .Take(1)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)

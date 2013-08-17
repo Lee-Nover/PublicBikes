@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System;
 
 namespace Bicikelj.Model
 {
@@ -13,5 +14,12 @@ namespace Bicikelj.Model
         public string AlternateCityName { get; set; }
         public List<StationLocation> Stations { get; set; }
         public List<FavoriteLocation> Favorites { get; set; }
+        [IgnoreDataMember]
+        public BikeServiceProvider Provider;
+
+        public IObservable<List<StationLocation>> DownloadStations()
+        {
+            return Provider.DownloadStations(UrlCityName);
+        }
     }
 }

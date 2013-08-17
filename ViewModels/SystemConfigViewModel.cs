@@ -21,7 +21,7 @@ namespace Bicikelj.ViewModels
             this.cityContext = cityContext;
             this.Cities = new List<City>();
             Cities.Add(new City() { CityName = " - automatic - " });
-            Cities.AddRange(BikeServiceProvider.GetAllCities().OrderBy(c => c.Country + c.CityName).Select(c => c));
+            Cities.AddRange(BikeServiceProvider.GetAllCities().OrderBy(c => c.Country + c.CityName));
             if (string.IsNullOrEmpty(config.City))
                 selectedCity = Cities[0];
             else
@@ -134,6 +134,7 @@ namespace Bicikelj.ViewModels
                 //config.CurrentCity = "";
                 //NotifyOfPropertyChange(() => CurrentCity);
             }
+            cityContext.ObserveCurrentCity(observe);
         }
 
         protected override void OnActivate()

@@ -128,7 +128,11 @@ namespace Bicikelj.ViewModels
                     DeactivateItem(activeItem, false);
                 activeItem = value;
                 if (activeItem != null)
+                {
+                    if (CurrentLocation.Coordinate != null && cityContext.IsCurrentCitySelected())
+                        activeItem.Location.CurrentLocation = CurrentLocation.Coordinate;
                     ActivateItem(activeItem);
+                }
                 if (!doShow.HasValue || doShow.Value)
                     NotifyOfPropertyChange(() => ActiveItem);
             }

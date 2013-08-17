@@ -237,14 +237,14 @@ namespace Bicikelj.ViewModels
 
                     var nearStart = LocationHelper.SortByLocation(s, fromLocation, cyclingSpeed, toLocation, walkingSpeed).ToObservable()
                         .ObserveOn(ThreadPoolScheduler.Instance)
-                        .Select(station => StationLocationList.GetAvailability2(station).First())
+                        .Select(station => cityContext.GetAvailability2(station).First())
                         .Where(avail => avail.Availability.Available > 0)
                         .Do(avail => fromStation = avail.Station)
                         .Take(1);
 
                     var nearFinish = LocationHelper.SortByLocation(s, toLocation, cyclingSpeed, fromLocation, walkingSpeed).ToObservable()
                         .ObserveOn(ThreadPoolScheduler.Instance)
-                        .Select(station => StationLocationList.GetAvailability2(station).First())
+                        .Select(station => cityContext.GetAvailability2(station).First())
                         .Where(avail => avail.Availability.Free > 0)
                         .Do(avail => toStation = avail.Station)
                         .Take(1); // add to options how many stations to try

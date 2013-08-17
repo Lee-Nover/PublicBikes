@@ -53,7 +53,16 @@ namespace Bicikelj.ViewModels
         public bool IsFavorite { get { return stationLocation.IsFavorite; } set { SetFavorite(value); } }
 
         public GeoCoordinate GeoLocation { get; private set; }
-        public GeoCoordinate CurrentLocation { get; private set; }
+        private GeoCoordinate currentLocation;
+        public GeoCoordinate CurrentLocation {
+            get { return currentLocation; }
+            set {
+                if (value == currentLocation) return;
+                currentLocation = value;
+                NotifyOfPropertyChange(() => DistanceValueString);
+                NotifyOfPropertyChange(() => DistanceString);
+            }
+        }
         private double travelDistance = double.NaN;
         private double travelDuration = double.NaN;
         public double Distance {
@@ -84,6 +93,17 @@ namespace Bicikelj.ViewModels
                         return "location services are turned off";
                 else
                     return string.Format("distance to station {0}", LocationHelper.GetDistanceString(Distance, config.UseImperialUnits));
+            }
+        }
+
+        public string DistanceValueString
+        {
+            get
+            {
+                if (double.IsNaN(Distance))
+                    return "";
+                else
+                    return LocationHelper.GetDistanceString(Distance, config.UseImperialUnits);
             }
         }
 

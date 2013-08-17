@@ -51,11 +51,27 @@ namespace Bicikelj.ViewModels
                 .RefCount()
                 .SubscribeOn(ThreadPoolScheduler.Instance)
                 .ObserveOn(ThreadPoolScheduler.Instance);
+            ObserveCurrentCity(true);
+        }
 
-            if (this.config.LocationEnabled.GetValueOrDefault())
-                LocationHelper.GetCurrentCity().Subscribe(c => {
-                    this.CurrentCity = c;
-                });
+        private IDisposable dispCity = null;
+        public void ObserveCurrentCity(bool observe)
+        {
+            if (observe && config.LocationEnabled.GetValueOrDefault())
+            {
+                if (dispCity == null)
+                    dispCity = LocationHelper.GetCurrentCity()
+                        .SubscribeOn(ThreadPoolScheduler.Instance)
+                        .Subscribe(city =>
+                        {
+                            this.CurrentCity = city;
+                            NotifyOfPropertyChange(() => CurrentCity);
+                        });
+            }
+            else
+            {
+                ReactiveExtensions.Dispose(ref dispCity);
+            }
         }
 
         public void SetCity(string cityName)
@@ -179,15 +195,21 @@ namespace Bicikelj.ViewModels
             return obsCache;
         }
 
-        private IObservable<List<StationLocation>> DownloadStations(bool forceUpdate = false)
+        private IObservable<List<StationLocation>> DownloadStations()
         {
-            return DownloadUrl.GetAsync(StationLocationList.GetStationListUri(city.UrlCityName))
-                    .Select<string, List<StationLocation>>(s =>
-                        {
-                            var sl = StationLocationList.LoadStationsFromXML(s, city.UrlCityName);
-                            city.Stations = sl;
-                            return sl;
-                        });
+            return city
+                .DownloadStations()
+                .Do(sl => city.Stations = sl);
+        }
+
+        public IObservable<StationAvailability> GetAvailability(StationLocation station)
+        {
+            return city.Provider.GetAvailability(station);
+        }
+
+        public IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
+        {
+            return city.Provider.GetAvailability2(station);
         }
 
         private IObservable<List<StationLocation>> obsStations = null;

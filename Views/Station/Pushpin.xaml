@@ -18,6 +18,7 @@
         </StackPanel>
         <Grid Visibility="{Binding IsActive, Converter={StaticResource ValueToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="28" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="28" />
@@ -25,10 +26,11 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Path Width="24" Height="24" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" />
-            <TextBlock Grid.Column="1" x:Name="Available" Text="{Binding Availability.Available}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
-            <Path Grid.Column="2" Width="24" Height="24" Data="{StaticResource ParkingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" />
-            <TextBlock Grid.Column="3" x:Name="Free" Text="{Binding Availability.Free}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="0" Text="{Binding Location.DistanceValueString}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
+            <Path Grid.Column="1" Width="24" Height="24" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="2" x:Name="Available" Text="{Binding Availability.Available}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
+            <Path Grid.Column="3" Width="24" Height="24" Data="{StaticResource ParkingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="4" x:Name="Free" Text="{Binding Availability.Free}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
             <Button Grid.Column="5" VerticalAlignment="Center" x:Name="OpenDetails" BorderThickness="0" BorderBrush="{x:Null}" Padding="0" Margin="0">
                 <Path Width="24" Height="24" Data="{StaticResource InfoIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" />
             </Button>

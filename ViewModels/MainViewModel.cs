@@ -65,6 +65,7 @@ namespace Bicikelj.ViewModels
                     }
                     LocationHelper.IsLocationEnabled = config.LocationEnabled.GetValueOrDefault();
                     var cx = IoC.Get<CityContextViewModel>();
+                    cx.ObserveCurrentCity(LocationHelper.IsLocationEnabled);
                     if (cx.City == null)
                         cx.SetCity(config.UseCity);
                 });

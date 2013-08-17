@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Reactive.Concurrency;
 using ServiceStack.Text;
 using System.IO;
+using System.Text;
 
 namespace Bicikelj.Model
 {
@@ -33,7 +34,9 @@ namespace Bicikelj.Model
             {
                 IAsyncResult iar = null;
                 WebResponse response = null;
-                HttpWebRequest wr = WebRequest.CreateHttp(url);
+
+                HttpWebRequest wr = (HttpWebRequest)SharpGIS.WebRequestCreator.GZip.Create(new Uri(url));
+                wr.AllowReadStreamBuffering = true;
                 wr.BeginGetResponse(ar =>
                 {
                     iar = ar;
@@ -80,6 +83,63 @@ namespace Bicikelj.Model
         public static IObservable<ObjectWithState<T>> GetAsync<T>(string url, object state)
         {
             return DownloadUrl.GetAsync(url, state).Select(s => new ObjectWithState<T>(s.Object.FromJson<T>(), s.State));
+        }
+
+        public static IObservable<ObjectWithState<string>> PostAsync(string url, string postData, object user)
+        {
+            return Observable.Create<ObjectWithState<string>>(observer =>
+            {
+                IAsyncResult iar = null;
+                WebResponse response = null;
+                HttpWebRequest wr = (HttpWebRequest)SharpGIS.WebRequestCreator.GZip.Create(new Uri(url));
+                wr.Method = "POST";
+                wr.ContentType = "application/x-www-form-urlencoded";
+                wr.AllowReadStreamBuffering = true;
+
+                iar = wr.BeginGetRequestStream(ar => {
+                    Stream postStream = wr.EndGetRequestStream(ar);
+                    // Convert the string into a byte array. 
+                    byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+                    // Write to the request stream.
+                    postStream.Write(byteArray, 0, byteArray.Length);
+                    postStream.Close();
+
+                    iar = wr.BeginGetResponse(ar2 =>
+                    {
+                        try
+                        {
+                            response = wr.EndGetResponse(ar2);
+                        }
+                        catch (WebException we)
+                        {
+                            if (we.Status == WebExceptionStatus.RequestCanceled)
+                                return;
+                            response = we.Response;
+                            if (response == null || response.ContentType != "application/json")
+                            {
+                                response = null;
+                                observer.OnError(we);
+                                return;
+                            }
+                        }
+                        using (response)
+                        using (Stream responseStream = response.GetResponseStream())
+                        {
+                            var reader = new StreamReader(responseStream);
+                            var content = reader.ReadToEnd();
+                            observer.OnNext(new ObjectWithState<string>(content, user));
+                            observer.OnCompleted();
+                        }
+                    }, user);
+                }, user);
+
+                return Disposable.Create(() =>
+                {
+                    if (iar != null && !iar.IsCompleted)
+                        wr.Abort();
+                });
+            })
+            .ObserveOn(ThreadPoolScheduler.Instance);
         }
     }
 }

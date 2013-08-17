@@ -10,6 +10,7 @@ namespace Bicikelj.ViewModels
     public class StationViewModel : Screen
     {
         private IEventAggregator events;
+        private CityContextViewModel cityContext;
         private StationAvailabilityViewModel availability;
         public StationLocationViewModel Location { get; set; }
         public StationAvailabilityViewModel Availability
@@ -38,6 +39,7 @@ namespace Bicikelj.ViewModels
         public StationViewModel(StationLocationViewModel location, StationAvailabilityViewModel availability)
         {
             events = IoC.Get<IEventAggregator>();
+            cityContext = IoC.Get<CityContextViewModel>();
             this.Location = location;
             this.Availability = availability;
         }
@@ -62,8 +64,8 @@ namespace Bicikelj.ViewModels
             if (availability == null || forceUpdate)
             {
                 events.Publish(BusyState.Busy("checking availability..."));
-                
-                var availObs = StationLocationList.GetAvailability(Location.Location);
+
+                var availObs = cityContext.GetAvailability(Location.Location);
                 availObs
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(a => {

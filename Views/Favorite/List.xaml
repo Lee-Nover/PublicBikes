@@ -22,8 +22,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource LogoLightGreenBrush}">
-                <Border CornerRadius="12" BorderThickness="0" Margin="2" Background="{StaticResource LogoDarkGreenBrush}" >
+            <Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource PinInactiveBackgroundBrush}">
+                <Border CornerRadius="12" BorderThickness="0" Margin="2" Background="{StaticResource PinInactiveBorderBrush}" >
                     <Path Height="24" Width="24" Stretch="Uniform" Fill="White" Data="{Binding FavoriteIcon}" VerticalAlignment="Center" HorizontalAlignment="Center" />
             	</Border>
             </Border>
