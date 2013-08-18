@@ -10,6 +10,7 @@ using System.IO;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using ServiceStack.Text;
 
 namespace Bicikelj.Model
 {
@@ -39,7 +40,7 @@ namespace Bicikelj.Model
             return allCities;
         }
         private static BikeServiceProvider[] providers = new BikeServiceProvider[] {
-            CycloCityService.Instance, VeloService.Instance, NextBikeService.Instance, SambaService.Instance
+            CycloCityService.Instance, VeloService.Instance, NextBikeService.Instance, SambaService.Instance, BicingService.Instance
         };
 
         public static City FindByCityName(string cityName)
@@ -56,6 +57,7 @@ namespace Bicikelj.Model
 
             return result;
         }
+
         #endregion
     }
 
@@ -291,7 +293,7 @@ namespace Bicikelj.Model
 
         private static string StationListUrl = "http://nextbike.net/maps/nextbike-official.xml";
         private static string StationInfoUrl = "https://nextbike.net/reservation/?action=check&format=json&start_place_id={0}";
-        private static string referer = "https://nextbike.net/reservation/?city_id_focused=0&height=400&maponly=1&language=de";
+        //private static string referer = "https://nextbike.net/reservation/?city_id_focused=0&height=400&maponly=1&language=de";
 
         private static List<StationLocation> LoadStationsFromXML(string stationsStr, string cityName)
         {
@@ -377,9 +379,9 @@ namespace Bicikelj.Model
             return result;
         }
 
-        private class NextBikeAvailability
+        public class NextBikeAvailability
         {
-            public int Available;
+            public int Available { get; set; }
         }
 
         public override IObservable<List<StationLocation>> DownloadStations(string cityName)
@@ -415,13 +417,15 @@ namespace Bicikelj.Model
 
         private static string StationListUrl = "http://www.movesamba.com/{0}/mapaestacao.asp";
 
+        // todo: add availability caching and read from cache until some time pases, eg. 5 min
+
         protected override IList<City> GetCities()
         {
             var result = new List<City>() {
                 new City(){ CityName = "Pernambuco", Country = "Brasil", ServiceName = "BikePE", UrlCityName = "bikepe", Provider = Instance },
                 new City(){ CityName = "Petrolina", Country = "Brasil", ServiceName = "PetroBike", UrlCityName = "petrobike", Provider = Instance },
                 new City(){ CityName = "Porto Alegre", Country = "Brasil", ServiceName = "bike PoA", UrlCityName = "bikepoa", Provider = Instance },
-                new City(){ CityName = "Porto Leve", Country = "Brasil", ServiceName = "PortoLevel", UrlCityName = "portoleve", Provider = Instance },
+                new City(){ CityName = "Porto Leve", Country = "Brasil", ServiceName = "PortoLeve", UrlCityName = "portoleve", Provider = Instance },
                 new City(){ CityName = "Rio de Janeiro", Country = "Brasil", ServiceName = "Bike Rio", UrlCityName = "sambarjpt", Provider = Instance },
                 new City(){ CityName = "São Paulo", Country = "Brasil", ServiceName = "Bike Sampa", UrlCityName = "bikesampa", Provider = Instance },
                 new City(){ CityName = "Santos", Country = "Brasil", ServiceName = "Bike Santos", UrlCityName = "bikesantos", Provider = Instance },
@@ -438,13 +442,8 @@ namespace Bicikelj.Model
 
         public override IObservable<List<StationLocation>> DownloadStations(string cityName)
         {
-            var url = string.Format(StationListUrl, cityName);
-            return DownloadUrl.GetAsync(url)
-                .Select<string, List<StationLocation>>(s =>
-                {
-                    var sl = LoadStationsFromHTML(s, cityName).Select(sa => sa.Station).ToList();
-                    return sl;
-                });
+            return DownloadStationsWithAvailability(cityName)
+                .Select(sl => sl.Select(sa => sa.Station).ToList());
         }
 
         public IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
@@ -517,6 +516,110 @@ namespace Bicikelj.Model
             }
 
             return result;
+        }
+    }
+
+    public class BicingService : BikeServiceProvider
+    {
+        public static BicingService Instance = new BicingService();
+
+        private static string StationListUrl = "https://www.bicing.cat/ca/formmap/getJsonObject";
+
+        public class BicingCommand
+        {
+            public string command { get; set; }
+            public string method { get; set; }
+            public string data { get; set; }
+        }
+
+        public class BicingAvailability
+        {
+            public int StationID { get; set; }
+            public string StationName { get; set; }
+            public double AddressGmapsLongitude { get; set; }
+            public double AddressGmapsLatitude { get; set; }
+            public int StationAvailableBikes { get; set; }
+            public int StationFreeSlot { get; set; }
+            public string AddressStreet1 { get; set; }
+            public string AddressNumber { get; set; }
+            public string StationStatusCode { get; set; }
+        }
+
+        private static List<StationAndAvailability> LoadStationsFromHTML(string stationsStr, string cityName)
+        {
+            if (string.IsNullOrWhiteSpace(stationsStr))
+                return null;
+            List<StationAndAvailability> stations = new List<StationAndAvailability>();
+
+            const string CDataStr = @"""data"":""[{";
+            const string CDataEndStr = @"}]"",""";
+            var dataStart = stationsStr.IndexOf(CDataStr);
+            if (dataStart > 0)
+            {
+                dataStart += CDataStr.Length - 2;
+                var dataEnd = stationsStr.IndexOf(CDataEndStr, dataStart);
+                if (dataEnd > 0)
+                {
+                    stationsStr = stationsStr.Substring(dataStart, dataEnd - dataStart + 2);
+                }
+            }
+            
+            stationsStr = Regex.Unescape(stationsStr);
+            List<BicingAvailability> availabilityList = stationsStr.FromJson<List<BicingAvailability>>();
+            foreach (var item in availabilityList)
+            {
+                if (string.IsNullOrEmpty(item.AddressStreet1))
+                    continue;
+
+                var station = new StationLocation();
+                station.Name = item.StationName;
+                station.Number = item.StationID;
+                station.Latitude = item.AddressGmapsLatitude;
+                station.Longitude = item.AddressGmapsLongitude;
+                station.Open = item.StationStatusCode == "OPN";
+                station.Address = item.AddressStreet1;
+                if (!string.IsNullOrEmpty(item.AddressNumber))
+                    station.Address += " " + item.AddressNumber;
+
+                var availability = new StationAvailability();
+                availability.Available = item.StationAvailableBikes;
+                availability.Free = item.StationFreeSlot;
+                availability.Total = availability.Available + availability.Free;
+                availability.Open = station.Open;
+
+                stations.Add(new StationAndAvailability(station, availability));
+            }
+            return stations;
+        }
+
+        protected override IList<City> GetCities()
+        {
+            var result = new List<City>() {
+                new City(){ CityName = "Barcelona", Country = "Spain", ServiceName = "bicing", UrlCityName = "barcelona", Provider = Instance }
+            };
+            return result;
+        }
+
+        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
+        {
+            return DownloadStationsWithAvailability(cityName)
+                .Select(sl => sl.Select(sa => sa.Station).ToList());
+        }
+
+        public IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
+        {
+            return DownloadUrl.GetAsync(StationListUrl)
+                .Select(cmdList =>
+                {
+                    var sl = LoadStationsFromHTML(cmdList, cityName);
+                    return sl;
+                });
+        }
+
+        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
+        {
+            return DownloadStationsWithAvailability(station.City)
+                .Select(sl => sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault());
         }
     }
 }
