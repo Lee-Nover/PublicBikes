@@ -11,15 +11,15 @@ namespace Bicikelj.Model
     {
         public static NextBikeService Instance = new NextBikeService();
 
-        private static string StationListUrl = "http://nextbike.net/maps/nextbike-official.xml";
+        private static string StationListUrl = "http://nextbike.net/maps/nextbike-official.xml?city={0}";
         private static string StationInfoUrl = "https://nextbike.net/reservation/?action=check&format=json&start_place_id={0}";
         //private static string referer = "https://nextbike.net/reservation/?city_id_focused=0&height=400&maponly=1&language=de";
 
-        private static List<StationLocation> LoadStationsFromXML(string stationsStr, string cityName)
+        private static List<StationAndAvailability> LoadStationsFromXML(string stationsStr, string cityName)
         {
             if (string.IsNullOrWhiteSpace(stationsStr))
                 return null;
-            List<StationLocation> stations = null;
+            List<StationAndAvailability> stations = new List<StationAndAvailability>();
             XDocument doc = XDocument.Load(new System.IO.StringReader(stationsStr));
             foreach (var xcountry in doc.Descendants("country"))
             {
@@ -39,22 +39,31 @@ namespace Bicikelj.Model
                     city.ServiceName = (string)xcountry.Attribute("name");
                     city.Provider = Instance;
 
-                    stations = (from s in xcity.Descendants("place")
-                                select new StationLocation
-                                {
-                                    Number = (int)s.Attribute("number"),
-                                    Name = (string)s.Attribute("name"),
-                                    //Address = (string)s.Attribute("address"),
-                                    //FullAddress = (string)s.Attribute("fullAddress"),
-                                    Latitude = (double)s.Attribute("lat"),
-                                    Longitude = (double)s.Attribute("lng"),
-                                    City = city.CityName
-                                }).ToList();
+                    foreach (var place in xcity.Descendants("place"))
+                    {
+                        var station = new StationLocation();
+                        station.Number = (int)place.Attribute("uid");
+                        station.Name = (string)place.Attribute("name");
+                        //station.Address = (string)place.Attribute("address"),
+                        //station.FullAddress = (string)place.Attribute("fullAddress"),
+                        station.Latitude = (double)place.Attribute("lat");
+                        station.Longitude = (double)place.Attribute("lng");
+                        station.City = city.CityName;
 
-                    city.Stations = stations;
+                        var availability = new StationAvailability();
+                        var availStr = (string)place.Attribute("bikes");
+                        if (availStr.EndsWith("+"))
+                            availStr = availStr.Remove(availStr.Length - 1);
+                        availability.Available = int.Parse(availStr);
+                        var racksAttr = place.Attribute("bike_racks");
+                        if (racksAttr != null)
+                            availability.Total = (int)racksAttr;
+                        availability.Free = availability.Total - availability.Available;
+
+                        stations.Add(new StationAndAvailability(station, availability));
+                    }
                 }
             }
-            
 
             return stations;
         }
@@ -91,10 +100,11 @@ namespace Bicikelj.Model
 
         protected override IList<City> GetCities()
         {
+            // todo: get the list of cities from the xml file
             var result = new List<City>() {
-                new City(){ CityName = "Leipzig", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "leipzig", Provider = Instance },
-                new City(){ CityName = "Frankfurt", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "frankfurt", Provider = Instance },
-                new City(){ CityName = "Berlin", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "berlin", Provider = Instance }
+                new City(){ CityName = "Leipzig", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "leipzig", UID = "1", Provider = Instance },
+                new City(){ CityName = "Frankfurt", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "frankfurt", UID = "8", Provider = Instance },
+                new City(){ CityName = "Berlin", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "berlin", UID = "20", Provider = Instance }
             };
             return result;
         }
@@ -104,14 +114,21 @@ namespace Bicikelj.Model
             public int Available { get; set; }
         }
 
-        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
+        public IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
-            return DownloadUrl.GetAsync(StationListUrl)
-                .Select<string, List<StationLocation>>(s =>
+            var url = string.Format(StationListUrl, cityName);
+            return DownloadUrl.GetAsync(url)
+                .Select<string, List<StationAndAvailability>>(s =>
                 {
                     var sl = LoadStationsFromXML(s, cityName);
                     return sl;
                 });
+        }
+
+        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
+        {
+            return DownloadStationsWithAvailability(cityName)
+                .Select(sl => sl.Select(sa => sa.Station).ToList());
         }
 
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)

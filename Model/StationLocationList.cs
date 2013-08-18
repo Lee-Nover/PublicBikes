@@ -16,6 +16,10 @@ namespace Bicikelj.Model
         public StationLocation Station { get; set; }
         public StationAvailability Availability { get; set; }
 
+        public StationAndAvailability()
+        {
+        }
+
         public StationAndAvailability(StationLocation station, StationAvailability availability)
         {
             this.Station = station;
