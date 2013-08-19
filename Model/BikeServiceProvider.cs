@@ -61,7 +61,8 @@ namespace Bicikelj.Model
             return allCities;
         }
         private static BikeServiceProvider[] providers = new BikeServiceProvider[] {
-            CycloCityService.Instance, VeloService.Instance, NextBikeService.Instance, SambaService.Instance, BicingService.Instance
+            CycloCityService.Instance, NextBikeService.Instance, SambaService.Instance, 
+            ClearChannelService.Instance, ClearChannel2Service.Instance
         };
 
         public static City FindByCityName(string cityName)

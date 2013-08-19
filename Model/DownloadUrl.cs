@@ -32,10 +32,23 @@ namespace Bicikelj.Model
             memStr.Position = 0;
 
             var enc = Encoding.UTF8;
+            var isISO_8859_15 = false;
             // get correct charset and encoding from the server's header
             var charset = GetCharset(response.ContentType);
             if (charset != "")
-                enc = Encoding.GetEncoding(charset);
+                try
+                {
+                    isISO_8859_15 = string.Equals(charset, "ISO-8859-15", StringComparison.InvariantCultureIgnoreCase);
+                    if (isISO_8859_15)
+                        enc = Encoding.GetEncoding("ISO-8859-9");
+                    else
+                        enc = Encoding.GetEncoding(charset);
+                }
+                catch (Exception)
+                {
+                    enc = Encoding.UTF8;
+                }
+                
             var reader = new StreamReader(memStr, enc);
             var content = reader.ReadToEnd();
 
@@ -44,9 +57,24 @@ namespace Bicikelj.Model
                 memStr.Position = 0;
                 charset = GetCharset(content);
                 if (charset != "")
-                    enc = Encoding.GetEncoding(charset);
+                    try
+                    {
+                        isISO_8859_15 = string.Equals(charset, "ISO-8859-15", StringComparison.InvariantCultureIgnoreCase);
+                        if (isISO_8859_15)
+                            enc = Encoding.GetEncoding("ISO-8859-9");
+                        else
+                            enc = Encoding.GetEncoding(charset);
+                    }
+                    catch (Exception)
+                    {
+                        enc = Encoding.UTF8;
+                    }
                 var reader2 = new StreamReader(memStr, enc);
                 content = reader2.ReadToEnd();
+            }
+            if (isISO_8859_15)
+            {
+                // todo replace incompatible characters
             }
             return content;
         }

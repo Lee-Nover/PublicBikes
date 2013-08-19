@@ -1,23 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Bicikelj.Model
 {
-    public class VeloService : BikeServiceProvider
+    public class ClearChannel2Service : BikeServiceProvider
     {
-        public static VeloService Instance = new VeloService();
+        public static ClearChannel2Service Instance = new ClearChannel2Service();
 
-        private static string StationListUrl = "https://www.velo-antwerpen.be/localizaciones/station_map.php";
-        private static string StationInfoUrl = "https://www.velo-antwerpen.be/CallWebService/StationBussinesStatus.php";
+        private static string StationListUrl(string cityName)
+        {
+            switch (cityName)
+            {
+                case "antwerpen":
+                    return "https://www.velo-antwerpen.be/localizaciones/station_map.php";
+                case "mexicocity":
+                    return "https://www.ecobici.df.gob.mx/localizaciones/localizaciones_body.php";
+                default:
+                    return "";
+            }
+            
+        }
+        private static string StationInfoUrl(string cityName)
+        {
+            switch (cityName)
+            {
+                case "antwerpen":
+                    return "https://www.velo-antwerpen.be/CallWebService/StationBussinesStatus.php";
+                case "mexicocity":
+                    return "https://www.ecobici.df.gob.mx/CallWebService/StationBussinesStatus.php";
+                default:
+                    return "";
+            }
+        }
 
         protected override IList<City> GetCities()
         {
             var result = new List<City>() {
-                new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", Provider = Instance }
+                new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", Provider = Instance },
+                new City(){ CityName = "Mexico City", Country = "Mexico", ServiceName = "ecobici", UrlCityName = "mexicocity", Provider = Instance }
             };
             return result;
         }
@@ -25,14 +51,14 @@ namespace Bicikelj.Model
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
             var urlData = string.Format("idStation={0}&s_id_idioma=en", station.Number);
-            return DownloadUrl.PostAsync(StationInfoUrl, urlData, station)
+            return DownloadUrl.PostAsync(StationInfoUrl(station.City), urlData, station)
                 .ObserveOn(ThreadPoolScheduler.Instance)
                 .Select(s => new StationAndAvailability(station, LoadAvailabilityFromHTML(s.Object)));
         }
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
-            return DownloadUrl.GetAsync(StationListUrl)
+            return DownloadUrl.GetAsync(StationListUrl(cityName))
                 .Select(s =>
                 {
                     var sl = LoadStationsFromHTML(s, cityName);
@@ -50,7 +76,12 @@ namespace Bicikelj.Model
             int dataPos = 0;
             int coordPos = s.IndexOf(CCoordStr);
             if (coordPos > 0)
-                s = s.Substring(coordPos, s.IndexOf("</script>", coordPos) - coordPos);
+            {
+                var endScriptPos = s.IndexOf("</script>", coordPos);
+                if (endScriptPos < coordPos)
+                    endScriptPos = s.Length;
+                s = s.Substring(coordPos, endScriptPos - coordPos);
+            }
             coordPos = s.IndexOf(CCoordStr);
             while (coordPos > -1)
             {
@@ -59,11 +90,12 @@ namespace Bicikelj.Model
                 var coordEndPos = s.IndexOf(");", coordPos);
                 var coordStr = s.Substring(coordPos, coordEndPos - coordPos);
                 var coords = coordStr.Split(',');
-                // data:"idStation=12&addressnew=MDEyIC0gQnJ1c3NlbA==&s_id_idioma=en",
+                // antwerpen:    data:"idStation=12&addressnew=MDEyIC0gQnJ1c3NlbA==&s_id_idioma=en",
+                // mexico city:  data:"idStation="+89+"&addressnew=ODkgUkVQVUJMSUNBIERFIEdVQVRFTUFMQSAtIE1PTlRFIERFIFBJRURBRA=="+"&s_id_idioma="+"es"
                 dataPos = s.IndexOf(CDataStr, coordEndPos) + CDataStr.Length;
                 var dataEndPos = s.IndexOf("\",", dataPos);
                 var dataStr = s.Substring(dataPos, dataEndPos - dataPos);
-                var dataValues = dataStr.Split('&');
+                var dataValues = dataStr.Replace("\"", string.Empty).Replace("+", string.Empty).Split('&');
 
                 var station = new StationLocation();
                 station.Latitude = double.Parse(coords[0], CultureInfo.InvariantCulture);
@@ -74,6 +106,7 @@ namespace Bicikelj.Model
                 var bytes = Convert.FromBase64String(value);
                 station.Address = UTF8Encoding.UTF8.GetString(bytes, 0, bytes.Length);
                 station.City = cityName;
+                station.Address = HttpUtility.HtmlDecode(station.Address);
                 station.Name = station.Address;
                 result.Add(new StationAndAvailability(station, null));
 
@@ -87,7 +120,7 @@ namespace Bicikelj.Model
         {
             string availStr = "0";
             string slotsStr = "0";
-            var bikePos = s.IndexOf("Bicycles");
+            var bikePos = s.IndexOf("Bicycles", StringComparison.InvariantCultureIgnoreCase);
             // todo: deleting one char at a time is really stupid and slow
             if (bikePos > 0)
             {
@@ -100,7 +133,7 @@ namespace Bicikelj.Model
                     availStr += s[0];
                     s = s.Remove(0, 1);
                 }
-                bikePos = s.IndexOf("Slots");
+                bikePos = s.IndexOf("Slots", StringComparison.InvariantCultureIgnoreCase);
                 s = s.Remove(0, bikePos + 5);
                 while (!char.IsNumber(s[0]))
                     s = s.Remove(0, 1);

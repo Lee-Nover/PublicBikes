@@ -21,7 +21,7 @@ namespace Bicikelj.Model
                 new City(){ CityName = "Recife", Country = "Brasil", ServiceName = "BikePE", UrlCityName = "bikepe", Provider = Instance },
                 new City(){ CityName = "Petrolina", Country = "Brasil", ServiceName = "PetroBike", UrlCityName = "petrobike", Provider = Instance },
                 new City(){ CityName = "Porto Alegre", Country = "Brasil", ServiceName = "bike PoA", UrlCityName = "bikepoa", Provider = Instance },
-                new City(){ CityName = "Porto Leve", Country = "Brasil", ServiceName = "PortoLeve", UrlCityName = "portoleve", Provider = Instance },
+                //new City(){ CityName = "Porto Leve", Country = "Brasil", ServiceName = "PortoLeve", UrlCityName = "portoleve", Provider = Instance },
                 new City(){ CityName = "Rio de Janeiro", Country = "Brasil", ServiceName = "Bike Rio", UrlCityName = "sambarjpt", Provider = Instance },
                 new City(){ CityName = "São Paulo", Country = "Brasil", ServiceName = "Bike Sampa", UrlCityName = "bikesampa", Provider = Instance },
                 new City(){ CityName = "Santos", Country = "Brasil", ServiceName = "Bike Santos", UrlCityName = "bikesantos", Provider = Instance },
@@ -65,6 +65,43 @@ namespace Bicikelj.Model
                 });
         }
 
+        private static string[] ParseFunctionParams(string s)
+        {
+            // parses 'quoted groups', doesn't handle nested quotes ' " '
+            var regex = new Regex(@"^(?:'(?<item>[^']*)'|(?<item>[^,]*))(?:,(?:'(?<item>[^']*)'|(?<item>[^,]*)))*$");
+            var array = regex
+              .Match(s)
+              .Groups["item"]
+              .Captures
+              .Cast<Capture>()
+              .Select(c => c.Value)
+              .ToArray();
+            return array;
+            /*
+            List<object> result = new List<object>();
+
+            int lastCopiedIdx = 0;
+            bool insideQuote = false;
+            char? currentQuoteChar = null;
+            for (int i = 0; i < s.Length; i++)
+            {
+                var c = s[i];
+                if (c == '\'' || c == '"')
+                {
+                    if (currentQuoteChar.HasValue && currentQuoteChar.Value == c)
+                    {
+                        insideQuote = false;
+                        result.Add(s.Substring(lastCopiedIdx + 1, i - lastCopiedIdx - 1));
+                        lastCopiedIdx = i;
+                    }
+                    else if (!currentQuoteChar.HasValue)
+                        currentQuoteChar = c;
+                }
+            }
+            
+            return result;*/
+        }
+
         private List<StationAndAvailability> LoadStationsFromHTML(string s, string cityName)
         {
             var result = new List<StationAndAvailability>();
@@ -106,43 +143,6 @@ namespace Bicikelj.Model
             }
 
             return result;
-        }
-
-        private static string[] ParseFunctionParams(string s)
-        {
-            // parses 'quoted groups', doesn't handle nested quotes ' " '
-            var regex = new Regex(@"^(?:'(?<item>[^']*)'|(?<item>[^,]*))(?:,(?:'(?<item>[^']*)'|(?<item>[^,]*)))*$");
-            var array = regex
-              .Match(s)
-              .Groups["item"]
-              .Captures
-              .Cast<Capture>()
-              .Select(c => c.Value)
-              .ToArray();
-            return array;
-            /*
-            List<object> result = new List<object>();
-
-            int lastCopiedIdx = 0;
-            bool insideQuote = false;
-            char? currentQuoteChar = null;
-            for (int i = 0; i < s.Length; i++)
-            {
-                var c = s[i];
-                if (c == '\'' || c == '"')
-                {
-                    if (currentQuoteChar.HasValue && currentQuoteChar.Value == c)
-                    {
-                        insideQuote = false;
-                        result.Add(s.Substring(lastCopiedIdx + 1, i - lastCopiedIdx - 1));
-                        lastCopiedIdx = i;
-                    }
-                    else if (!currentQuoteChar.HasValue)
-                        currentQuoteChar = c;
-                }
-            }
-            
-            return result;*/
         }
 
         private List<StationAndAvailability> LoadStationsFromHTML_RIO(string s, string cityName)
