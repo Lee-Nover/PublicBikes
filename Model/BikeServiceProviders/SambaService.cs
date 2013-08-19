@@ -108,14 +108,6 @@ namespace Bicikelj.Model
             return result;
         }
 
-        private static string Unescape(string s)
-        {
-            if (s == null || s.Length < 2 || s[0] != '\'' || s[s.Length - 1] != '\'')
-                return s;
-            else
-                return s.Substring(1, s.Length - 2);
-        }
-
         private static string[] ParseFunctionParams(string s)
         {
             // parses 'quoted groups', doesn't handle nested quotes ' " '
@@ -185,9 +177,9 @@ namespace Bicikelj.Model
                 if (int.TryParse(dataValues[0], out tmp))
                 {
                     station.Number = tmp;
-                    station.Name = Unescape(dataValues[1]);
-                    station.Address = Unescape(dataValues[2]);
-                    station.FullAddress = Unescape(dataValues[3]);
+                    station.Name = dataValues[1];
+                    station.Address = dataValues[2];
+                    station.FullAddress = dataValues[3];
                     station.City = cityName;
                     var availability = new StationAvailability();
 
@@ -198,8 +190,8 @@ namespace Bicikelj.Model
                     if (availability.Total < availability.Available)
                         availability.Total = availability.Available;
                     availability.Free = availability.Total - availability.Available;
-                    availability.Connected = Unescape(dataValues[6]) == "A";
-                    availability.Open = Unescape(dataValues[7]) == "EO";
+                    availability.Connected = dataValues[6] == "A";
+                    availability.Open = dataValues[7] == "EO";
 
                     result.Add(new StationAndAvailability(station, availability));
                 }
