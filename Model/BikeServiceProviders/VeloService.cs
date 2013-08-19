@@ -30,19 +30,19 @@ namespace Bicikelj.Model
                 .Select(s => new StationAndAvailability(station, LoadAvailabilityFromHTML(s.Object)));
         }
 
-        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
+        public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
             return DownloadUrl.GetAsync(StationListUrl)
-                .Select<string, List<StationLocation>>(s =>
+                .Select(s =>
                 {
                     var sl = LoadStationsFromHTML(s, cityName);
                     return sl;
                 });
         }
 
-        private List<StationLocation> LoadStationsFromHTML(string s, string cityName)
+        private List<StationAndAvailability> LoadStationsFromHTML(string s, string cityName)
         {
-            var result = new List<StationLocation>();
+            var result = new List<StationAndAvailability>();
 
             const string CCoordStr = "point = new GLatLng(";
             const string CDataStr = "data:\"";
@@ -75,7 +75,7 @@ namespace Bicikelj.Model
                 station.Address = UTF8Encoding.UTF8.GetString(bytes, 0, bytes.Length);
                 station.City = cityName;
                 station.Name = station.Address;
-                result.Add(station);
+                result.Add(new StationAndAvailability(station, null));
 
                 coordPos = s.IndexOf(CCoordStr, dataPos);
             }
@@ -88,7 +88,7 @@ namespace Bicikelj.Model
             string availStr = "0";
             string slotsStr = "0";
             var bikePos = s.IndexOf("Bicycles");
-            // todo: deleteing one char at a time is really stupid and slow
+            // todo: deleting one char at a time is really stupid and slow
             if (bikePos > 0)
             {
                 s = s.Remove(0, bikePos + 8);

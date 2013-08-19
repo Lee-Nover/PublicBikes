@@ -10,9 +10,39 @@ namespace Bicikelj.Model
         public string ServiceName { get; set; }
         public string ServiceUrl { get; set; }
         protected virtual IList<City> GetCities() { return null; }
+        public virtual IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName) { return null; }
         public virtual IObservable<StationAndAvailability> GetAvailability2(StationLocation station) { return null; }
-        public virtual IObservable<StationAvailability> GetAvailability(StationLocation station) { return GetAvailability2(station).Select(a => a.Availability); }
-        public virtual IObservable<List<StationLocation>> DownloadStations(string cityName) { return null; }
+
+        public virtual IObservable<List<StationLocation>> DownloadStations(string cityName)
+        {
+            return DownloadStationsWithAvailability(cityName)
+                .Select(sl => sl.Select(sa => sa.Station).ToList());
+        }
+        public virtual IObservable<StationAvailability> GetAvailability(StationLocation station) {
+            return GetAvailability2(station)
+                .Select(a => a.Availability);
+        }
+
+        protected Dictionary<string, StationAvailability> AvailabilityCache = new Dictionary<string, StationAvailability>();
+        protected void UpdateAvailabilityCache(IEnumerable<StationAndAvailability> list)
+        {
+            foreach (var item in list)
+                UpdateAvailabilityCache(item);
+        }
+
+        protected void UpdateAvailabilityCache(StationAndAvailability item)
+        {
+            AvailabilityCache[item.Station.City + item.Station.Number.ToString()] = item.Availability;
+        }
+
+        protected StationAndAvailability GetAvailabilityFromCache(StationLocation item)
+        {
+            StationAndAvailability result = new StationAndAvailability(item, null);
+            StationAvailability availability = null;
+            if (AvailabilityCache.TryGetValue(item.City + item.Number.ToString(), out availability))
+                result.Availability = availability;
+            return result;
+        }
 
         #region Static members
         private static List<City> allCities = null;

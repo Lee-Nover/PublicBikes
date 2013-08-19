@@ -114,7 +114,7 @@ namespace Bicikelj.Model
             public int Available { get; set; }
         }
 
-        public IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
+        public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
             var url = string.Format(StationListUrl, cityName);
             return DownloadUrl.GetAsync(url)
@@ -123,12 +123,6 @@ namespace Bicikelj.Model
                     var sl = LoadStationsFromXML(s, cityName);
                     return sl;
                 });
-        }
-
-        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
-        {
-            return DownloadStationsWithAvailability(cityName)
-                .Select(sl => sl.Select(sa => sa.Station).ToList());
         }
 
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)

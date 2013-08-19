@@ -32,23 +32,22 @@ namespace Bicikelj.Model
 
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
-            return DownloadStationsWithAvailability(station.City)
-                .Select(sl => sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault());
+            var availability = GetAvailabilityFromCache(station);
+            if (availability.Availability != null)
+                return Observable.Return<StationAndAvailability>(availability);
+            else
+                return DownloadStationsWithAvailability(station.City)
+                    .Select(sl => sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault());
         }
 
-        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
-        {
-            return DownloadStationsWithAvailability(cityName)
-                .Select(sl => sl.Select(sa => sa.Station).ToList());
-        }
-
-        public IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
+        public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
             var url = string.Format(StationListUrl, cityName);
             return DownloadUrl.GetAsync(url)
                 .Select<string, List<StationAndAvailability>>(s =>
                 {
                     var sl = LoadStationsFromHTML(s, cityName);
+                    UpdateAvailabilityCache(sl);
                     return sl;
                 });
         }
@@ -56,27 +55,51 @@ namespace Bicikelj.Model
         private List<StationAndAvailability> LoadStationsFromHTML(string s, string cityName)
         {
             var result = new List<StationAndAvailability>();
-
-            // exibirEstacaMapa("-23.930828", "-46.346232","img/icone-estacoes.gif","Saboó","30","A","EO","11","12","Praça Ruy de Lugo Viña, oposto ao Cemitério da Filosofia");
-            // lat, lng, img, name, number, status online, status op, bikes, station count, address
-            /*
-             if((StatusOperacao == "EO") && (StatusOnline == "A")){
-                strCaminho = "img/icone-estacoes.gif";
-                if(VagasOcupadas == 0){
-                strCaminho = "img/icone-estacoes-vazia.gif";
-                }
-                if(numBicicletas == VagasOcupadas){
-                strCaminho = "img/icone-estacoes-cheia.gif";
-                }
-              }else if( ((StatusOperacao == "EI") && (StatusOnline == "A")) || ((StatusOperacao == "EI") && (StatusOnline == "I"))){
-                strCaminho = "img/icone-estacoes-cinza.gif";
-                }else{
-                strCaminho = "img/icone-estacoes-desativado.gif";
-                }
-
-             */
             const string CDataStr = "exibirEstacaMapa(";
             
+            int dataPos = s.IndexOf(CDataStr);
+            if (dataPos > 0)
+                s = s.Substring(dataPos, s.IndexOf("function exibirEstacaMapa(", dataPos) - dataPos);
+            dataPos = s.IndexOf(CDataStr);
+            string[] split = new string[] { "\",\"" };
+            while (dataPos > -1)
+            {
+                dataPos += CDataStr.Length;
+                var dataEndPos = s.IndexOf(");", dataPos);
+                if (dataEndPos > -1 && s[dataEndPos] == '"')
+                    dataEndPos--;
+                var dataStr = s.Substring(dataPos + 1, dataEndPos - dataPos);
+                var dataValues = Regex.Replace(dataStr, @"\t|\n|\r", "").Split(split, StringSplitOptions.None);
+                // stations without the 'address' are test stations
+                if (dataValues[9].Trim() != "")
+                {
+                    var station = new StationLocation();
+                    station.Latitude = double.Parse(dataValues[0], CultureInfo.InvariantCulture);
+                    station.Longitude = double.Parse(dataValues[1], CultureInfo.InvariantCulture);
+                    station.Name = dataValues[3];
+                    station.Number = int.Parse(dataValues[4]);
+                    station.Address = dataValues[9];
+                    station.City = cityName;
+                    var availability = new StationAvailability();
+                    availability.Available = int.Parse(dataValues[7]);
+                    availability.Free = int.Parse(dataValues[8]);
+                    availability.Free -= availability.Available;
+                    availability.Connected = dataValues[7] == "A";
+                    availability.Open = dataValues[6] == "EO";
+
+                    result.Add(new StationAndAvailability(station, availability));
+                }
+                dataPos = s.IndexOf(CDataStr, dataPos);
+            }
+
+            return result;
+        }
+
+        private List<StationAndAvailability> LoadStationsFromHTML_RIO(string s, string cityName)
+        {
+            var result = new List<StationAndAvailability>();
+            const string CDataStr = "point = new GLatLng(";
+
             int dataPos = s.IndexOf(CDataStr);
             if (dataPos > 0)
                 s = s.Substring(dataPos, s.IndexOf("function exibirEstacaMapa(", dataPos) - dataPos);

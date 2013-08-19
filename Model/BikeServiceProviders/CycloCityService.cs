@@ -13,22 +13,25 @@ namespace Bicikelj.Model
         
         public static CycloCityService Instance = new CycloCityService();
 
-        private static List<StationLocation> LoadStationsFromXML(string stationsStr, string city)
+        private static List<StationAndAvailability> LoadStationsFromXML(string stationsStr, string city)
         {
             if (string.IsNullOrWhiteSpace(stationsStr))
                 return null;
             XDocument doc = XDocument.Load(new System.IO.StringReader(stationsStr));
             var stations = (from s in doc.Descendants("marker")
-                            select new StationLocation
+                            select new StationAndAvailability()
                             {
-                                Number = (int)s.Attribute("number"),
-                                Name = (string)s.Attribute("name"),
-                                Address = (string)s.Attribute("address"),
-                                FullAddress = (string)s.Attribute("fullAddress"),
-                                Latitude = (double)s.Attribute("lat"),
-                                Longitude = (double)s.Attribute("lng"),
-                                Open = (bool)s.Attribute("open"),
-                                City = city
+                                Station = new StationLocation()
+                                {
+                                    Number = (int)s.Attribute("number"),
+                                    Name = (string)s.Attribute("name"),
+                                    Address = (string)s.Attribute("address"),
+                                    FullAddress = (string)s.Attribute("fullAddress"),
+                                    Latitude = (double)s.Attribute("lat"),
+                                    Longitude = (double)s.Attribute("lng"),
+                                    Open = (bool)s.Attribute("open"),
+                                    City = city
+                                }
                             }).ToList();
 
             return stations;
@@ -101,10 +104,10 @@ namespace Bicikelj.Model
                 .Select(s => new StationAndAvailability(station, LoadAvailabilityFromXML(s)));
         }
 
-        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
+        public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
             return DownloadUrl.GetAsync(GetStationListUri(cityName))
-                .Select<string, List<StationLocation>>(s =>
+                .Select(s =>
                 {
                     var sl = LoadStationsFromXML(s, cityName);
                     return sl;

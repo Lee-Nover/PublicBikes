@@ -88,13 +88,7 @@ namespace Bicikelj.Model
             return result;
         }
 
-        public override IObservable<List<StationLocation>> DownloadStations(string cityName)
-        {
-            return DownloadStationsWithAvailability(cityName)
-                .Select(sl => sl.Select(sa => sa.Station).ToList());
-        }
-
-        public IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
+        public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
             return DownloadUrl.GetAsync(StationListUrl)
                 .Select(cmdList =>
