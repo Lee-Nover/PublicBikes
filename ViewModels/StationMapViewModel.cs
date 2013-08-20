@@ -185,7 +185,10 @@ namespace Bicikelj.ViewModels
                     .Subscribe(location =>
                     {
                         CurrentLocation.Coordinate = location.Coordinate;
-                        FromLocation = location.Address.FormattedAddress;
+                        if (location.Address != null)
+                            FromLocation = location.Address.FormattedAddress;
+                        else
+                            FromLocation = "";
                     });
             
             if (stationObs == null)
