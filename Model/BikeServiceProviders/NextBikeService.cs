@@ -89,7 +89,7 @@ namespace Bicikelj.Model
                 case "az": return "Azerbaijan";
                 case "vp": return "Poland";
                 case "nk": return "Turkey";
-                case "me": return "Dubai";
+                case "me": return "United Arab Emirates";
                 case "hr": return "Croatia";
                 case "sz": return "Germany";
                 case "eg": return "Germany";
@@ -100,12 +100,39 @@ namespace Bicikelj.Model
 
         protected override IList<City> GetCities()
         {
+            var result = new List<City>();
             // todo: get the list of cities from the xml file
-            var result = new List<City>() {
-                new City(){ CityName = "Leipzig", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "leipzig", UID = "1", Provider = Instance },
-                new City(){ CityName = "Frankfurt", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "frankfurt", UID = "8", Provider = Instance },
-                new City(){ CityName = "Berlin", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "berlin", UID = "20", Provider = Instance }
-            };
+            
+            var doc = XDocument.Load("Assets/nextbike-cities.xml");
+            foreach (var xctry in doc.Descendants("country"))
+            {
+                var country = DomainNameToCountry((string)xctry.Attribute("domain"));
+                var serviceName = (string)xctry.Attribute("name");
+                foreach (var xcity in xctry.Descendants("city")/*.ToList()*/)
+                {
+                    var city = new City() { 
+                        CityName = (string)xcity.Attribute("name"),
+                        Country = country,
+                        ServiceName = serviceName,
+                        UrlCityName = (string)xcity.Attribute("alias"),
+                        UID = (string)xcity.Attribute("uid"),
+                        Provider = Instance
+                    };
+                    if (string.IsNullOrEmpty(city.UrlCityName))
+                        city.UrlCityName = city.CityName;
+                    result.Add(city);
+                    //xcity.RemoveNodes();
+                }
+            }
+            
+            /*var s = doc.ToString();
+            if (s.Length > 0)
+                s.Remove(1, 1);*/
+            /*
+            result.Add(new City(){ CityName = "Leipzig", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "leipzig", UID = "1", Provider = Instance });
+            result.Add(new City() { CityName = "Frankfurt", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "frankfurt", UID = "8", Provider = Instance });
+            result.Add(new City(){ CityName = "Berlin", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "berlin", UID = "20", Provider = Instance });
+            */
             return result;
         }
 
@@ -116,7 +143,10 @@ namespace Bicikelj.Model
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
-            var url = string.Format(StationListUrl, cityName);
+            var uid = (from city in BikeServiceProvider.GetAllCities() where string.Equals(city.UrlCityName, cityName, StringComparison.InvariantCultureIgnoreCase) select city.UID).FirstOrDefault();
+            if (uid == null)
+                uid = cityName;
+            var url = string.Format(StationListUrl, uid);
             return DownloadUrl.GetAsync(url)
                 .Select<string, List<StationAndAvailability>>(s =>
                 {

@@ -51,7 +51,7 @@ namespace Bicikelj
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
 
-            BugSenseHandler.Instance.initAndStartSession(Application, BugSenseCredentials.Key);
+            BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {
                 e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
