@@ -25,6 +25,7 @@ namespace Bicikelj.ViewModels
             {
                 availability = value;
                 NotifyOfPropertyChange(() => Availability);
+                NotifyOfPropertyChange(() => IsOpen);
             }
         }
 
@@ -92,6 +93,9 @@ namespace Bicikelj.ViewModels
         }
 
         public bool IsFavorite { get { return Location != null ? Location.IsFavorite : false; } }
+        public bool IsOpen { get { 
+            return Availability != null ? Availability.Open : Location != null ? Location.Open : false;
+        } }
 
         public virtual bool CanOpenDetails() { return true; }
         public void OpenDetails()

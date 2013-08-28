@@ -30,7 +30,7 @@
             <TextBlock Grid.Row="1" Text="free stands" TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" />
             <TextBlock Grid.Row="1" Grid.Column="1" x:Name="Free" TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" />
             
-            <TextBlock Grid.Row="2" x:Name="OpenText" TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" />
+            <TextBlock Grid.Row="2" x:Name="OpenText" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
         </Grid>
     </Grid>
  

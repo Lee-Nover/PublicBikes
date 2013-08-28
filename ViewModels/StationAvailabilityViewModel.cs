@@ -24,7 +24,7 @@ namespace Bicikelj.ViewModels
                 if (Open)
                     return "station is open";
                 else
-                    return "station is not open";
+                    return "station is closed";
             }
         }
     }
