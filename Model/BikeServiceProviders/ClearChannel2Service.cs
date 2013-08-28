@@ -53,7 +53,11 @@ namespace Bicikelj.Model
             var urlData = string.Format("idStation={0}&s_id_idioma=en", station.Number);
             return DownloadUrl.PostAsync(StationInfoUrl(station.City), urlData, station)
                 .ObserveOn(ThreadPoolScheduler.Instance)
-                .Select(s => new StationAndAvailability(station, LoadAvailabilityFromHTML(s.Object)));
+                .Select(s => {
+                    var availability = LoadAvailabilityFromHTML(s.Object);
+                    availability.Open = station.Open;
+                    return new StationAndAvailability(station, availability);
+                });
         }
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)

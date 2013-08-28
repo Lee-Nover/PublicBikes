@@ -113,13 +113,13 @@ namespace Bicikelj.ViewModels
         public bool CanFindNearestAvailableBike { get { return IsEnabled; } }
         public void FindNearestAvailableBike()
         {
-            FindNearestStationWithCondition(null, "finding nearest bike...", (s, a) => { return a.Available > 0; });
+            FindNearestStationWithCondition(null, "finding nearest bike...", (s, a) => { return a.Open && a.Available > 0; });
         }
 
         public bool CanFindNearestFreeStand { get { return IsEnabled; } }
         public void FindNearestFreeStand()
         {
-            FindNearestStationWithCondition(null, "finding nearest stand...", (s, a) => { return a.Free > 0; });
+            FindNearestStationWithCondition(null, "finding nearest stand...", (s, a) => { return a.Open && a.Free > 0; });
         }
 
         private void FindNearestStationWithCondition(GeoCoordinate location, string msg, StationCondition condition)

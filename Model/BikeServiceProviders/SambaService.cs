@@ -130,12 +130,13 @@ namespace Bicikelj.Model
                     station.Number = int.Parse(dataValues[4]);
                     station.Address = dataValues[9];
                     station.City = cityName;
+                    station.Open = dataValues[6] == "EO";
                     var availability = new StationAvailability();
                     availability.Available = int.Parse(dataValues[7]);
                     availability.Free = int.Parse(dataValues[8]);
                     availability.Free -= availability.Available;
                     availability.Connected = dataValues[7] == "A";
-                    availability.Open = dataValues[6] == "EO";
+                    availability.Open = station.Open;
 
                     result.Add(new StationAndAvailability(station, availability));
                 }
@@ -181,6 +182,7 @@ namespace Bicikelj.Model
                     station.Address = dataValues[2];
                     station.FullAddress = dataValues[3];
                     station.City = cityName;
+                    station.Open = dataValues[7] == "EO";
                     var availability = new StationAvailability();
 
                     if (int.TryParse(dataValues[8], out tmp))
@@ -191,7 +193,7 @@ namespace Bicikelj.Model
                         availability.Total = availability.Available;
                     availability.Free = availability.Total - availability.Available;
                     availability.Connected = dataValues[6] == "A";
-                    availability.Open = dataValues[7] == "EO";
+                    availability.Open = station.Open;
 
                     result.Add(new StationAndAvailability(station, availability));
                 }

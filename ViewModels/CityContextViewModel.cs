@@ -190,7 +190,7 @@ namespace Bicikelj.ViewModels
                         observer.OnCompleted();
                         return Disposable.Empty;
                     })
-                    .SubscribeOn(ThreadPoolScheduler.Instance); // will make LoadFromDB run background
+                    .SubscribeOn(ThreadPoolScheduler.Instance); // will make LoadFromDB run in background
 
             return obsCache;
         }

@@ -30,7 +30,11 @@ namespace Bicikelj.Model
             }
         }
 
-
         public string City { get; set; }
+
+        public StationLocation()
+        {
+            Open = true;
+        }
     }
 }
