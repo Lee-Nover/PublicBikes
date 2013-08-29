@@ -204,12 +204,22 @@ namespace Bicikelj.ViewModels
 
         public IObservable<StationAvailability> GetAvailability(StationLocation station)
         {
-            return city.Provider.GetAvailability(station);
+            return city.Provider
+                .GetAvailability(station)
+                .Do(a =>
+                {
+                    if (a != null) station.Open = a.Open;
+                });
         }
 
         public IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
-            return city.Provider.GetAvailability2(station);
+            return city.Provider
+                .GetAvailability2(station)
+                .Do(a =>
+                {
+                    if (a != null) station.Open = a.Availability.Open;
+                });
         }
 
         private IObservable<List<StationLocation>> obsStations = null;

@@ -17,29 +17,20 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBox x:Name="Filter" Style="{StaticResource FilterTextBoxStyle}" 
+        <TextBox x:Name="Filter" Style="{StaticResource FilterTextBoxStyle}" Margin="0,0,-12,0"
                  cal:Message.Attach="[Event GotFocus] = [Action GotFocus]; [Event LostFocus] = [Action LostFocus]"/>
         <toolkit:LongListSelector x:Name="Items" Grid.Row="1" Background="{x:Null}" IsFlatList="True">
             <toolkit:LongListSelector.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="12,0,12,12" >
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <!--Rectangle Width="2" Grid.RowSpan="2" HorizontalAlignment="Left" StrokeThickness="0" Margin="0,4,0,0">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{StaticResource PhoneAccentColor}"/>
-                </Rectangle.Fill>
-            </Rectangle-->
-
-                        <!--Border Grid.RowSpan="2" BorderThickness="4" CornerRadius="13" Width="64" d:DesignHeight="52" Background="White" BorderBrush="{StaticResource LogoLightGreenBrush}">
-                <Border CornerRadius="12" BorderThickness="0" Margin="2" Background="{StaticResource LogoDarkGreenBrush}">
-            		<TextBlock x:Name="Number" Style="{StaticResource PhoneTextLargeStyle}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" />
-            	</Border>
-            </Border-->
-                        <TextBlock Grid.Column="0" x:Name="StationName" Text="{Binding StationName}" Style="{StaticResource PhoneTextLargeStyle}" />
-                        <TextBlock Grid.Column="0" Grid.Row="1" x:Name="Address" Text="{Binding Address}" Style="{StaticResource PhoneTextSubtleStyle}" />
+                    <Grid x:Name="ContentGrid" Margin="0,0,0,12">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Width="18" Height="18" Data="{StaticResource FavoriteIconData}" Visibility="{Binding IsFavorite, Converter={StaticResource ValueToVisibilityConverter}}" Fill="White" Stretch="Uniform" Margin="12,0,-8,0" />
+                                <TextBlock Grid.Column="1" Text="{Binding StationName}" Style="{StaticResource PhoneTextLargeStyle}" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Address}" Style="{StaticResource PhoneTextSubtleStyle}" />
+                        </StackPanel>
+                        <Path MaxHeight="42" Data="{StaticResource ClosedSignIconData}" Visibility="{Binding Open, Converter={StaticResource ValueToVisibilityInvConverter}}" Fill="#FFFFB5AC" Stretch="Uniform" Stroke="{StaticResource PinInactiveBorderBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" />
                     </Grid>
                 </DataTemplate>
             </toolkit:LongListSelector.ItemTemplate>

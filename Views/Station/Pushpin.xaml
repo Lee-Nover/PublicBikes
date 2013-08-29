@@ -9,29 +9,26 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="White"
-    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
+    mc:Ignorable="d" d:DesignHeight="100" d:DesignWidth="480">
 
-	<StackPanel x:Name="ContentGrid">
-        <StackPanel Orientation="Horizontal">
-			<Path MaxHeight="36" Data="{StaticResource ClosedSignIconData}" Visibility="{Binding IsOpen, Converter={StaticResource ValueToVisibilityInvConverter}}" Fill="#FFFFB5AC" Stretch="Uniform" Margin="-8,-8,0,8" VerticalAlignment="Top" Stroke="{StaticResource PinInactiveBorderBrush}" />      
-			<StackPanel VerticalAlignment="Center">
-				<StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-		            <Path Width="18" Height="18" Data="{StaticResource FavoriteIconData}" Visibility="{Binding IsFavorite, Converter={StaticResource ValueToVisibilityConverter}}" Fill="White" Stretch="Uniform" Margin="12,0,-8,0" />            
-		            <TextBlock x:Name="Number" Text="{Binding Location.Number}" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" />
-		            <TextBlock x:Name="StationName" Text="{Binding Location.StationName}" Style="{StaticResource PhoneTextNormalStyle}" Visibility="{Binding IsActive, Converter={StaticResource ValueToVisibilityConverter}}" VerticalAlignment="Center" Margin="0,0,12,0"/>
-		        </StackPanel>
-				<StackPanel Orientation="Horizontal" Margin="0,-4,0,0" Visibility="{Binding IsActive, Converter={StaticResource ValueToVisibilityConverter}}" >
-					<TextBlock Text="{Binding Location.DistanceValueString}" Visibility="{Binding Location.DistanceValueString, Converter={StaticResource ValueToVisibilityConverter}}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" Margin="12,0,0,0"/>
-					<Path Width="24" Height="24" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" UseLayoutRounding="False" Margin="12,0,0,0"  />
-					<TextBlock x:Name="Available" Text="{Binding Availability.Available}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
-					<Path Width="24" Height="24" Data="{StaticResource ParkingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" UseLayoutRounding="False"  />
-					<TextBlock x:Name="Free" Text="{Binding Availability.Free}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
-					<Button VerticalAlignment="Center" x:Name="OpenDetails" BorderThickness="0" BorderBrush="{x:Null}" Padding="0" Width="48">
-						<Path Width="24" Height="24" Data="{StaticResource InfoIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" />
-					</Button>
-				</StackPanel>
-			</StackPanel>
-		</StackPanel>
+    <StackPanel x:Name="ContentGrid" Orientation="Horizontal" MinHeight="24" MinWidth="24">
+        <Path MaxHeight="36" Data="{StaticResource ClosedSignIconData}" Visibility="{Binding IsOpen, Converter={StaticResource ValueToVisibilityInvConverter}}" Fill="#FFFFB5AC" Stretch="Uniform" Margin="-8,-8,0,8" VerticalAlignment="Top" Stroke="{StaticResource PinInactiveBorderBrush}" />      
+        <StackPanel VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                <Path Width="18" Height="18" Data="{StaticResource FavoriteIconData}" Visibility="{Binding IsFavorite, Converter={StaticResource ValueToVisibilityConverter}}" Fill="White" Stretch="Uniform" Margin="12,0,-8,0" />            
+                <TextBlock x:Name="Number" Text="{Binding Location.Number}" VerticalAlignment="Center" Style="{StaticResource PhoneTextNormalStyle}" />
+                <TextBlock x:Name="StationName" Text="{Binding Location.StationName}" Style="{StaticResource PhoneTextNormalStyle}" Visibility="{Binding IsActive, Converter={StaticResource ValueToVisibilityConverter}}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,-4,0,0" Visibility="{Binding IsActive, Converter={StaticResource ValueToVisibilityConverter}}" >
+                <TextBlock Text="{Binding Location.DistanceValueString}" Visibility="{Binding Location.DistanceValueString, Converter={StaticResource ValueToVisibilityConverter}}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" Margin="12,0,0,0"/>
+                <Path Width="24" Height="24" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" UseLayoutRounding="False" Margin="12,0,0,0"  />
+                <TextBlock x:Name="Available" Text="{Binding Availability.Available}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
+                <Path Width="24" Height="24" Data="{StaticResource ParkingIconData}" Fill="White" Stretch="Uniform" VerticalAlignment="Center" UseLayoutRounding="False"  />
+                <TextBlock x:Name="Free" Text="{Binding Availability.Free}" Style="{StaticResource PhoneTextNormalStyle}" Foreground="White" VerticalAlignment="Center" />
+                <Button VerticalAlignment="Center" x:Name="OpenDetails" BorderThickness="0" BorderBrush="{x:Null}" Padding="0" Width="48">
+                    <Path Width="24" Height="24" Data="{StaticResource InfoIconData}" Fill="{StaticResource PhoneForegroundBrush}" Stretch="Uniform" />
+                </Button>
+            </StackPanel>
+        </StackPanel>
     </StackPanel>
-
 </UserControl>

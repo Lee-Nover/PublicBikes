@@ -27,10 +27,10 @@ namespace Bicikelj.Model
         protected void UpdateAvailabilityCache(IEnumerable<StationAndAvailability> list)
         {
             foreach (var item in list)
-                UpdateAvailabilityCache(item);
+                UpdateAvailabilityCacheItem(item);
         }
 
-        protected void UpdateAvailabilityCache(StationAndAvailability item)
+        protected void UpdateAvailabilityCacheItem(StationAndAvailability item)
         {
             AvailabilityCache[item.Station.City + item.Station.Number.ToString()] = item.Availability;
         }
