@@ -13,7 +13,7 @@
 
 	<StackPanel x:Name="ContentGrid">
         <StackPanel Orientation="Horizontal">
-			<Path MaxHeight="32" Data="{StaticResource ClosedSignIconData}" Visibility="{Binding IsOpen, Converter={StaticResource ValueToVisibilityInvConverter}}" Fill="#FFFFB5AC" Stretch="Uniform" Margin="8,6,0,8" />      
+			<Path MaxHeight="36" Data="{StaticResource ClosedSignIconData}" Visibility="{Binding IsOpen, Converter={StaticResource ValueToVisibilityInvConverter}}" Fill="#FFFFB5AC" Stretch="Uniform" Margin="-8,-8,0,8" VerticalAlignment="Top" Stroke="{StaticResource PinInactiveBorderBrush}" />      
 			<StackPanel VerticalAlignment="Center">
 				<StackPanel Orientation="Horizontal" Margin="0,0,0,4">
 		            <Path Width="18" Height="18" Data="{StaticResource FavoriteIconData}" Visibility="{Binding IsFavorite, Converter={StaticResource ValueToVisibilityConverter}}" Fill="White" Stretch="Uniform" Margin="12,0,-8,0" />            
