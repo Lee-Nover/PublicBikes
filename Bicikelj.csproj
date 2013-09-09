@@ -161,6 +161,7 @@
     <Compile Include="Model\ErrorState.cs" />
     <Compile Include="Model\FavoriteLocation.cs" />
     <Compile Include="Model\DownloadUrl.cs" />
+    <Compile Include="Model\Group.cs" />
     <Compile Include="Model\LocationHelper.cs" />
     <Compile Include="Model\LocationState.cs" />
     <Compile Include="Model\MapsCommon.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\CityContextViewModel.cs" />
     <Compile Include="ViewModels\ClusteredStationViewModel.cs" />
+    <Compile Include="ViewModels\SelectorViewModel.cs" />
     <Compile Include="ViewModels\NavigationRouteLegViewModel.cs" />
     <Compile Include="ViewModels\StationMapViewModel.cs" />
     <Compile Include="ViewModels\FavoriteViewModel.cs" />
@@ -234,6 +236,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ClusteredStation\Pushpin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SelectorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

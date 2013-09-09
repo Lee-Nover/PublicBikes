@@ -5,6 +5,8 @@ using Bicikelj.Model;
 using Caliburn.Micro;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Microsoft.Phone.Controls;
+using Caliburn.Micro.Contrib.Dialogs;
 
 namespace Bicikelj.ViewModels
 {
@@ -103,9 +105,12 @@ namespace Bicikelj.ViewModels
                     else
                         config.City = selectedCity.UrlCityName;
                 NotifyOfPropertyChange(() => SelectedCity);
+                NotifyOfPropertyChange(() => SelectedCityName);
                 LocationUpdated();
             }
         }
+
+        public string SelectedCityName { get { return selectedCity != null ? selectedCity.CityName : ""; } }
 
         public string CurrentCity
         {
@@ -153,6 +158,14 @@ namespace Bicikelj.ViewModels
         {
             cityContext.SetCity(config.UseCity);
             events.Publish(config);
+        }
+
+        public void SelectCity()
+        {
+            var grouppedCities = CustomKeyGroup<City>.GetItemGroups(Cities, c => c.Country);
+            var selvm = new SelectorViewModel();
+            selvm.ItemsSource = grouppedCities;
+            var dlg = new Dialog<CustomKeyGroup<City>.Group<City>>("select a city & service", selvm, grouppedCities);
         }
     }
 }

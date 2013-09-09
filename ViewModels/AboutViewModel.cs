@@ -8,14 +8,15 @@ namespace Bicikelj.ViewModels
 {
     public class AboutViewModel : Screen
     {
-        public string SupportedCities { get; set; }
+        public string SupportedServices { get; set; }
+        public string SupportedCountries { get; set; }
         public string AppTitle { get; set; }
         public string VersionNumber { get; set; }
 
         protected override void OnActivate()
         {
             base.OnActivate();
-            if (string.IsNullOrEmpty(SupportedCities))
+            if (string.IsNullOrEmpty(SupportedServices))
                 UpdateCities();
             if (string.IsNullOrEmpty(VersionNumber))
                 UpdateVersionInfo();
@@ -34,7 +35,21 @@ namespace Bicikelj.ViewModels
 
         private void UpdateCities()
         {
-            var cities = from city in BikeServiceProvider.GetAllCities() orderby city.Country select city;
+            var svclist = "";
+            var services = from city in BikeServiceProvider.GetAllCities() orderby city.ServiceName select city.ServiceName;
+            foreach (var service in services.Distinct())
+                svclist += service + ", ";
+            svclist = svclist.Remove(svclist.Length - 2, 2);
+
+            var countrylist = "";
+            var countries = from city in BikeServiceProvider.GetAllCities() orderby city.Country select city.Country;
+            foreach (var country in countries.Distinct())
+                countrylist += country + ", ";
+            countrylist = countrylist.Remove(countrylist.Length - 2, 2);
+
+            SupportedServices = svclist;
+            SupportedCountries = countrylist;
+            /*var cities = from city in BikeServiceProvider.GetAllCities() orderby city.Country select city;
             var country = "";
             var list = "";
             foreach (var city in cities)
@@ -46,8 +61,9 @@ namespace Bicikelj.ViewModels
                 }
                 list += city.CityName + ", ";
             }
-            SupportedCities = list.Remove(list.Length - 2, 2);
-            NotifyOfPropertyChange(() => SupportedCities);
+            SupportedCities = list.Remove(list.Length - 2, 2);*/
+            NotifyOfPropertyChange(() => SupportedServices);
+            NotifyOfPropertyChange(() => SupportedCountries);
         }
     }
 }

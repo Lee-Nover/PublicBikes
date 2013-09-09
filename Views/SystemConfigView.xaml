@@ -16,13 +16,13 @@
     <Grid x:Name="LayoutRoot" Background="Transparent" >
         <ScrollViewer>
             <StackPanel>
-                <TextBlock Text="options" Style="{StaticResource PhoneTextTitle1Style}" />
+                <TextBlock Text="options" Style="{StaticResource PhoneTextTitle2Style}" />
                 <toolkit:ToggleSwitch x:Name="LocationEnabled" Content="{Binding LocationEnabled, ConverterParameter=on;off, Converter={StaticResource BoolToStringConverter}}" Header="location service" VerticalContentAlignment="Center" Style="{StaticResource MyToggleSwitchStyle}" />
                 <TextBlock Margin="12,-12,12,24" Text="allow the app to find your current location to find the nearest stations and be able to map a route." Style="{StaticResource PhoneTextSubtleStyle}" TextWrapping="Wrap" />
                 <toolkit:ToggleSwitch x:Name="UseImperialUnits" Content="{Binding UseImperialUnits, ConverterParameter=miles and feet;meters, Converter={StaticResource BoolToStringConverter}}" Style="{StaticResource MyToggleSwitchStyle}" Header="use imperial units (feet) or SI (meters)?" VerticalContentAlignment="Center" />
                 <bctl:TravelSpeedControl x:Name="WalkingSpeed" Title="walking speed" TravelType="Walking"/>
                 <bctl:TravelSpeedControl x:Name="CyclingSpeed" Title="cycling speed" TravelType="Cycling"/>
-            
+                <Button Visibility="Collapsed" x:Name="SelectCity" Content="{Binding SelectedCityName}" IsTabStop="False" />
                 <toolkit:ListPicker x:Name="Cities" ExpansionMode="FullScreenOnly" DisplayMemberPath="CityName" Header="select a city" Margin="12,0,12,12" >
                     <toolkit:ListPicker.HeaderTemplate>
                         <DataTemplate>

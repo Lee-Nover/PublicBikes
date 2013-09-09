@@ -40,6 +40,17 @@ namespace Caliburn.Micro.Contrib.Dialogs
             PossibleResponses = possibleResponens;
         }
 
+        public Dialog(string subject, object content, IEnumerable<TResponse> possibleResponens)
+        {
+            if (!possibleResponens.Any())
+                throw new ArgumentException("No possible responses are given", "possibleResponens");
+
+            DialogType = DialogType.None;
+            Subject = subject;
+            Content = content;
+            PossibleResponses = possibleResponens;
+        }
+
         public string Subject { get; set; }
         public string Message { get; set; }
         public object Content { get; set; }

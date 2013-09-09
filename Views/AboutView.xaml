@@ -23,11 +23,12 @@
                 </TextBlock>
                 <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,12,12,0" 
                        Text="A simple to use app to get around the city using public bikes. You can find the nearest free bike or dock, map a route using the most appropriate bike stations.
-The application uses the CycloCity service to provide bike and station availability information, currently supporting:"  />
-                <TextBlock x:Name="SupportedCities" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
-                <TextBlock Margin="12,12,12,0" TextWrapping="Wrap" Text="Maps and routing are provided by Bing Maps.
-*soon to provide many other cities*" Style="{StaticResource PhoneTextNormalStyle}" />
+The application uses many different services to provide bike and station availability information across the world."  />
+                <!--TextBlock x:Name="SupportedServices" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
+                <TextBlock TextWrapping="Wrap" Text="Providing info in these countries:" Style="{StaticResource PhoneTextNormalStyle}" />
+                <TextBlock x:Name="SupportedCountries" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" /-->
                 
+                <TextBlock Margin="12,12,12,0" TextWrapping="Wrap" Text="Maps and routing are provided by Bing Maps." Style="{StaticResource PhoneTextNormalStyle}" />
                 <RichTextBox Margin="0,12,0,0">
                     <Paragraph>
                         <Run Text="Please report bugs and leave suggestions at the application's " />

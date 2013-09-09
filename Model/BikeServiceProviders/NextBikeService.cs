@@ -59,6 +59,8 @@ namespace Bicikelj.Model
                         if (racksAttr != null)
                             availability.Total = (int)racksAttr;
                         availability.Free = availability.Total - availability.Available;
+                        // todo find out when a station is open
+                        availability.Open = true;
 
                         stations.Add(new StationAndAvailability(station, availability));
                     }
@@ -88,6 +90,7 @@ namespace Bicikelj.Model
                 case "ob": return "Poland";
                 case "az": return "Azerbaijan";
                 case "vp": return "Poland";
+                case "tp": return "Poland";
                 case "nk": return "Turkey";
                 case "me": return "United Arab Emirates";
                 case "hr": return "Croatia";
