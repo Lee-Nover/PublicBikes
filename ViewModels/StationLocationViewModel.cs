@@ -9,6 +9,7 @@ using Bicikelj.Model.Bing;
 using Bicikelj.Views.StationLocation;
 using Caliburn.Micro;
 using Microsoft.Phone.Controls.Maps;
+using System.Net;
 
 namespace Bicikelj.ViewModels
 {
@@ -162,6 +163,13 @@ namespace Bicikelj.ViewModels
                 }
                 else if (dispCurrentAddr == null)
                     dispCurrentAddr = LocationHelper.GetCurrentGeoAddress()
+                        .Catch<GeoAddress, WebException>(webex =>
+                        {
+                            dispCurrentAddr = null;
+                            string msg = "could not get the current address. check your internet connection.";
+                            events.Publish(new ErrorState(webex, msg));
+                            return Observable.Empty<GeoAddress>();
+                        })
                         .ObserveOn(ThreadPoolScheduler.Instance)
                         .Subscribe(geoAddr => CalculateRoute(geoAddr.Coordinate, GeoLocation));
             }
