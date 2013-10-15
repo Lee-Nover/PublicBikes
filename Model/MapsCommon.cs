@@ -11,4 +11,20 @@ namespace Bicikelj.Model
         string PostalCode { get; }
         string Locality { get; }
     }
+
+    public class RegionAndLocality
+    {
+        public string CountryRegion { get; set; }
+        public string Locality { get; set; }
+        
+        public RegionAndLocality()
+        {
+        }
+
+        public RegionAndLocality(string region, string locality)
+        {
+            this.CountryRegion = region;
+            this.Locality = locality;
+        }
+    }
 }

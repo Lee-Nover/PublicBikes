@@ -187,7 +187,13 @@ namespace Bicikelj.ViewModels
                     .Subscribe(location =>
                     {
                         CurrentLocation.Coordinate = location.Coordinate;
-                        FromLocation = location.Address.FormattedAddress;
+                        if (location.Address != null)
+                            FromLocation = location.Address.FormattedAddress;
+                    },
+                    error =>
+                    {
+                        currentGeo = null;
+                        events.Publish(new ErrorState(error, "Could not get the current address"));
                     });
             
             if (stationObs == null)
@@ -197,7 +203,12 @@ namespace Bicikelj.ViewModels
                     .Select(s => LocationHelper.GetLocationRect(s))
                     .Where(r => r != null)
                     .ObserveOn(syncContext)
-                    .Subscribe(r => this.view.Map.SetView(r));
+                    .Subscribe(r => this.view.Map.SetView(r),
+                    error =>
+                    {
+                        stationObs = null;
+                        events.Publish(new ErrorState(error, "stations could not be loaded"));
+                    });
 
             CheckNavigateRequest();
         }
@@ -273,6 +284,9 @@ namespace Bicikelj.ViewModels
                         .Finally(() => events.Publish(BusyState.NotBusy()))
                         .Subscribe(nav => {
                             routes.Add(nav);
+                        },
+                        error => {
+                            events.Publish(new ErrorState(error, "Could not find nearest stations"));
                         },
                         () =>
                         {

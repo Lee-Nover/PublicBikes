@@ -9,6 +9,7 @@ using System.Reactive.Subjects;
 using Bicikelj.Model;
 using Caliburn.Micro;
 using ServiceStack.Text;
+using System.Net;
 
 namespace Bicikelj.ViewModels
 {
@@ -61,6 +62,13 @@ namespace Bicikelj.ViewModels
             {
                 if (dispCity == null)
                     dispCity = LocationHelper.GetCurrentCity()
+                        .Catch<string, WebException>(webex =>
+                        {
+                            dispCity = null;
+                            string msg = "could not get the current address. check your internet connection.";
+                            events.Publish(new ErrorState(webex, msg));
+                            return Observable.Empty<string>();
+                        })
                         .SubscribeOn(ThreadPoolScheduler.Instance)
                         .Subscribe(city =>
                         {
@@ -87,14 +95,37 @@ namespace Bicikelj.ViewModels
             }
             else if (dispCurrentCity == null)
                 dispCurrentCity = LocationHelper.GetCurrentAddress()
+                    .Catch<IAddress, WebException>(webex =>
+                    {
+                        dispCurrentCity = null;
+                        string msg = "could not get the current address. check your internet connection.";
+                        events.Publish(new ErrorState(webex, msg));
+                        return Observable.Empty<IAddress>();
+                    })
                     .SubscribeOn(ThreadPoolScheduler.Instance)
-                    .Select(addr => new { addr.CountryRegion, addr.Locality })
+                    .Select(addr => {
+                        if (addr != null)
+                            return new RegionAndLocality(addr.CountryRegion, addr.Locality);
+                        else
+                            return null;// new RegionAndLocality(null, LocationHelper.UnknownLocation);
+                    })
                     .DistinctUntilChanged()
-                    .Subscribe(city => {
-                        newCity = BikeServiceProvider.FindByCityName(city.Locality);
-                        if (newCity == null)
-                            newCity = new City() { Country = city.CountryRegion, CityName = city.Locality };
+                    .Subscribe(city =>
+                    {
+                        if (city == null)
+                            newCity = null;
+                        else
+                        {
+                            newCity = BikeServiceProvider.FindByCityName(city.Locality);
+                            if (newCity == null)
+                                newCity = new City() { Country = city.CountryRegion, CityName = city.Locality };
+                        }
                         SetCity(newCity);
+                    },
+                    error => {
+                        dispCurrentCity = null;
+                        string msg = "could not get the current address";
+                        events.Publish(new ErrorState(error, msg));
                     });
         }
 
@@ -103,7 +134,8 @@ namespace Bicikelj.ViewModels
             if (newCity == this.city)
                 return;
             var saveCity = this.city;
-            ThreadPoolScheduler.Instance.Schedule(() => { SaveToDB(saveCity); });
+            if (saveCity != null)
+                ThreadPoolScheduler.Instance.Schedule(() => { SaveToDB(saveCity); });
             this.city = newCity;
             subCity.OnNext(this.city);
         }

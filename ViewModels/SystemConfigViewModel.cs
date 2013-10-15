@@ -7,6 +7,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Microsoft.Phone.Controls;
 using Caliburn.Micro.Contrib.Dialogs;
+using System.Net;
 
 namespace Bicikelj.ViewModels
 {
@@ -126,6 +127,13 @@ namespace Bicikelj.ViewModels
             {
                 if (dispCity == null)
                     dispCity = LocationHelper.GetCurrentCity()
+                        .Catch<string, WebException>(webex =>
+                        {
+                            dispCity = null;
+                            string msg = "could not get the current address. check your internet connection.";
+                            events.Publish(new ErrorState(webex, msg));
+                            return Observable.Empty<string>();
+                        })
                         .SubscribeOn(ThreadPoolScheduler.Instance)
                         .Subscribe(city =>
                         {

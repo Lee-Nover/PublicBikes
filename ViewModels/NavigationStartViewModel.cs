@@ -9,6 +9,7 @@ using System.Reactive.Subjects;
 using System;
 using System.Threading;
 using System.Diagnostics;
+using System.Net;
 
 namespace Bicikelj.ViewModels
 {
@@ -134,6 +135,12 @@ namespace Bicikelj.ViewModels
                         return LocationHelper.SortByNearest(sl).First();
                     else
                         return LocationHelper.SortByLocation(sl, location);
+                })
+                .Catch<IEnumerable<StationLocation>, WebException>(webex =>
+                {
+                    string msgex = "stations could not be loaded. check your internet connection.";
+                    events.Publish(new ErrorState(webex, msgex));
+                    return Observable.Empty<IEnumerable<StationLocation>>();
                 })
                 .Subscribe(sl => {
                     FindNearest(sl, condition); 

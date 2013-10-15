@@ -170,7 +170,10 @@ namespace Bicikelj.Model
         {
             return new StationAvailability()
             {
-                Available = nba.Available
+                Available = nba.Available,
+                Free = 1,
+                Open = true,
+                Connected = true
             };
         }
     }

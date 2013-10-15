@@ -189,6 +189,11 @@ namespace Bicikelj.ViewModels
                             FromLocation = location.Address.FormattedAddress;
                         else
                             FromLocation = "";
+                    },
+                    error =>
+                    {
+                        currentGeo = null;
+                        events.Publish(new ErrorState(error, "Could not get the current address"));
                     });
             
             if (stationObs == null)

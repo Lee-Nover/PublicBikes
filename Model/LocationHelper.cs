@@ -78,6 +78,8 @@ namespace Bicikelj.Model
 
     public static class LocationHelper
     {
+        public const string UnknownLocation = "(unknown location)";
+
         #region Reactive
 
         #region Compass
@@ -259,7 +261,7 @@ namespace Bicikelj.Model
 
         public static IObservable<string> GetCurrentCity()
         {
-            return GetCurrentAddress().Select(addr => addr.Locality);
+            return GetCurrentAddress().Select(addr => addr == null ? UnknownLocation : addr.Locality);
         }
         
         #endregion

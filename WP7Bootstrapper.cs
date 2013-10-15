@@ -48,7 +48,7 @@ namespace Bicikelj
 #if DEBUG
             return;
 #endif
-            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))                
                 return;
 
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);

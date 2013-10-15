@@ -7,7 +7,7 @@ namespace Bicikelj.Model
 {
     public class CustomKeyGroup<T> : List<T>
     {
-        public static List<Group<T>> GetItemGroups<T>(IEnumerable<T> itemList, Func<T, string> getKeyFunc)
+        public static List<Group<T>> GetItemGroups(IEnumerable<T> itemList, Func<T, string> getKeyFunc)
         {
             IEnumerable<Group<T>> groupList = from item in itemList
                                               group item by getKeyFunc(item) into g
@@ -16,9 +16,9 @@ namespace Bicikelj.Model
             return groupList.ToList();
         }
 
-        public class Group<T> : List<T>
+        public class Group<Tg> : List<Tg>
         {
-            public Group(string name, IEnumerable<T> items) : base(items)
+            public Group(string name, IEnumerable<Tg> items) : base(items)
             {
                 this.Title = name;
             }
