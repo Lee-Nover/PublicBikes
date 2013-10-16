@@ -52,8 +52,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BugSense, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BugSense.WP7.3.5.0.0\lib\sl4-wp71\BugSense.dll</HintPath>
+    <Reference Include="BugSense, Version=3.5.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\BugSense.WP7.3.5.0.2\lib\sl4-wp71\BugSense.dll</HintPath>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -76,7 +77,8 @@
     </Reference>
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="ServiceStack.Text.WP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\ServiceStack.Text.3.9.59\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\ServiceStack.Text.3.9.67\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
     </Reference>
     <Reference Include="SharpGIS.GZipWebClient, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -147,6 +149,7 @@
     <Compile Include="DebugLog.cs" />
     <Compile Include="Model\BikeServiceProvider.cs" />
     <Compile Include="Model\BikeServiceProviders\ClearChannelService.cs" />
+    <Compile Include="Model\BikeServiceProviders\BCycleService.cs" />
     <Compile Include="Model\BikeServiceProviders\SambaService.cs" />
     <Compile Include="Model\BikeServiceProviders\NextBikeService.cs" />
     <Compile Include="Model\BikeServiceProviders\ClearChannel2Service.cs" />
@@ -339,6 +342,7 @@
     <Resource Include="Images\PublicBikeLogo173.png" />
     <Resource Include="Images\PublicBikeLogo62.png" />
     <Content Include="Assets\nextbike-cities.xml" />
+    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
     <Content Include="Images\PublicBikeLogo99.png" />
     <Resource Include="Images\appbar.button.png" />
     <Content Include="Images\appbar.edit.png" />
