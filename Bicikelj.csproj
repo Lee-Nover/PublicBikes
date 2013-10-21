@@ -342,7 +342,6 @@
     <Resource Include="Images\PublicBikeLogo173.png" />
     <Resource Include="Images\PublicBikeLogo62.png" />
     <Content Include="Assets\nextbike-cities.xml" />
-    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
     <Content Include="Images\PublicBikeLogo99.png" />
     <Resource Include="Images\appbar.button.png" />
     <Content Include="Images\appbar.edit.png" />
