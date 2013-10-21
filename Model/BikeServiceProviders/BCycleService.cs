@@ -111,7 +111,8 @@ namespace Bicikelj.Model
             var point = new google.maps.LatLng(40.01630, -105.28230);
             kioskpoints.push(point);
             var marker = new createMarker(point, "<div class='location'><strong>10th & Walnut</strong><br />10th St. & Walnut St.<br />Boulder, CO 80302</div><div class='avail'>Bikes available: <strong>5</strong><br />Docks available: <strong>6</strong></div><div></div>", icon, back);
-            markers.push(marker);
+            markers.push(marker);
+
             */
 
             var result = new List<StationAndAvailability>();

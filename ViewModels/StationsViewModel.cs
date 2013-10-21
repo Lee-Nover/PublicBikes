@@ -80,7 +80,12 @@ namespace Bicikelj.ViewModels
                 filterLower = filterLC;
             if (string.IsNullOrWhiteSpace(filterLower))
                 return true;
-            return station.Address.ToLower().Contains(filterLower) || station.StationName.ToLower().Contains(filterLower);
+            bool result = false;
+            if (!result && !string.IsNullOrWhiteSpace(station.Address))
+                result = station.Address.ToLower().Contains(filterLower);
+            if (!result && !string.IsNullOrWhiteSpace(station.StationName))
+                result = station.StationName.ToLower().Contains(filterLower);
+            return result;
         }
 
         private IDisposable stationsObs = null;
