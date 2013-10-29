@@ -11,7 +11,20 @@ namespace Bicikelj.Model
     {
         public static ClearChannelService Instance = new ClearChannelService();
 
-        private static string StationListUrl = "https://{0}/formmap/getJsonObject";
+        private static string StationListUrl_ = "https://{0}/formmap/getJsonObject";
+
+        private static string StationListUrl(string cityName)
+        {
+            switch (cityName)
+            {
+                case "barcelona":
+                    return string.Format(StationListUrl_, "www.bicing.cat/ca");
+                case "zaragoza":
+                    return string.Format(StationListUrl_, "www.bizizaragoza.com/es");
+                default:
+                    return "";
+            }
+        }
 
         public class BicingCommand
         {
@@ -84,15 +97,15 @@ namespace Bicikelj.Model
         protected override IList<City> GetCities()
         {
             var result = new List<City>() {
-                new City(){ CityName = "Barcelona", Country = "Spain", ServiceName = "bicing", UrlCityName = "www.bicing.cat/ca", Provider = Instance },
-                new City(){ CityName = "Zaragoza", Country = "Spain", ServiceName = "bizi Zaragoza", UrlCityName = "www.bizizaragoza.com/es", Provider = Instance }
+                new City(){ CityName = "Barcelona", Country = "Spain", ServiceName = "bicing", UrlCityName = "barcelona", Provider = Instance },
+                new City(){ CityName = "Zaragoza", Country = "Spain", ServiceName = "bizi Zaragoza", UrlCityName = "zaragoza", Provider = Instance }
             };
             return result;
         }
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
-            var url = string.Format(StationListUrl, cityName);
+            var url = StationListUrl(cityName);
             return DownloadUrl.GetAsync(url)
                 .Select(cmdList =>
                 {

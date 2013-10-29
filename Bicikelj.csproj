@@ -150,6 +150,7 @@
     <Compile Include="Model\BikeServiceProvider.cs" />
     <Compile Include="Model\BikeServiceProviders\ClearChannelService.cs" />
     <Compile Include="Model\BikeServiceProviders\BCycleService.cs" />
+    <Compile Include="Model\BikeServiceProviders\BixiService.cs" />
     <Compile Include="Model\BikeServiceProviders\SambaService.cs" />
     <Compile Include="Model\BikeServiceProviders\NextBikeService.cs" />
     <Compile Include="Model\BikeServiceProviders\ClearChannel2Service.cs" />

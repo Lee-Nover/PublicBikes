@@ -94,6 +94,8 @@ namespace Bicikelj.ViewModels
                 SetCity(newCity);
             }
             else if (dispCurrentCity == null)
+            {
+                events.Publish(BusyState.Busy("getting current location..."));
                 dispCurrentCity = LocationHelper.GetCurrentAddress()
                     .Catch<IAddress, WebException>(webex =>
                     {
@@ -103,7 +105,9 @@ namespace Bicikelj.ViewModels
                         return Observable.Empty<IAddress>();
                     })
                     .SubscribeOn(ThreadPoolScheduler.Instance)
-                    .Select(addr => {
+                    .Select(addr =>
+                    {
+                        events.Publish(BusyState.NotBusy());
                         if (addr != null)
                             return new RegionAndLocality(addr.CountryRegion, addr.Locality);
                         else
@@ -122,11 +126,13 @@ namespace Bicikelj.ViewModels
                         }
                         SetCity(newCity);
                     },
-                    error => {
+                    error =>
+                    {
                         dispCurrentCity = null;
                         string msg = "could not get the current address";
                         events.Publish(new ErrorState(error, msg));
                     });
+            }
         }
 
         public void SetCity(City newCity)
