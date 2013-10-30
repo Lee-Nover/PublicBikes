@@ -56,20 +56,35 @@ namespace Bicikelj.Model
         {
             switch (cityName)
             {
+                // xml data
                 case "london":
-                    return "https://web.barclayscyclehire.tfl.gov.uk/maps"; // js
+                    return "http://www.tfl.gov.uk/tfl/syndication/feeds/cycle-hire/livecyclehireupdates.xml";
                 case "washingtondc":
                     return "http://www.capitalbikeshare.com/data/stations/bikeStations.xml";
                 case "minneapolis":
                     return "https://secure.niceridemn.org/data2/bikeStations.xml";
                 case "boston":
                     return "http://www.thehubway.com/data/stations/bikeStations.xml";
+                case "toronto":
+                    return "https://toronto.bixi.com/data/bikeStations.xml";
+                case "ottawa":
+                    return "https://capital.bixi.com/data/bikeStations.xml";
+                case "montreal":
+                    return "https://montreal.bixi.com/data/bikeStations.xml";
+                // json data
+                case "melbourne":
+                    return "http://www.melbournebikeshare.com.au/stationmap/data"; // special json
                 case "chattanooga":
                     return "http://www.bikechattanooga.com/stations/json";
-                case "melbourne":
-                    return "http://www.melbournebikeshare.com.au/stationmap/data"; // json
+                case "newyork":
+                    return "https://citibikenyc.com/stations/json";
+                case "chicago":
+                    return "https://divvybikes.com/stations/json";
+                case "sanfrancisco":
+                    return "http://bayareabikeshare.com/stations/json";
+                // unknown
                 default:
-                    return string.Format("https://{0}.bixi.com/maps/statajax", cityName);// js
+                    return "http://bixi.com";
             }
         }
 
@@ -85,6 +100,9 @@ namespace Bicikelj.Model
                 new City(){ CityName = "Minneapolis", Country = "USA", ServiceName = "Nice Ride", UrlCityName = "minneapolis", Provider = Instance },
                 new City(){ CityName = "Boston", Country = "USA", ServiceName = "Hubway", UrlCityName = "boston", Provider = Instance },
                 new City(){ CityName = "Chattanooga", Country = "USA", ServiceName = "Bike Chattanooga", UrlCityName = "chattanooga", Provider = Instance },
+                new City(){ CityName = "Chicago", Country = "USA", ServiceName = "Divvy", UrlCityName = "chicago", Provider = Instance },
+                new City(){ CityName = "New York", Country = "USA", ServiceName = "Citi Bike", UrlCityName = "newyork", Provider = Instance },
+                new City(){ CityName = "San Francisco", Country = "USA", ServiceName = "Bay Area Bike Share", UrlCityName = "sanfrancisco", AlternateCityName = "bay areay", Provider = Instance },
                 new City(){ CityName = "London", Country = "United Kingdom", ServiceName = "Barclays Cycle Hire", UrlCityName = "london", Provider = Instance },
                 new City(){ CityName = "Melbourne", Country = "Australia", ServiceName = "Melbourne bike share", UrlCityName = "melbourne", Provider = Instance }
             };
@@ -111,78 +129,36 @@ namespace Bicikelj.Model
 
                     switch (cityName)
                     {
+                        // xml data
+                        case "london":
                         case "washingtondc":
                         case "minneapolis":
                         case "boston":
+                        case "toronto":
+                        case "ottawa":
+                        case "montreal":
                             sl = LoadStationsFromXML(s, cityName);
                             break;
-
+                        // json data
                         case "chattanooga":
+                        case "newyork":
+                        case "chicago":
+                        case "sanfrancisco":
                             sl = LoadStationsFromJSON(s, cityName);
                             break;
-
+                        // special json
                         case "melbourne":
                             sl = LoadStationsFromJSON2(s, cityName);
                             break;
-
+                        
                         default:
-                            sl = LoadStationsFromHTML(s, cityName);
+                            sl = null;
                             break;
                     }
 
                     UpdateAvailabilityCache(sl);
                     return sl;
                 });
-        }
-
-        private List<StationAndAvailability> LoadStationsFromHTML(string s, string cityName)
-        {
-            /*
-             default: var station = {id:"1",name:"Notre Dame / Place Jacques Cartier",lat:"45.508183",long:"-73.554094",nbBikes:"2",nbEmptyDocks:"25",installed:"true",
-               locked:"false",temporary:"false", sponsorName:null, sponsorLink:null, sponsorLogo:null};
-             
-             * london: var station;station={...};
-             */
-            var result = new List<StationAndAvailability>();
-            string CDataStr = "var station = {";
-            if (cityName == "london")
-                CDataStr = "station={";
-            int id = 1;
-            int dataPos = s.IndexOf(CDataStr);
-            //if (dataPos > 0)
-            //    s = s.Substring(dataPos, s.IndexOf(CDataStr, dataPos) - dataPos);
-            //dataPos = s.IndexOf(CDataStr);
-            while (dataPos > -1)
-            {
-                ServiceStack.Text.JsConfig.ConvertObjectTypesIntoStringDictionary = true;
-                dataPos += CDataStr.Length - 1;
-                var dataEndPos = s.IndexOf("};", dataPos);
-                var dataStr = s.Substring(dataPos, dataEndPos - dataPos + 1);
-                var dataJson = Regex.Replace(dataStr, @"\t|\n|\r", "");
-                dataJson = dataJson.Replace("id:", "\"id\":").Replace("name:", "\"name\":").Replace("address:", "\"address\":").Replace("lat:", "\"lat\":").Replace("long:", "\"lng\":")
-                    .Replace("nbBikes:", "\"nbBikes\":").Replace("nbEmptyDocks:", "\"nbEmptyDocks\":").Replace("installed:", "\"installed\":").Replace("closed:", "\"closed\":");
-                var bixiStation = dataJson.FromJson<BixiStationJS>();
-                var station = new StationLocation();
-                var availability = new StationAvailability();
-                if (bixiStation.id == null)
-                    bixiStation.id = id++;
-                station.Number = bixiStation.id.GetValueOrDefault();
-                station.Name = bixiStation.name;
-                station.Address = bixiStation.address;
-                station.Latitude = bixiStation.lat;
-                station.Longitude = bixiStation.lng;
-                station.City = cityName;
-                availability.Available = bixiStation.nbBikes;
-                availability.Free = bixiStation.nbEmptyDocks;
-                availability.Open = bixiStation.installed;
-                availability.Connected = !bixiStation.locked;
-                availability.Total = availability.Available + availability.Free;
-                result.Add(new StationAndAvailability(station, availability));
-
-                dataPos = s.IndexOf(CDataStr, dataPos);
-            }
-
-            return result;
         }
 
         private List<StationAndAvailability> LoadStationsFromXML(string stationsStr, string cityName)
@@ -218,14 +194,14 @@ namespace Bicikelj.Model
         {
             if (string.IsNullOrWhiteSpace(stationsStr))
                 return null;
-
+            bool useLandmark = cityName == "chattanooga";
             var result = stationsStr.FromJson<BixiStationListJSON>().stationBeanList
                 .Select(s => new StationAndAvailability()
                 {
                     Station = new StationLocation()
                     {
                         Number = s.id,
-                        Name = s.landMark,
+                        Name = useLandmark ? s.landMark : s.stationName,
                         Address = s.stAddress1,
                         Latitude = s.latitude,
                         Longitude = s.longitude,
