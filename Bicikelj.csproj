@@ -78,7 +78,7 @@
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="ServiceStack.Text.WP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\ServiceStack.Text.3.9.67\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
+      <HintPath>packages\ServiceStack.Text.3.9.69\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
     </Reference>
     <Reference Include="SharpGIS.GZipWebClient, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
