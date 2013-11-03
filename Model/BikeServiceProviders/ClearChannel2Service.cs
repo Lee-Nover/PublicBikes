@@ -126,6 +126,7 @@ namespace Bicikelj.Model
             string slotsStr = "0";
             var bikePos = s.IndexOf("Bicycles", StringComparison.InvariantCultureIgnoreCase);
             // todo: deleting one char at a time is really stupid and slow
+            // use a regex with split(); var numbersOnly = new Regex("\\d+", RegexOptions.Compiled);
             if (bikePos > 0)
             {
                 s = s.Remove(0, bikePos + 8);
