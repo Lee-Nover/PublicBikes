@@ -154,6 +154,7 @@ namespace Bicikelj.Model
                 .Select<string, List<StationAndAvailability>>(s =>
                 {
                     var sl = LoadStationsFromXML(s, cityName);
+                    UpdateAvailabilityCache(sl);
                     return sl;
                 });
         }
@@ -161,9 +162,18 @@ namespace Bicikelj.Model
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
             var url = string.Format(StationInfoUrl, station.Number);
-            return DownloadUrl.GetAsync<NextBikeAvailability>(url, station)
-                .ObserveOn(ThreadPoolScheduler.Instance)
-                .Select(s => new StationAndAvailability(station, LoadAvailabilityFromNBA(s.Object)));
+            var availability = GetAvailabilityFromCache(station);
+            if (availability.Availability != null)
+                return Observable.Return<StationAndAvailability>(availability);
+            else
+                return DownloadUrl.GetAsync<NextBikeAvailability>(url, station)
+                    .ObserveOn(ThreadPoolScheduler.Instance)
+                    .Select(s => 
+                    {
+                        var sa = new StationAndAvailability(station, LoadAvailabilityFromNBA(s.Object));
+                        UpdateAvailabilityCacheItem(sa);
+                        return sa;
+                    });
         }
 
         private StationAvailability LoadAvailabilityFromNBA(NextBikeAvailability nba)

@@ -260,6 +260,11 @@ namespace Bicikelj.ViewModels
                 });
         }
 
+        public bool IsAvailabilityValid(StationLocation station)
+        {
+            return city.Provider.IsAvailabilityValid(station);
+        }
+
         private IObservable<List<StationLocation>> obsStations = null;
         public IObservable<List<StationLocation>> GetStations()
         {

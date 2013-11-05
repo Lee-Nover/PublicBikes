@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Bicikelj.Model;
-using Caliburn.Micro;
+using System.Net;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using Microsoft.Phone.Controls;
-using Caliburn.Micro.Contrib.Dialogs;
-using System.Net;
-using Bicikelj.Views;
 using System.Windows;
+using Bicikelj.Model;
+using Bicikelj.Views;
+using Caliburn.Micro;
 
 namespace Bicikelj.ViewModels
 {
@@ -186,11 +184,10 @@ namespace Bicikelj.ViewModels
             var cityEnum = grouppedCities as IEnumerable<City>;
             selvm = new SelectorViewModel();
             selvm.SelectedItem = SelectedCity;
-            // templates also
-
             selvm.ItemsSource = grouppedCities;
             selvm.ItemTemplate = sysConfView.Resources["citySelectorItemTmpl"] as DataTemplate;
             var wm = IoC.Get<IWindowManager>();
+            // use something else to show the selector because this one wants to animate it and it's slow because of all of the items
             wm.ShowDialog(selvm);
             selvm.Deactivated += selvm_Deactivated;
         }

@@ -14,20 +14,16 @@
     <UserControl.Resources>
         <DataTemplate x:Name="groupItemTmpl">
             <Border Background="{StaticResource PhoneAccentBrush}" HorizontalAlignment="Stretch">
-                <TextBlock Text="{Binding Title}" Style="{StaticResource PhoneTextLargeStyle}"/>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
             </Border>
         </DataTemplate>
     </UserControl.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent" >
-        <toolkit:LongListSelector x:Name="Selector" GroupItemTemplate="{StaticResource groupItemTmpl}"
+        <toolkit:LongListSelector x:Name="Selector"
+                                  GroupItemTemplate="{StaticResource groupItemTmpl}"
                                   GroupHeaderTemplate="{StaticResource groupItemTmpl}">
-            <toolkit:LongListSelector.GroupItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="Vertical" HorizontalAlignment="Stretch" />
-                </ItemsPanelTemplate>
-            </toolkit:LongListSelector.GroupItemsPanel>
         </toolkit:LongListSelector>
     </Grid>
 </UserControl>

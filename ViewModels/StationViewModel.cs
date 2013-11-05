@@ -62,7 +62,7 @@ namespace Bicikelj.ViewModels
         {
             if (Location == null || Location.Location == null)
                 return;
-            if (availability == null || forceUpdate)
+            if (availability == null || forceUpdate || !cityContext.IsAvailabilityValid(Location.Location))
             {
                 events.Publish(BusyState.Busy("checking availability..."));
 

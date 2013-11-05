@@ -14,7 +14,10 @@
     
     <UserControl.Resources>
         <DataTemplate x:Name="citySelectorItemTmpl">
-            <TextBlock Text="{Binding CityName}" Style="{StaticResource PhoneTextLargeStyle}"/>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding CityName}" Style="{StaticResource PhoneTextExtraLargeStyle}" />
+                <TextBlock Text="{Binding ServiceName}" Style="{StaticResource PhoneTextSubtleStyle}" />
+            </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
     

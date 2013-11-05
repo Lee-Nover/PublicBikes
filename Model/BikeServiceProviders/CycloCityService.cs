@@ -99,9 +99,18 @@ namespace Bicikelj.Model
 
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
-            return DownloadUrl.GetAsync(GetStationDetailsUri(station.City) + station.Number.ToString())
-                .ObserveOn(ThreadPoolScheduler.Instance)
-                .Select(s => new StationAndAvailability(station, LoadAvailabilityFromXML(s)));
+            var availability = GetAvailabilityFromCache(station);
+            if (availability.Availability != null)
+                return Observable.Return<StationAndAvailability>(availability);
+            else
+                return DownloadUrl.GetAsync(GetStationDetailsUri(station.City) + station.Number.ToString())
+                    .ObserveOn(ThreadPoolScheduler.Instance)
+                    .Select(s =>
+                    {
+                        var sa = new StationAndAvailability(station, LoadAvailabilityFromXML(s));
+                        UpdateAvailabilityCacheItem(sa);
+                        return sa;
+                    });
         }
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)

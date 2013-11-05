@@ -22,6 +22,9 @@ namespace Bicikelj.ViewModels
         protected override void OnViewAttached(object view, object context)
         {
             selView = view as SelectorView;
+            var rs = Application.Current.RootVisual.RenderSize;
+            selView.MaxHeight = System.Math.Max(rs.Height, rs.Width);
+            selView.MaxWidth = selView.MaxHeight;
             base.OnViewAttached(view, context);
         }
 

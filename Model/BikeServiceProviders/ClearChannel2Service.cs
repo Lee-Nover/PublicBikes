@@ -51,13 +51,20 @@ namespace Bicikelj.Model
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
             var urlData = string.Format("idStation={0}&s_id_idioma=en", station.Number);
-            return DownloadUrl.PostAsync(StationInfoUrl(station.City), urlData, station)
-                .ObserveOn(ThreadPoolScheduler.Instance)
-                .Select(s => {
-                    var availability = LoadAvailabilityFromHTML(s.Object);
-                    availability.Open = station.Open;
-                    return new StationAndAvailability(station, availability);
-                });
+            var csa = GetAvailabilityFromCache(station);
+            if (csa.Availability != null)
+                return Observable.Return<StationAndAvailability>(csa);
+            else
+                return DownloadUrl.PostAsync(StationInfoUrl(station.City), urlData, station)
+                    .ObserveOn(ThreadPoolScheduler.Instance)
+                    .Select(s => 
+                    {
+                        var availability = LoadAvailabilityFromHTML(s.Object);
+                        availability.Open = station.Open;
+                        var sa = new StationAndAvailability(station, availability);
+                        UpdateAvailabilityCacheItem(sa);
+                        return sa;
+                    });
         }
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
