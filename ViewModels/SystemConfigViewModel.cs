@@ -8,6 +8,8 @@ using System.Reactive.Linq;
 using Microsoft.Phone.Controls;
 using Caliburn.Micro.Contrib.Dialogs;
 using System.Net;
+using Bicikelj.Views;
+using System.Windows;
 
 namespace Bicikelj.ViewModels
 {
@@ -101,7 +103,7 @@ namespace Bicikelj.ViewModels
                     return;
                 selectedCity = value;
                 if (config != null)
-                    if (string.IsNullOrEmpty(selectedCity.UrlCityName))
+                    if (selectedCity == null || string.IsNullOrEmpty(selectedCity.UrlCityName))
                         config.City = "";
                     else
                         config.City = selectedCity.UrlCityName;
@@ -150,6 +152,14 @@ namespace Bicikelj.ViewModels
             cityContext.ObserveCurrentCity(observe);
         }
 
+        private SystemConfigView sysConfView = null;
+
+        protected override void OnViewAttached(object view, object context)
+        {
+            sysConfView = view as SystemConfigView;
+            base.OnViewAttached(view, context);
+        }
+
         protected override void OnActivate()
         {
             base.OnActivate();
@@ -168,12 +178,27 @@ namespace Bicikelj.ViewModels
             events.Publish(config);
         }
 
+        private SelectorViewModel selvm = null;
         public void SelectCity()
         {
+            if (selvm != null) return;
             var grouppedCities = CustomKeyGroup<City>.GetItemGroups(Cities, c => c.Country);
-            var selvm = new SelectorViewModel();
+            var cityEnum = grouppedCities as IEnumerable<City>;
+            selvm = new SelectorViewModel();
+            selvm.SelectedItem = SelectedCity;
+            // templates also
+
             selvm.ItemsSource = grouppedCities;
-            var dlg = new Dialog<CustomKeyGroup<City>.Group<City>>("select a city & service", selvm, grouppedCities);
+            selvm.ItemTemplate = sysConfView.Resources["citySelectorItemTmpl"] as DataTemplate;
+            var wm = IoC.Get<IWindowManager>();
+            wm.ShowDialog(selvm);
+            selvm.Deactivated += selvm_Deactivated;
+        }
+
+        void selvm_Deactivated(object sender, DeactivationEventArgs e)
+        {
+            SelectedCity = selvm.SelectedItem as City;
+            selvm = null;
         }
     }
 }

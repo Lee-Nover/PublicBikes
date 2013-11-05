@@ -8,47 +8,47 @@ namespace Caliburn.Micro.Contrib.Dialogs
     {
         private TResponse _givenResponse;
 
-        public Dialog(string subject, string message, params TResponse[] possibleResponens)
-            : this(DialogType.None, subject, message, possibleResponens)
+        public Dialog(string subject, string message, params TResponse[] possibleResponses)
+            : this(DialogType.None, subject, message, possibleResponses)
         {
         }
 
-        public Dialog(DialogType dialogType, string message, params TResponse[] possibleResponens)
-            : this(dialogType, dialogType.ToString(), message, possibleResponens)
+        public Dialog(DialogType dialogType, string message, params TResponse[] possibleResponses)
+            : this(dialogType, dialogType.ToString(), message, possibleResponses)
         {
         }
 
-        public Dialog(DialogType dialogType, string subject, string message, params TResponse[] possibleResponens)
+        public Dialog(DialogType dialogType, string subject, string message, params TResponse[] possibleResponses)
         {
-            if (!possibleResponens.Any())
-                throw new ArgumentException("No possible responses are given", "possibleResponens");
+            if (!possibleResponses.Any())
+                throw new ArgumentException("No possible responses are given", "possibleResponses");
 
             DialogType = dialogType;
             Subject = subject;
             Message = message;
-            PossibleResponses = possibleResponens;
+            PossibleResponses = possibleResponses;
         }
 
-        public Dialog(DialogType dialogType, string subject, object content, params TResponse[] possibleResponens)
+        public Dialog(DialogType dialogType, string subject, object content, params TResponse[] possibleResponses)
         {
-            if (!possibleResponens.Any())
-                throw new ArgumentException("No possible responses are given", "possibleResponens");
+            if (!possibleResponses.Any())
+                throw new ArgumentException("No possible responses are given", "possibleResponses");
 
             DialogType = dialogType;
             Subject = subject;
             Content = content;
-            PossibleResponses = possibleResponens;
+            PossibleResponses = possibleResponses;
         }
 
-        public Dialog(string subject, object content, IEnumerable<TResponse> possibleResponens)
+        public Dialog(string subject, object content, IEnumerable<TResponse> possibleResponses)
         {
-            if (!possibleResponens.Any())
-                throw new ArgumentException("No possible responses are given", "possibleResponens");
+            if (!possibleResponses.Any())
+                throw new ArgumentException("No possible responses are given", "possibleResponses");
 
             DialogType = DialogType.None;
             Subject = subject;
             Content = content;
-            PossibleResponses = possibleResponens;
+            PossibleResponses = possibleResponses;
         }
 
         public string Subject { get; set; }
@@ -75,18 +75,18 @@ namespace Caliburn.Micro.Contrib.Dialogs
 
     public class Dialog : Dialog<Answer>
     {
-        public Dialog(string subject, string message, params Answer[] possibleResponens)
-            : base(subject, message, possibleResponens)
+        public Dialog(string subject, string message, params Answer[] possibleResponses)
+            : base(subject, message, possibleResponses)
         {
         }
 
-        public Dialog(DialogType dialogType, string message, params Answer[] possibleResponens)
-            : base(dialogType, message, possibleResponens)
+        public Dialog(DialogType dialogType, string message, params Answer[] possibleResponses)
+            : base(dialogType, message, possibleResponses)
         {
         }
 
-        public Dialog(DialogType dialogType, string subject, string message, params Answer[] possibleResponens)
-            : base(dialogType, subject, message, possibleResponens)
+        public Dialog(DialogType dialogType, string subject, string message, params Answer[] possibleResponses)
+            : base(dialogType, subject, message, possibleResponses)
         {
         }
     }

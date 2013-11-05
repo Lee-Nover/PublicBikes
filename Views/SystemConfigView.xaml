@@ -11,7 +11,13 @@
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
-
+    
+    <UserControl.Resources>
+        <DataTemplate x:Name="citySelectorItemTmpl">
+            <TextBlock Text="{Binding CityName}" Style="{StaticResource PhoneTextLargeStyle}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent" >
         <ScrollViewer>
@@ -22,8 +28,9 @@
                 <toolkit:ToggleSwitch x:Name="UseImperialUnits" Content="{Binding UseImperialUnits, ConverterParameter=miles and feet;meters, Converter={StaticResource BoolToStringConverter}}" Style="{StaticResource MyToggleSwitchStyle}" Header="use imperial units (feet) or SI (meters)?" VerticalContentAlignment="Center" />
                 <bctl:TravelSpeedControl x:Name="WalkingSpeed" Title="walking speed" TravelType="Walking"/>
                 <bctl:TravelSpeedControl x:Name="CyclingSpeed" Title="cycling speed" TravelType="Cycling"/>
-                <Button Visibility="Collapsed" x:Name="SelectCity" Content="{Binding SelectedCityName}" IsTabStop="False" />
-                <toolkit:ListPicker x:Name="Cities" ExpansionMode="FullScreenOnly" DisplayMemberPath="CityName" Header="select a city" Margin="12,0,12,12" >
+                <TextBlock Text="select a city" Style="{StaticResource PhoneTextTitle2Style}" />
+                <Button x:Name="SelectCity" Content="{Binding SelectedCityName}" IsTabStop="False" />
+                <!--toolkit:ListPicker x:Name="Cities" ExpansionMode="FullScreenOnly" DisplayMemberPath="CityName" Header="select a city" Margin="12,0,12,12" >
                     <toolkit:ListPicker.HeaderTemplate>
                         <DataTemplate>
                             <TextBlock Style="{StaticResource PhoneTextLargeStyle}" Text="{Binding .}" Margin="0" />
@@ -40,8 +47,8 @@
                             </StackPanel>
                         </DataTemplate>
                     </toolkit:ListPicker.FullModeItemTemplate>
-                </toolkit:ListPicker>
-
+                </toolkit:ListPicker-->
+                
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="current city" Style="{StaticResource PhoneTextSubtleStyle}" />
                     <TextBlock x:Name="CurrentCity" Style="{StaticResource PhoneTextSubtleStyle}" />
