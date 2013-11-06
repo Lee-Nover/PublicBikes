@@ -186,16 +186,12 @@ namespace Bicikelj.ViewModels
             selvm.SelectedItem = SelectedCity;
             selvm.ItemsSource = grouppedCities;
             selvm.ItemTemplate = sysConfView.Resources["citySelectorItemTmpl"] as DataTemplate;
-            var wm = IoC.Get<IWindowManager>();
-            // use something else to show the selector because this one wants to animate it and it's slow because of all of the items
-            wm.ShowDialog(selvm);
-            selvm.Deactivated += selvm_Deactivated;
-        }
-
-        void selvm_Deactivated(object sender, DeactivationEventArgs e)
-        {
-            SelectedCity = selvm.SelectedItem as City;
-            selvm = null;
+            selvm.Deactivated += (s, e) =>
+            {
+                SelectedCity = selvm.SelectedItem as City;
+                selvm = null;
+            };
+            NavigationExtension.NavigateTo(selvm);
         }
     }
 }

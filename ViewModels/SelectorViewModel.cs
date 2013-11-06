@@ -9,6 +9,8 @@ using Microsoft.Phone.Controls;
 
 namespace Bicikelj.ViewModels
 {
+    public delegate void ItemSelectedEventHandler(object item);
+
     public class SelectorViewModel : Screen
     {
         public DataTemplate GroupHeaderTemplate { get; set; }
@@ -16,6 +18,7 @@ namespace Bicikelj.ViewModels
         public IEnumerable ItemsSource { get; set; }
         public object SelectedItem { get; set; }
         public bool IsFlatList { get; set; }
+        public event ItemSelectedEventHandler ItemSelected;
         
         private SelectorView selView;
 
@@ -31,27 +34,25 @@ namespace Bicikelj.ViewModels
         protected override void OnActivate()
         {
             base.OnActivate();
-            //var dlghost = GetView() as Caliburn.Micro.WindowManager;
-            var view = selView;// dlghost as SelectorView;
             if (GroupHeaderTemplate != null)
-                view.Selector.GroupHeaderTemplate = GroupHeaderTemplate;
+                selView.Selector.GroupHeaderTemplate = GroupHeaderTemplate;
             if (ItemTemplate != null)
-                view.Selector.ItemTemplate = ItemTemplate;
-            view.Selector.IsFlatList = IsFlatList;
-            view.Selector.ItemsSource = ItemsSource;
+                selView.Selector.ItemTemplate = ItemTemplate;
+            selView.Selector.IsFlatList = IsFlatList;
+            selView.Selector.ItemsSource = ItemsSource;
             if (SelectedItem != null)
             {
-                view.Selector.SelectedItem = SelectedItem;
-                view.Selector.ScrollTo(SelectedItem);
+                selView.Selector.SelectedItem = SelectedItem;
+                selView.Selector.ScrollTo(SelectedItem);
             }
-            view.Selector.SelectionChanged += Selector_SelectionChanged;
+            selView.Selector.SelectionChanged += Selector_SelectionChanged;
         }
 
         protected override void OnDeactivate(bool close)
         {
-            base.OnDeactivate(close);
             if (selView != null)
                 selView.Selector.SelectionChanged -= Selector_SelectionChanged;
+            base.OnDeactivate(close);
         }
 
         void Selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -61,7 +62,13 @@ namespace Bicikelj.ViewModels
             if (selector.SelectedItem == null)
                 return;
             SelectedItem = selector.SelectedItem;
-            this.TryClose();
+            if (ItemSelected != null)
+                ItemSelected(SelectedItem);
+            else
+            {
+                var nav = IoC.Get<INavigationService>();
+                nav.GoBack();
+            }
         }
     }
 }
