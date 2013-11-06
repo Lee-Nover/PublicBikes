@@ -171,6 +171,16 @@ namespace Bicikelj.Model
                         geoPos.Coordinate = GeoCoordinate.Unknown;
                         geoObserver.OnNext(geoPos);
                     }
+                    else
+                    {
+                        geoPos.Status = geoCoordinateWatcher.Status;
+                        if (geoCoordinateWatcher.Position != null)
+                        {
+                            geoPos.Coordinate = geoCoordinateWatcher.Position.Location;
+                            geoPos.LastUpdate = geoCoordinateWatcher.Position.Timestamp;
+                        }
+                        geoObserver.OnNext(geoPos);
+                    }
                 }
                 else
                 {
@@ -190,13 +200,27 @@ namespace Bicikelj.Model
                     geoObserver = observer;
                     EventHandler<GeoPositionStatusChangedEventArgs> statusChanged = (sender, e) =>
                     {
-                        geoPos.Status = e.Status;
+                        if (!isLocationEnabled)
+                        {
+                            geoPos.Status = GeoPositionStatus.Disabled;
+                            geoPos.Coordinate = GeoCoordinate.Unknown;
+                        }
+                        else
+                            geoPos.Status = e.Status;
                         observer.OnNext(geoPos);
                     };
                     EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>> positionChanged = (sender, e) =>
                     {
-                        geoPos.Coordinate = e.Position.Location;
-                        geoPos.LastUpdate = e.Position.Timestamp;
+                        if (!isLocationEnabled)
+                        {
+                            geoPos.Status = GeoPositionStatus.Disabled;
+                            geoPos.Coordinate = GeoCoordinate.Unknown;
+                        }
+                        else
+                        {
+                            geoPos.Coordinate = e.Position.Location;
+                            geoPos.LastUpdate = e.Position.Timestamp;
+                        }
                         observer.OnNext(geoPos);
                     };
                     geoCoordinateWatcher.StatusChanged += statusChanged;

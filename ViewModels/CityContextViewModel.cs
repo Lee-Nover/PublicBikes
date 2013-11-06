@@ -95,7 +95,8 @@ namespace Bicikelj.ViewModels
             }
             else if (dispCurrentCity == null)
             {
-                events.Publish(BusyState.Busy("getting current location..."));
+                if (config.LocationEnabled.GetValueOrDefault())
+                    events.Publish(BusyState.Busy("getting current location..."));
                 dispCurrentCity = LocationHelper.GetCurrentAddress()
                     .Catch<IAddress, WebException>(webex =>
                     {
