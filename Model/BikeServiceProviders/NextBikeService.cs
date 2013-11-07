@@ -58,7 +58,10 @@ namespace Bicikelj.Model
                         var racksAttr = place.Attribute("bike_racks");
                         if (racksAttr != null)
                             availability.Total = (int)racksAttr;
-                        availability.Free = availability.Total - availability.Available;
+                        if (availability.Total >= availability.Available)
+                            availability.Free = availability.Total - availability.Available;
+                        else
+                            availability.Free = 1;
                         // todo find out when a station is open
                         availability.Open = true;
 
@@ -124,18 +127,8 @@ namespace Bicikelj.Model
                     if (string.IsNullOrEmpty(city.UrlCityName))
                         city.UrlCityName = city.CityName;
                     result.Add(city);
-                    //xcity.RemoveNodes();
                 }
             }
-            
-            /*var s = doc.ToString();
-            if (s.Length > 0)
-                s.Remove(1, 1);*/
-            /*
-            result.Add(new City(){ CityName = "Leipzig", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "leipzig", UID = "1", Provider = Instance });
-            result.Add(new City() { CityName = "Frankfurt", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "frankfurt", UID = "8", Provider = Instance });
-            result.Add(new City(){ CityName = "Berlin", Country = "Germany", ServiceName = "nextbike Germany", UrlCityName = "berlin", UID = "20", Provider = Instance });
-            */
             return result;
         }
 

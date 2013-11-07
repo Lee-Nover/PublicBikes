@@ -29,7 +29,7 @@ namespace Bicikelj.Model
                 new City(){ CityName = "Des Moines", Country = "United States", ServiceName = "B-cycle", UrlCityName = "desmoines", Provider = Instance },
                 new City(){ CityName = "Fort Worth", Country = "United States", ServiceName = "B-cycle", UrlCityName = "fortworth", Provider = Instance },
                 new City(){ CityName = "Greenville", Country = "United States", ServiceName = "B-cycle", UrlCityName = "greenville", Provider = Instance },
-                new City(){ CityName = "Hawaii", Country = "United States", ServiceName = "B-cycle", UrlCityName = "hawaii", Provider = Instance },
+                new City(){ CityName = "Hawaii", Country = "United States", ServiceName = "B-cycle", UrlCityName = "hawaii", AlternateCityName = "Kailua", Provider = Instance },
                 new City(){ CityName = "Houston", Country = "United States", ServiceName = "B-cycle", UrlCityName = "houston", Provider = Instance },
                 new City(){ CityName = "Kansas City", Country = "United States", ServiceName = "B-cycle", UrlCityName = "kansascity", Provider = Instance },
                 new City(){ CityName = "Madison", Country = "United States", ServiceName = "B-cycle", UrlCityName = "madison", Provider = Instance },
