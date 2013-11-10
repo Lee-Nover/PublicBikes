@@ -115,6 +115,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\AzureServiceCredentials.cs" />
     <Compile Include="CM.Contrib\Dialogs\Answer.cs" />
     <Compile Include="CM.Contrib\Dialogs\BindableResponse.cs" />
     <Compile Include="CM.Contrib\Dialogs\Dialog.cs" />
@@ -322,6 +323,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\PubliBike-services.zip" />
+    <Content Include="AzureService\StationStatus.js" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />

@@ -111,10 +111,12 @@ namespace Bicikelj.Model
                 var serviceName = abo.Abo.Name;
                 var grouppedTerminals = from term in abo.Abo.Terminals group term by term.City into byCity select new { City = byCity.Key, Country = DomainNameToCountry(byCity.First().Country), Terminals = byCity.ToList() };
                 foreach (var xcity in grouppedTerminals)
-                    //foreach (var terminal in xcity.Terminals)
+                {
+                    // todo: find an existing city and append the service name; eg: "SwissPass, Bulle"
+                    var city = (from c in result where string.Equals(c.CityName, xcity.City, StringComparison.InvariantCultureIgnoreCase) select c).FirstOrDefault();
+                    if (city == null)
                     {
-                        // todo: find an existing city and append the service name; eg: "SwissPass, Bulle"
-                        var city = new City()
+                        city = new City()
                         {
                             CityName = xcity.City,
                             Country = DomainNameToCountry(xcity.Country),
@@ -127,6 +129,9 @@ namespace Bicikelj.Model
                             city.UrlCityName = city.CityName;
                         result.Add(city);
                     }
+                    else if (city.ServiceName.IndexOf(serviceName, StringComparison.InvariantCultureIgnoreCase) < 0)
+                        city.ServiceName += ", " + serviceName;
+                }
             }
             return result;
         }
