@@ -146,7 +146,7 @@ namespace Bicikelj.Model
             return stations;
         }
 
-        private List<StationAndAvailability> LoadStationsFromKML(string stationsStr, string cityName)
+        private static List<StationAndAvailability> LoadStationsFromKML(string stationsStr, string cityName)
         {
             if (string.IsNullOrWhiteSpace(stationsStr))
                 return null;

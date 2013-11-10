@@ -6,6 +6,7 @@ using System.Reactive.Concurrency;
 using ServiceStack.Text;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Bicikelj.Model
 {
@@ -96,10 +97,15 @@ namespace Bicikelj.Model
 
         public static IObservable<string> GetAsync(string url)
         {
-            return GetAsync(url, null).Select(r => r.Object);
+            return GetAsync(url, null, null).Select(r => r.Object);
         }
 
-        public static IObservable<ObjectWithState<string>> GetAsync(string url, object user)
+        public static IObservable<string> GetAsync(string url, Dictionary<string, string> headers)
+        {
+            return GetAsync(url, null, headers).Select(r => r.Object);
+        }
+
+        public static IObservable<ObjectWithState<string>> GetAsync(string url, object user, Dictionary<string, string> headers)
         {
             return Observable.Create<ObjectWithState<string>>(observer =>
             {
@@ -108,6 +114,10 @@ namespace Bicikelj.Model
 
                 HttpWebRequest wr = (HttpWebRequest)SharpGIS.WebRequestCreator.GZip.Create(new Uri(url));
                 wr.AllowReadStreamBuffering = true;
+                if (headers != null)
+                    foreach (var item in headers)
+                        wr.Headers[item.Key] = item.Value;
+                    
                 wr.BeginGetResponse(ar =>
                 {
                     iar = ar;
@@ -151,9 +161,14 @@ namespace Bicikelj.Model
             return DownloadUrl.GetAsync(url).Select(s => s.FromJson<T>());
         }
 
+        public static IObservable<T> GetAsync<T>(string url, Dictionary<string, string> headers)
+        {
+            return DownloadUrl.GetAsync(url, headers).Select(s => s.FromJson<T>());
+        }
+
         public static IObservable<ObjectWithState<T>> GetAsync<T>(string url, object state)
         {
-            return DownloadUrl.GetAsync(url, state).Select(s => new ObjectWithState<T>(s.Object.FromJson<T>(), s.State));
+            return DownloadUrl.GetAsync(url, state, null).Select(s => new ObjectWithState<T>(s.Object.FromJson<T>(), s.State));
         }
 
         public static IObservable<ObjectWithState<string>> PostAsync(string url, string postData, object user)

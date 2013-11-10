@@ -1,9 +1,9 @@
 ﻿var serviceData = null; // table
 var response; // response object
-var stationId;
+var cityName;
 var serviceName;
 var downloadData = function () { }; // function pointer
-var getStationInfo = function (stationData, doUpdate, onResult) { };
+var getStationList = function (stationData, doUpdate, onResult) { };
 
 function logError(error) {
     console.error(error);
@@ -13,7 +13,7 @@ function respondResult(result) {
     if (result !== null)
         response.send(statusCodes.OK, result);
     else
-        response.send(404, { message: 'Station with ID ' + stationId + ' not found!' });
+        response.send(404, { message: 'Stations for city ' + cityName + ' not found!' });
 }
 
 function updateCache(data) {
@@ -37,7 +37,7 @@ function updateCache(data) {
         })
 }
 
-function checkStation() {
+function checkStations() {
     serviceData.where({ serviceName: serviceName })
         .read({
             success: function (results) {
@@ -52,7 +52,7 @@ function checkStation() {
                         });
                 }
                 if (isDataUsable)
-                    getStationInfo(results[0].serviceData, false, respondResult);
+                    getStationList(results[0].serviceData, false, respondResult);
                 else
                     downloadData();
             },
@@ -60,38 +60,30 @@ function checkStation() {
         })
 }
 
-exports.post = function (request, response) {
-    // Use "request.service" to access features of your mobile service, e.g.:
-    //   var tables = request.service.tables;
-    //   var push = request.service.push;
-
-    response.send(statusCodes.OK, { message: 'Hello World!' });
-};
-
 exports.get = function (request, resp) {
     response = resp;
-    stationId = request.query.id;
+    cityName = request.query.city;
     serviceData = request.service.tables.getTable('serviceData');
     serviceName = request.query.serviceName;
     switch (serviceName) {
         case 'publibike':
             downloadData = PB_downloadData;
-            getStationInfo = PB_getStationInfo;
+            getStationList = PB_getStationList;
             break;
 
         default:
             downloadData = PB_downloadData;
-            getStationInfo = PB_getStationInfo;
+            getStationList = PB_getStationList;
             break;
     }
-    checkStation();
+    checkStations();
 };
 
 // service specific functins
 
 // publibike
 function PB_downloadData() {
-    console.log('Checking the PubliBike service for station ' + stationId + ' ...');
+    console.log('Checking the PubliBike service for stations in ' + cityName + ' ...');
     var request2 = require('request');
     var cityListUrl = "https://www.publibike.ch/en/stations.html"
     request2(cityListUrl, function (error2, response2, body2) {
@@ -103,7 +95,7 @@ function PB_downloadData() {
             var end = s.indexOf(endMarker, start) + 1;
             s = s.substr(start, end - start);
 
-            getStationInfo(s, true, respondResult);
+            getStationList(s, true, respondResult);
         } else {
             console.error('Could not get the PubliBike city list! Response: ' + response2.statusCode + ', Error: ' + error2);
         }
@@ -111,16 +103,16 @@ function PB_downloadData() {
     return false;
 }
 
-function PB_getStationInfo(stationData, doUpdate, onResult) {
+function PB_getStationList(stationData, doUpdate, onResult) {
     var aboList = JSON.parse(stationData);
-    var found = null;
+    var stations = [];
+    var stationCache = {}; // using an object is faster than an array for a dictionary
+    var idxStation = 0;
     if (doUpdate && aboList && aboList[0] && aboList[0].abo)
         updateCache(stationData);
     aboList.forEach(function visitAbo(abo) {
-        if (found !== null)
-            return;
         abo.abo.terminals.forEach(function visitTerminal(terminal) {
-            if (terminal.terminalid == stationId) {
+            if (terminal.city == cityName && !stationCache[terminal.terminalid]) {
                 var holders = 0;
                 var freeHolders = 0;
                 var bikes = 0;
@@ -131,7 +123,7 @@ function PB_getStationInfo(stationData, doUpdate, onResult) {
                 terminal.bikes.forEach(function visitBike(bike) {
                     bikes += bike.available;
                 });
-                found = {
+                var station = {
                     name: terminal.name,
                     id: terminal.terminalid,
                     address: terminal.street,
@@ -143,9 +135,10 @@ function PB_getStationInfo(stationData, doUpdate, onResult) {
                     freeDocks: freeHolders,
                     totalDocks: holders
                 }
-                return;
+                stations[idxStation++] = station;
+                stationCache[terminal.terminalid] = true;
             }
         })
     });
-    onResult(found);
+    onResult(stations);
 }
