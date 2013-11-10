@@ -119,7 +119,7 @@ namespace Bicikelj.Model
             foreach (var abo in allServices)
             {
                 var serviceName = abo.Abo.Name;
-                var grouppedTerminals = from term in abo.Abo.Terminals group term by term.City into byCity select new { City = byCity.Key, Country = DomainNameToCountry(byCity.First().Country), Terminals = byCity.ToList() };
+                var grouppedTerminals = from term in abo.Abo.Terminals where !string.IsNullOrEmpty(term.City) group term by term.City into byCity select new { City = byCity.Key, Country = DomainNameToCountry(byCity.First().Country), Terminals = byCity.ToList() };
                 foreach (var xcity in grouppedTerminals)
                 {
                     // todo: find an existing city and append the service name; eg: "SwissPass, Bulle"
