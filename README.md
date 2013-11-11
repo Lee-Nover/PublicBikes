@@ -1,4 +1,3 @@
-
-**Bicikelj** is a Windows Phone application for the **[CyclOcity service](http://en.cyclocity.com/)**, covering many cities throughout the world.
-
-It can find the nearest available bike, nearest free bike stand and find the best route to a destination using nearest stations to current location and destination.
+A simple to use Windows Phone application to get around the city using public bikes.
+You can find the nearest free bike or dock, map a route using the most appropriate bike stations.
+The application uses many different services to provide bike and station availability information across the world.
