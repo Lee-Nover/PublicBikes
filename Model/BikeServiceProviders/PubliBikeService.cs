@@ -1,35 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System;
-using System.Xml.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Reactive.Concurrency;
-using System.Net;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Linq;
 using ServiceStack.Text;
 using SharpGIS;
 
 namespace Bicikelj.Model
 {
-    public class PubliBikeService : BikeServiceProvider
+    public class PubliBikeService : AzureServiceProxy
     {
+        public PubliBikeService()
+        {
+            AzureServiceName = "publibike";
+        }
+
         public static PubliBikeService Instance = new PubliBikeService();
-
-        private static string StationListUrl = "https://www.publibike.ch/en/stations.html";
-
-        private static string GetStationDetailsUri(string stationId)
-        {
-            return string.Format("https://publicbikes.azure-mobile.net/api/stationstatus?serviceName=publibike&id={0}", stationId);
-        }
-
-        private static string GetStationListUri(string city)
-        {
-            return string.Format("https://publicbikes.azure-mobile.net/api/stationlist?serviceName=publibike&city={0}", city);
-        }
         
         #region Internal classes
         
@@ -143,46 +128,6 @@ namespace Bicikelj.Model
                         city.ServiceName += ", " + serviceName;
                 }
             }
-            return result;
-        }
-
-        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
-        {
-            var availability = GetAvailabilityFromCache(station);
-            if (availability.Availability != null)
-                return Observable.Return<StationAndAvailability>(availability);
-            else
-                return DownloadUrl.GetAsync<AzureService.StationInfo>(GetStationDetailsUri(station.Number.ToString()), AzureServiceCredentials.AuthHeaders)
-                    .ObserveOn(ThreadPoolScheduler.Instance)
-                    .Select(s =>
-                    {
-                        var sa = new StationAndAvailability(station, s.GetAvailability());
-                        UpdateAvailabilityCacheItem(sa);
-                        return sa;
-                    });
-        }
-
-        public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
-        {
-            return DownloadUrl.GetAsync<List<AzureService.StationInfo>>(GetStationListUri(cityName), AzureServiceCredentials.AuthHeaders)
-                .Select(s =>
-                {
-                    var sl = LoadStationsFromSI(s, cityName);
-                    UpdateAvailabilityCache(sl);
-                    return sl;
-                });
-        }
-
-        private static List<StationAndAvailability> LoadStationsFromSI(List<AzureService.StationInfo> s, string cityName)
-        {
-            var result = s.Select(si =>
-            {
-                return new StationAndAvailability()
-                {
-                    Station = si.GetStation(),
-                    Availability = si.GetAvailability()
-                };
-            }).ToList();
             return result;
         }
     }

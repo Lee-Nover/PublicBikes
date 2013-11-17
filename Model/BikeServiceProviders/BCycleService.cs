@@ -10,13 +10,14 @@ using System.Xml.Linq;
 
 namespace Bicikelj.Model
 {
-    public class BCycleService : BikeServiceProvider
+    public class BCycleService : AzureServiceProxy
     {
+        public BCycleService()
+        {
+            AzureServiceName = "b-cycle";
+        }
+
         public static BCycleService Instance = new BCycleService();
-
-        private static string StationListUrl = "http://{0}.bcycle.com/home.aspx";
-
-        // todo: add availability caching and read from cache until some time pases, eg. 5 min
 
         protected override IList<City> GetCities()
         {
@@ -39,116 +40,6 @@ namespace Bicikelj.Model
                 new City(){ CityName = "San Antonio", Country = "United States", ServiceName = "B-cycle", UrlCityName = "sanantonio", Provider = Instance },
                 new City(){ CityName = "Spartanburg", Country = "United States", ServiceName = "B-cycle", UrlCityName = "spartanburg", Provider = Instance }
             };
-            return result;
-        }
-
-        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
-        {
-            var availability = GetAvailabilityFromCache(station);
-            if (availability.Availability != null)
-                return Observable.Return<StationAndAvailability>(availability);
-            else
-                return DownloadStationsWithAvailability(station.City)
-                    .Select(sl => sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault());
-        }
-
-        public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
-        {
-            var url = string.Format(StationListUrl, cityName);
-            return DownloadUrl.GetAsync(url)
-                .Select(s => 
-                {
-                    List<StationAndAvailability> sl;
-                    sl = LoadStationsFromHTML(s, cityName);
-                    UpdateAvailabilityCache(sl);
-                    return sl;
-                });
-        }
-
-        private static string[] ParseFunctionParams(string s)
-        {
-            // parses 'quoted groups', doesn't handle nested quotes ' " '
-            var regex = new Regex(@"^(?:'(?<item>[^']*)'|(?<item>[^,]*))(?:,(?:'(?<item>[^']*)'|(?<item>[^,]*)))*$");
-            var array = regex
-              .Match(s)
-              .Groups["item"]
-              .Captures
-              .Cast<Capture>()
-              .Select(c => c.Value)
-              .ToArray();
-            return array;
-        }
-
-        private List<StationAndAvailability> LoadStationsFromHTML(string s, string cityName)
-        {
-            /*
-             
-            var icon = '../Portals/10/images/maps/marker-outofservice.png';
-            var back = 'infowin-unavail';
-            var point = new google.maps.LatLng(40.01630, -105.28230);
-            kioskpoints.push(point);
-            var marker = new createMarker(point, "<div class='location'><strong>10th & Walnut</strong><br />10th St. & Walnut St.<br />Boulder, CO 80302</div><div class='avail'>Bikes available: <strong>5</strong><br />Docks available: <strong>6</strong></div><div></div>", icon, back);
-            markers.push(marker);
-
-            */
-
-            var result = new List<StationAndAvailability>();
-
-            const string CCoordStr = "point = new google.maps.LatLng(";
-            const string CDataStr = "createMarker(point, \"";
-            const string CDataEndStr = "\", icon, back);";
-            int index = 1;
-            int dataPos = 0;
-            int coordPos = s.IndexOf("function LoadKiosks()");
-            if (coordPos > 0)
-            {
-                var endScriptPos = s.IndexOf("</script>", coordPos);
-                if (endScriptPos < coordPos)
-                    endScriptPos = s.Length;
-                s = s.Substring(coordPos, endScriptPos - coordPos);
-            }
-            coordPos = s.IndexOf(CCoordStr);
-            while (coordPos > -1)
-            {
-                coordPos += CCoordStr.Length;
-                var coordEndPos = s.IndexOf(");", coordPos);
-                var coordStr = s.Substring(coordPos, coordEndPos - coordPos);
-                var coords = coordStr.Split(',');
-                
-                dataPos = s.IndexOf(CDataStr, coordEndPos) + CDataStr.Length;
-                var dataEndPos = s.IndexOf(CDataEndStr, dataPos);
-                var dataStr = s.Substring(dataPos, dataEndPos - dataPos);
-                dataStr = dataStr.Replace("&", "&amp;");
-                dataStr = "<div>" + dataStr + "</div>";
-                var xml = XDocument.Parse(dataStr);
-
-                var station = new StationLocation();
-                station.Number = index++;
-                station.Latitude = double.Parse(coords[0].Trim(), CultureInfo.InvariantCulture);
-                station.Longitude = double.Parse(coords[1].Trim(), CultureInfo.InvariantCulture);
-                
-                //xml
-                // read the name and address and availability from the xml
-                // name = //div[@class='location']/strong/text()
-                // address = //div[@class='location']/text()
-                var loc = xml.Descendants("div").Where(el => (string)el.Attribute("class") == "location").FirstOrDefault();
-                station.Name = loc.Descendants("strong").FirstOrDefault().Value;
-                station.Address = loc.Value.Remove(0, station.Name.Length);
-                station.City = cityName;
-                var availability = new StationAvailability();
-                availability.Connected = true;
-                availability.Open = true;
-                // bikes = //div[@class='avail']/strong[1]/text()
-                // docks = //div[@class='avail']/strong[2]/text()
-                var avail = xml.Descendants("div").Where(el => (string)el.Attribute("class") == "avail").Descendants("strong").ToArray();
-                availability.Available = int.Parse(avail[0].Value);
-                availability.Free = int.Parse(avail[1].Value);
-                availability.Total = availability.Available + availability.Free;
-                result.Add(new StationAndAvailability(station, availability));
-
-                coordPos = s.IndexOf(CCoordStr, dataPos);
-            }
-
             return result;
         }
     }
