@@ -77,29 +77,6 @@ namespace Bicikelj.Model
               .Select(c => c.Value)
               .ToArray();
             return array;
-            /*
-            List<object> result = new List<object>();
-
-            int lastCopiedIdx = 0;
-            bool insideQuote = false;
-            char? currentQuoteChar = null;
-            for (int i = 0; i < s.Length; i++)
-            {
-                var c = s[i];
-                if (c == '\'' || c == '"')
-                {
-                    if (currentQuoteChar.HasValue && currentQuoteChar.Value == c)
-                    {
-                        insideQuote = false;
-                        result.Add(s.Substring(lastCopiedIdx + 1, i - lastCopiedIdx - 1));
-                        lastCopiedIdx = i;
-                    }
-                    else if (!currentQuoteChar.HasValue)
-                        currentQuoteChar = c;
-                }
-            }
-            
-            return result;*/
         }
 
         private List<StationAndAvailability> LoadStationsFromHTML(string s, string cityName)

@@ -81,7 +81,7 @@ exports.get = function (req, res) {
         serviceCache = require('../shared/serviceCache');
         serviceCache.serviceName = serviceName;
         serviceCache.serviceData = serviceData;
-        var city = serviceHandlers.cacheByCity ? cityName : null;
+        var city = serviceHandlers.cacheByCity ? cityName : "";
         serviceCache.checkServiceData(city, downloadData, processData);
     } else {
         var err = 'Handler not found for service "' + serviceName + '"';
