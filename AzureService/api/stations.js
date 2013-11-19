@@ -61,6 +61,8 @@ exports.register = function (api) {
 };
 
 exports.get = function (req, res) {
+    /// <param name="req" type="ApiRequest"></param>
+    /// <param name="res" type="ApiResponse"></param>
     response = res;
     serviceName = req.params.service;
     cityName = req.params.city || req.query.city;
