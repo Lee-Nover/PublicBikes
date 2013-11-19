@@ -44,7 +44,7 @@ function processData(data, onUpdate) {
 
 function downloadData() {
     console.log('Downloading the ' + serviceName + ' service data ...');
-    var request = require('request');
+    var request = require('../shared/crequest');
     var cityListUrl = serviceHandlers.getUrl(cityName);
     request(cityListUrl, function (error, response, body) {
         if (!error && response && response.statusCode == 200) {
