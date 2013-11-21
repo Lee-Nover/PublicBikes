@@ -49,7 +49,7 @@ namespace Bicikelj.Model
 
         private static List<StationAndAvailability> LoadStationsFromSI(List<AzureService.StationInfo> s, string cityName)
         {
-            var result = s.Select(si =>
+            var result = s.Where(si => !string.IsNullOrEmpty(si.id)).Select(si =>
             {
                 var sa = new StationAndAvailability()
                 {
