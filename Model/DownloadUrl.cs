@@ -133,7 +133,8 @@ namespace Bicikelj.Model
                         if (response == null || response.ContentType != "application/json")
                         {
                             response = null;
-                            observer.OnError(we);
+                            var webex = new WebException(we.Message + ": " + url, we, we.Status, we.Response);
+                            observer.OnError(webex);
                             return;
                         }
                     }
