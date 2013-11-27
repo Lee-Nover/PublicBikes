@@ -18,6 +18,8 @@ namespace Bicikelj
     public class WP7Bootstrapper : PhoneBootstrapper
     {
         PhoneContainer container;
+        DateTime timeActivated;
+        SystemConfig config;
 
         protected override void Configure()
         {
@@ -68,11 +70,14 @@ namespace Bicikelj
             base.OnStartup(sender, e);
             InitBugSense();
             LoadDatabase();
+            timeActivated = DateTime.Now;
+            config.SessionCount++;
         }
 
         protected override void OnActivate(object sender, ActivatedEventArgs e)
         {
             base.OnActivate(sender, e);
+            timeActivated = DateTime.Now;
             if (e.IsApplicationInstancePreserved)
                 return;
 
@@ -82,19 +87,21 @@ namespace Bicikelj
 
         protected override void OnDeactivate(object sender, DeactivatedEventArgs e)
         {
+            config.UpdateStatistics(timeActivated);
             SaveDatabase();
             base.OnDeactivate(sender, e);
         }
 
         protected override void OnClose(object sender, ClosingEventArgs e)
         {
+            config.UpdateStatistics(timeActivated);
             SaveDatabase();
             base.OnClose(sender, e);
         }
 
         private void LoadDatabase()
         {
-            SystemConfig config = IoC.Get<SystemConfig>();
+            config = IoC.Get<SystemConfig>();
             if (config != null && config.LocationEnabled.HasValue)
                 return;
             // CM handles this so it's always instantiated (as a singleton)

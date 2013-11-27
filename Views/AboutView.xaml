@@ -35,7 +35,22 @@ The application uses many different services to provide bike and station availab
                         <Hyperlink TargetName="_blank" NavigateUri="https://github.com/Lee-Nover/PublicBikes/issues">project page</Hyperlink>
                     </Paragraph>
                 </RichTextBox>
-                
+                <Button x:Name="RateApp" IsTabStop="False" Margin="0,24">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
+                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
+                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
+                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
+                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
+                        <TextBlock Text="rate the app" Margin="12,0" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="UpdateApp" Visibility="{Binding IsUpdateAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="{StaticResource UpdateIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
+                        <TextBlock Text="update the app" Margin="12,0" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

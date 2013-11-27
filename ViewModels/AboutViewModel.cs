@@ -3,6 +3,7 @@ using Bicikelj.Model;
 using System.Linq;
 using Bicikelj.Views;
 using BugSense;
+using Microsoft.Phone.Tasks;
 
 namespace Bicikelj.ViewModels
 {
@@ -64,6 +65,24 @@ namespace Bicikelj.ViewModels
             SupportedCities = list.Remove(list.Length - 2, 2);*/
             NotifyOfPropertyChange(() => SupportedServices);
             NotifyOfPropertyChange(() => SupportedCountries);
+        }
+
+        public void RateApp()
+        {
+            var marketplaceReviewTask = new MarketplaceReviewTask();
+            marketplaceReviewTask.Show();
+        }
+
+        private bool isUpdateAvailable = false;
+        public bool IsUpdateAvailable()
+        {
+            return isUpdateAvailable;
+        }
+
+        public void UpdateApp()
+        {
+            var markeplaceTask = new MarketplaceDetailTask();
+            markeplaceTask.Show();
         }
     }
 }

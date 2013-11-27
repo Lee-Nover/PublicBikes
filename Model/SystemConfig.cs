@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Bicikelj.Model
 {
@@ -25,6 +26,19 @@ namespace Bicikelj.Model
         {
             WalkingSpeed = TravelSpeed.Normal;
             CyclingSpeed = TravelSpeed.Normal;
+        }
+
+        public bool AppRated { get; set; }
+        public TimeSpan TimeActive { get; set; }
+        public TimeSpan TimeUnrated { get; set; }
+        public int SessionCount { get; set; }
+        
+        public void UpdateStatistics(DateTime timeActivated)
+        {
+            var activeTime = DateTime.Now - timeActivated;
+            TimeActive += activeTime;
+            if (!AppRated)
+                TimeUnrated += activeTime;
         }
     }
 }

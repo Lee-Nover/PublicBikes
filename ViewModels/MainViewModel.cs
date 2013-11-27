@@ -7,6 +7,7 @@ using System.Threading;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
 using Bicikelj.Views;
+using Microsoft.Phone.Tasks;
 
 namespace Bicikelj.ViewModels
 {
@@ -68,6 +69,26 @@ namespace Bicikelj.ViewModels
                     cx.ObserveCurrentCity(LocationHelper.IsLocationEnabled);
                     if (cx.City == null)
                         cx.SetCity(config.UseCity);
+
+                    if (!config.AppRated)
+                    {
+                        var minutesActive = config.TimeUnrated.TotalMinutes;
+                        var sessionCount = config.SessionCount;
+                        // every 8th session or after every 20 minutes of usage
+                        if ((sessionCount > 7 && sessionCount % 7 == 1) || minutesActive > 20)
+                        {
+                            Execute.OnUIThread(() =>
+                            {
+                                if (MessageBox.Show("You've used this app for some time now. We'd love to know what you like about the app and what could be improved. Would you please rate the app and leave a comment?", "application feedback", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                                {
+                                    config.AppRated = true;
+                                    var marketplaceReviewTask = new MarketplaceReviewTask();
+                                    marketplaceReviewTask.Show();
+                                }
+                                config.TimeUnrated = TimeSpan.Zero;
+                            });
+                        }
+                    }
                 });
         }
 
