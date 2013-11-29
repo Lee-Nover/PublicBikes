@@ -12,6 +12,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone.Info;
+using System.IO.IsolatedStorage;
 
 namespace Bicikelj
 {
@@ -50,9 +51,9 @@ namespace Bicikelj
 #if DEBUG
             return;
 #endif
-            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))                
+            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
-
+            
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {
@@ -72,6 +73,9 @@ namespace Bicikelj
             LoadDatabase();
             timeActivated = DateTime.Now;
             config.SessionCount++;
+
+            var bingCred = App.Current.Resources["BingCredentials"];
+            (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
         }
 
         protected override void OnActivate(object sender, ActivatedEventArgs e)
@@ -116,7 +120,14 @@ namespace Bicikelj
         {
             var cityCtx = IoC.Get<CityContextViewModel>();
             if (cityCtx.City != null)
-                cityCtx.SaveToDB(cityCtx.City);
+                try
+                {
+                    cityCtx.SaveToDB(cityCtx.City);
+                }
+                catch (IsolatedStorageException)
+                {
+                    // ignore the exception that usually happens on app shutdown
+                }
         }
 
         static void AddCustomConventions()
@@ -189,11 +200,12 @@ namespace Bicikelj
             //ConventionManager.AddElementConvention<MenuItem>(ItemsControl.ItemsSourceProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<MenuItem>(MenuItem.DataContextProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<TravelSpeedControl>(TravelSpeedControl.SpeedProperty, "Speed", "Change");
-            
+
 
             ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
             var aaf = ActionMessage.ApplyAvailabilityEffect;
-            ActionMessage.ApplyAvailabilityEffect = (context => {
+            ActionMessage.ApplyAvailabilityEffect = (context =>
+            {
                 if (context.Source is BindableApplicationBarMenuItem)
                 {
                     var bmi = context.Source as BindableApplicationBarMenuItem;

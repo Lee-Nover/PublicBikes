@@ -32,6 +32,8 @@ namespace Bicikelj.Model
         public TimeSpan TimeActive { get; set; }
         public TimeSpan TimeUnrated { get; set; }
         public int SessionCount { get; set; }
+        public string UpdateAvailable { get; set; }
+        public string LastCheckedVersion { get; set; }
         
         public void UpdateStatistics(DateTime timeActivated)
         {

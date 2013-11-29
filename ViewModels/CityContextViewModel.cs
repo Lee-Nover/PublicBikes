@@ -163,6 +163,7 @@ namespace Bicikelj.ViewModels
                 if (!myIsolatedStorage.DirectoryExists("Cities"))
                     myIsolatedStorage.CreateDirectory("Cities");
                 var cityFile = "Cities\\" + saveCity.UrlCityName;
+
                 using (var fileStream = new IsolatedStorageFileStream(cityFile, FileMode.Create, myIsolatedStorage))
                 using (var writer = new StreamWriter(fileStream))
                 {

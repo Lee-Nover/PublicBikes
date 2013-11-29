@@ -13,6 +13,13 @@ namespace Bicikelj.ViewModels
         public string SupportedCountries { get; set; }
         public string AppTitle { get; set; }
         public string VersionNumber { get; set; }
+        SystemConfig config;
+
+        protected override void OnInitialize()
+        {
+            base.OnInitialize();
+            config = IoC.Get<SystemConfig>();
+        }
 
         protected override void OnActivate()
         {
@@ -73,10 +80,9 @@ namespace Bicikelj.ViewModels
             marketplaceReviewTask.Show();
         }
 
-        private bool isUpdateAvailable = false;
-        public bool IsUpdateAvailable()
+        public bool IsUpdateAvailable
         {
-            return isUpdateAvailable;
+            get { return config != null && !string.IsNullOrEmpty(config.UpdateAvailable); }
         }
 
         public void UpdateApp()

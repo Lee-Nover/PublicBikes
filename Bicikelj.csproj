@@ -64,6 +64,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Caliburn.Micro.1.5.2\lib\wp71\Caliburn.Micro.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Coding4Fun.Toolkit.Controls">
+      <HintPath>packages\Coding4Fun.Toolkit.Controls.2.0.7\lib\wp71\Coding4Fun.Toolkit.Controls.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Devices.Sensors" />
     <Reference Include="Microsoft.Expression.Interactions, Version=3.7.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>Bin\Debug\Microsoft.Expression.Interactions.dll</HintPath>
@@ -116,6 +119,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AzureService\StationInfo.cs" />
+    <Compile Include="AzureService\VersionHistory.cs" />
     <Compile Include="Model\AzureServiceCredentials.cs" />
     <Compile Include="CM.Contrib\Dialogs\Answer.cs" />
     <Compile Include="CM.Contrib\Dialogs\BindableResponse.cs" />
