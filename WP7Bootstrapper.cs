@@ -13,6 +13,8 @@ using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone.Info;
 using System.IO.IsolatedStorage;
+using Coding4Fun.Toolkit.Controls;
+using System.Windows.Navigation;
 
 namespace Bicikelj
 {
@@ -37,7 +39,9 @@ namespace Bicikelj
             container.Singleton<SystemConfigViewModel>();
             container.Singleton<StationMapViewModel>();
             container.Singleton<AboutViewModel>();
+            container.Singleton<RentTimerViewModel>();
             container.Singleton<CityContextViewModel>();
+            IoC.Get<INavigationService>().Navigating += new System.Windows.Navigation.NavigatingCancelEventHandler(WP7Bootstrapper_Navigating);
 
 #if DEBUG
             //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
@@ -45,11 +49,27 @@ namespace Bicikelj
             AddCustomConventions();
         }
 
+        void WP7Bootstrapper_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
+        {
+            if (e.NavigationMode == System.Windows.Navigation.NavigationMode.New)
+            {
+                var uriValues = e.Uri.ParseQueryStringEx();
+                if (uriValues.ContainsKey("redirect"))
+                {
+                    if (e.IsCancelable)
+                    {
+                        e.Cancel = true;
+                        NavigationExtension.NavigateTo(null, e.Uri.Query);
+                    }
+                }
+            }
+        }
+
         private void InitBugSense()
         {
             // debug versions and running on emulator shouldn't report exceptions
 #if DEBUG
-            return;
+            //return;
 #endif
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
@@ -200,7 +220,7 @@ namespace Bicikelj
             //ConventionManager.AddElementConvention<MenuItem>(ItemsControl.ItemsSourceProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<MenuItem>(MenuItem.DataContextProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<TravelSpeedControl>(TravelSpeedControl.SpeedProperty, "Speed", "Change");
-
+            ConventionManager.AddElementConvention<TimeSpanPicker>(TimeSpanPicker.ValueProperty, "Value", "ValueChanged");
 
             ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
             var aaf = ActionMessage.ApplyAvailabilityEffect;
@@ -216,7 +236,7 @@ namespace Bicikelj
                 return aaf(context);
             });
 
-            TiltEffect.TiltableItems.Add(typeof(HubTile));
+            Microsoft.Phone.Controls.TiltEffect.TiltableItems.Add(typeof(HubTile));
         }
 
         protected override object GetInstance(Type service, string key)

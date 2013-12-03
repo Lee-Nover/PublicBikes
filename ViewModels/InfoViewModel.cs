@@ -21,10 +21,9 @@ namespace Bicikelj.ViewModels
             Bicikelj.NavigationExtension.NavigateTo(IoC.Get<AboutViewModel>());
         }
 
-        public void SetAlert()
+        public void OpenRentTimer()
         {
-            TimePickerPage timepicker = new TimePickerPage();
-            
+            Bicikelj.NavigationExtension.NavigateTo(IoC.Get<RentTimerViewModel>());
         }
     }
 }

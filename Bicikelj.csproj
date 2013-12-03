@@ -189,6 +189,7 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\CityContextViewModel.cs" />
     <Compile Include="ViewModels\ClusteredStationViewModel.cs" />
+    <Compile Include="ViewModels\RentTimerViewModel.cs" />
     <Compile Include="ViewModels\SelectorViewModel.cs" />
     <Compile Include="ViewModels\NavigationRouteLegViewModel.cs" />
     <Compile Include="ViewModels\StationMapViewModel.cs" />
@@ -245,6 +246,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ClusteredStation\Pushpin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RentTimerView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -329,7 +334,9 @@
     <Content Include="Assets\PubliBike-services.zip" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
-    <None Include="Properties\WMAppManifest.xml" />
+    <None Include="Properties\WMAppManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -338,7 +345,7 @@
     <Folder Include="SampleData\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Toolkit.Content\ApplicationBar.Add.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Resource Include="Images\PublicBikeLogo200.png" />
     <Resource Include="Images\PublicBikeLogo173.png" />
     <Resource Include="Images\PublicBikeLogo62.png" />
@@ -350,10 +357,10 @@
     <Content Include="Images\appbar.star.delete.png" />
     <Content Include="Images\appbar.star.png" />
     <Content Include="Images\Ljubljana-header2.png" />
-    <Resource Include="Toolkit.Content\ApplicationBar.Cancel.png" />
-    <Resource Include="Toolkit.Content\ApplicationBar.Check.png" />
-    <Resource Include="Toolkit.Content\ApplicationBar.Delete.png" />
-    <Resource Include="Toolkit.Content\ApplicationBar.Select.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

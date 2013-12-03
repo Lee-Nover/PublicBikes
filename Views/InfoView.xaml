@@ -15,6 +15,7 @@
         <StackPanel>
             <HyperlinkButton x:Name="OpenConfig" Content="configuration" HorizontalAlignment="Left" Style="{StaticResource LargeLinkStyle}" />
             <HyperlinkButton x:Name="OpenAbout" Content="about" HorizontalAlignment="Left" Style="{StaticResource LargeLinkStyle}" />
+            <HyperlinkButton x:Name="OpenRentTimer" Content="rent timer" HorizontalAlignment="Left" Style="{StaticResource LargeLinkStyle}" />
         </StackPanel>
     </Grid>
 </UserControl>
