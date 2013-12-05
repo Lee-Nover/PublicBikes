@@ -11,11 +11,13 @@ using Microsoft.Phone.Tasks;
 using Bicikelj.AzureService;
 using Coding4Fun.Toolkit.Controls;
 using System.Windows.Media.Imaging;
+using System.Net;
 
 namespace Bicikelj.ViewModels
 {
     public class MainViewModel : Conductor<IScreen>.Collection.OneActive, IHandle<BusyState>, IHandle<ErrorState>
     {
+        INavigationService navService = null;
         SystemConfig config;
         private int busyCount = 0;
         private bool isBusy;
@@ -24,6 +26,7 @@ namespace Bicikelj.ViewModels
         protected override void OnInitialize()
         {
             base.OnInitialize();
+            navService = IoC.Get<INavigationService>();
 
             App.CurrentApp.Events.Subscribe(this);
             App.CurrentApp.Config = IoC.Get<SystemConfig>();
@@ -59,12 +62,34 @@ namespace Bicikelj.ViewModels
             viewChecked = true;
             ActivateItem(Items[0]);
 
+            CheckRedirect();
+
             NewThreadScheduler.Default.Schedule(TimeSpan.FromSeconds(3), () =>
                 {
                     CheckLocationServices();
                     CheckRating();
                     CheckUpdate();
                 });
+        }
+
+        private void CheckRedirect()
+        {
+            var uri = navService.Source;
+            var uriValues = uri.ParseQueryStringEx();
+            if (uriValues.ContainsKey("redirect"))
+            {
+                var target = uriValues["redirect"];
+                var query = App.CurrentApp.Settings[target] as string;
+                if (!string.IsNullOrEmpty(query))
+                {
+                    uri = new Uri(query, UriKind.Relative);
+                    uriValues = uri.ParseQueryStringEx();
+                    if (uriValues.ContainsKey("redirect"))
+                        uriValues.Remove("redirect");
+                    navService.Source = new Uri("/Views/MainView.xaml", UriKind.Relative);
+                    NavigationExtension.NavigateTo(target, uriValues);
+                }
+            }
         }
 
         private void CheckLocationServices()
@@ -91,8 +116,8 @@ namespace Bicikelj.ViewModels
             {
                 var minutesActive = config.TimeUnrated.TotalMinutes;
                 var sessionCount = config.SessionCount;
-                // every 8th session or after every 20 minutes of usage
-                if ((sessionCount > 7 && sessionCount % 7 == 1) || minutesActive > 20)
+                // every 20th session or after every 20 minutes of usage
+                if ((sessionCount > 19 && sessionCount % 21 == 1) || minutesActive > 20)
                 {
                     Execute.OnUIThread(() =>
                     {
@@ -123,7 +148,9 @@ namespace Bicikelj.ViewModels
                         if (latestVer > appVer)
                         {
                             config.UpdateAvailable = latestVerStr;
+#if !DEBUG
                             if (!string.Equals(config.LastCheckedVersion, latestVerStr))
+#endif
                             {
                                 config.LastCheckedVersion = latestVerStr;
                                 Execute.OnUIThread(() =>

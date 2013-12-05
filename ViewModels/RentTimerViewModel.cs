@@ -8,6 +8,7 @@ using Bicikelj.Model;
 using System.Collections.Generic;
 using Microsoft.Phone.Scheduler;
 using Bicikelj.Views;
+using System.Net;
 
 namespace Bicikelj.ViewModels
 {
@@ -104,6 +105,7 @@ namespace Bicikelj.ViewModels
             if (dispTimer != null)
                 StopTimer();
             rentStarted = DateTime.Now;
+            rentStarted = rentStarted.Value.AddMilliseconds(-rentStarted.Value.Millisecond);
             RemainingRentTime = RentTime;
             UpdateControls(false);
             ToggleTimerText = "stop the timer";
@@ -126,6 +128,7 @@ namespace Bicikelj.ViewModels
             UpdateControls(true);
             ToggleTimerText = "start the timer";
             NotifyOfPropertyChange(() => ToggleTimerText);
+            rentStarted = null;
             if (dispTimer == null) return;
             dispTimer.Dispose();
             dispTimer = null;
@@ -155,21 +158,26 @@ namespace Bicikelj.ViewModels
 
         private void CreateReminder(DateTime dueTime, TimeSpan remindBefore)
         {
+            var sa = ScheduledActionService.Find("PublicBikesExpirationReminder");
+            if (sa is Reminder)
+            {
+                var r = sa as Reminder;
+                if (r.ExpirationTime == dueTime && r.BeginTime == dueTime - remindBefore) return;
+            }
             RemoveReminder();
             if (dueTime < DateTime.Now) return;
             reminder = new Reminder("PublicBikesExpirationReminder");
             reminder.Content = "your free ride will end soon. find a dock nearby to avoid extra charges";
             reminder.BeginTime = dueTime - remindBefore;
             reminder.ExpirationTime = dueTime;
-            reminder.Title = "public bikes ride reminder";
+            reminder.Title = "end of ride reminder";
             reminder.RecurrenceType = RecurrenceInterval.None;
-            var navService = IoC.Get<INavigationService>();
-            var vmUri = navService.UriFor<RentTimerViewModel>()
-                .WithParam<DateTime>(vm => vm.RentStarted, RentStarted)
-                .WithParam<TimeSpan>(vm => vm.RentTime, RentTime)
-                .WithParam<int>(vm => vm.ReminderTimeMinutes, ReminderTimeMinutes)
-                .BuildUri();
-            reminder.NavigationUri = new Uri("/Main.xaml?redirect=RentTimerViewModel&" + vmUri.Query);
+            var configName = this.GetType().FullName;
+            var urlString = "/Views/MainView.xaml?redirect=" + configName;
+            App.CurrentApp.Settings[configName] = urlString + string.Format(@"&RentStarted={0:s}&RentTime={1:s}&ReminderTimeMinutes={2}",
+                RentStarted, RentTime, ReminderTimeMinutes);
+            var vmUri = new Uri(urlString, UriKind.Relative);
+            reminder.NavigationUri = vmUri;
             ScheduledActionService.Add(reminder);
         }
 

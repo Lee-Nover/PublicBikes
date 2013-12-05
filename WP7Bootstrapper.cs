@@ -15,6 +15,7 @@ using Microsoft.Phone.Info;
 using System.IO.IsolatedStorage;
 using Coding4Fun.Toolkit.Controls;
 using System.Windows.Navigation;
+using System.Globalization;
 
 namespace Bicikelj
 {
@@ -41,39 +42,19 @@ namespace Bicikelj
             container.Singleton<AboutViewModel>();
             container.Singleton<RentTimerViewModel>();
             container.Singleton<CityContextViewModel>();
-            IoC.Get<INavigationService>().Navigating += new System.Windows.Navigation.NavigatingCancelEventHandler(WP7Bootstrapper_Navigating);
-
 #if DEBUG
             //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
             AddCustomConventions();
         }
 
-        void WP7Bootstrapper_Navigating(object sender, System.Windows.Navigation.NavigatingCancelEventArgs e)
-        {
-            if (e.NavigationMode == System.Windows.Navigation.NavigationMode.New)
-            {
-                var uriValues = e.Uri.ParseQueryStringEx();
-                if (uriValues.ContainsKey("redirect"))
-                {
-                    if (e.IsCancelable)
-                    {
-                        e.Cancel = true;
-                        NavigationExtension.NavigateTo(null, e.Uri.Query);
-                    }
-                }
-            }
-        }
-
         private void InitBugSense()
         {
-            // debug versions and running on emulator shouldn't report exceptions
-#if DEBUG
-            //return;
-#endif
+            App.Current.UnhandledException += (s, e) => { e.Handled = true; };
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
-            
+            // debug versions and running on emulator shouldn't report exceptions
+#if !DEBUG
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {
@@ -83,7 +64,7 @@ namespace Bicikelj
                     BugSenseHandler.Instance.SendException(e.ExceptionObject);
                 e.Handled = true;
             };
-            App.Current.UnhandledException += (s, e) => { e.Handled = true; };
+#endif
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
@@ -152,6 +133,18 @@ namespace Bicikelj
 
         static void AddCustomConventions()
         {
+            MessageBinder.CustomConverters.Add(typeof(TimeSpan), (value, context) => {
+                TimeSpan result;
+                TimeSpan.TryParse(value.ToString(), out result);
+                return result;
+            });
+            MessageBinder.CustomConverters[typeof(DateTime)] = (value, context) =>
+            {
+                DateTime result;
+                DateTime.TryParseExact(value.ToString(), "s", CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
+                return result;
+            };
+
             ConventionManager.AddElementConvention<Pivot>(Pivot.ItemsSourceProperty, "SelectedItem", "SelectionChanged").ApplyBinding =
                 (viewModelType, path, property, element, convention) =>
                 {

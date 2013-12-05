@@ -16,6 +16,29 @@ namespace Bicikelj
             IoC.Get<IPhoneService>().State[HostPageViewModel.TARGET_VM_CTX] = context;
             IoC.Get<INavigationService>().UriFor<HostPageViewModel>().WithParam<string>(vm => vm.DisplayName, targetModel.GetType().Name).Navigate();
         }
+
+        public static void NavigateTo(string targetModelName, IDictionary<string, string> properties, string context = null)
+        {
+            var viewModelType = Type.GetType(targetModelName);
+            var viewModel = IoC.GetInstance(viewModelType, null);
+
+            foreach (var pair in properties)
+            {
+                if (string.IsNullOrEmpty(context) && pair.Key == "context")
+                    context = pair.Value;
+
+                var property = viewModelType.GetPropertyCaseInsensitive(pair.Key);
+                if (property == null)
+                    continue;
+
+                property.SetValue(
+                    viewModel,
+                    MessageBinder.CoerceValue(property.PropertyType, pair.Value, null),
+                    null);
+            }
+
+            NavigateTo(viewModel, context);
+        }
     }
 
     public static class UriExtension
