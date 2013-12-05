@@ -87,7 +87,9 @@ namespace Bicikelj.ViewModels
                     if (uriValues.ContainsKey("redirect"))
                         uriValues.Remove("redirect");
                     navService.Source = new Uri("/Views/MainView.xaml", UriKind.Relative);
-                    NavigationExtension.NavigateTo(target, uriValues);
+                    NewThreadScheduler.Default.Schedule(TimeSpan.FromMilliseconds(100), () => {
+                        Execute.OnUIThread(() => NavigationExtension.NavigateTo(target, uriValues));
+                    });
                 }
             }
         }

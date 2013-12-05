@@ -104,8 +104,11 @@ namespace Bicikelj.ViewModels
         {
             if (dispTimer != null)
                 StopTimer();
-            rentStarted = DateTime.Now;
-            rentStarted = rentStarted.Value.AddMilliseconds(-rentStarted.Value.Millisecond);
+            if (!rentStarted.HasValue)
+            {
+                rentStarted = DateTime.Now;
+                rentStarted = rentStarted.Value.AddMilliseconds(-rentStarted.Value.Millisecond);
+            }
             RemainingRentTime = RentTime;
             UpdateControls(false);
             ToggleTimerText = "stop the timer";
