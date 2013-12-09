@@ -69,6 +69,8 @@ namespace Bicikelj
 
             var bingCred = App.Current.Resources["BingCredentials"];
             (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
+
+            
 #endif
         }
 
