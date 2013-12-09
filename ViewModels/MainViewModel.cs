@@ -139,12 +139,13 @@ namespace Bicikelj.ViewModels
         {
             var appInfo = new BugSense.Internal.ManifestAppInfo();
             Version appVer = new Version(appInfo.Version);
-            DownloadUrl.GetAsync<VersionHistory[]>("https://publicbikes.azure-mobile.net/api/versions/latest")
+            DownloadUrl.GetAsync<VersionHistory[]>("https://publicbikes.azure-mobile.net/api/versions/published")
                 .Take(1)
                 .Subscribe(versions =>
                 {
                     if (versions != null && versions.Length > 0)
                     {
+                        App.CurrentApp.VersionHistory = versions;
                         var latestVerStr = versions[0].Version;
                         var latestVer = new Version(latestVerStr);
                         if (latestVer > appVer)

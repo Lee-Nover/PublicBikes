@@ -72,5 +72,7 @@ namespace Bicikelj
         }
 
         #endregion
+
+        public AzureService.VersionHistory[] VersionHistory { get; set; }
     }
 }

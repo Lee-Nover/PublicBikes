@@ -67,6 +67,9 @@
     <Reference Include="Coding4Fun.Toolkit.Controls">
       <HintPath>packages\Coding4Fun.Toolkit.Controls.2.0.7\lib\wp71\Coding4Fun.Toolkit.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="FlurryWP8SDK">
+      <HintPath>packages\FlurryWP8SDK.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Devices.Sensors" />
     <Reference Include="Microsoft.Expression.Interactions, Version=3.7.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>Bin\Debug\Microsoft.Expression.Interactions.dll</HintPath>
@@ -125,7 +128,6 @@
     </Compile>
     <Compile Include="AzureService\StationInfo.cs" />
     <Compile Include="AzureService\VersionHistory.cs" />
-    <Compile Include="Model\AzureServiceCredentials.cs" />
     <Compile Include="CM.Contrib\Dialogs\Answer.cs" />
     <Compile Include="CM.Contrib\Dialogs\BindableResponse.cs" />
     <Compile Include="CM.Contrib\Dialogs\Dialog.cs" />
@@ -167,8 +169,7 @@
     <Compile Include="Model\BikeServiceProviders\ClearChannel2Service.cs" />
     <Compile Include="Model\BikeServiceProviders\PubliBikeService.cs" />
     <Compile Include="Model\BikeServiceProviders\CycloCityService.cs" />
-    <Compile Include="Model\BingMapsCredentials.cs" />
-    <Compile Include="Model\BugSenseCredentials.cs" />
+    <Compile Include="Model\ServiceCredentials.cs" />
     <Compile Include="Model\BusyState.cs" />
     <Compile Include="Model\BingMaps.cs" />
     <Compile Include="Model\City.cs" />
@@ -194,6 +195,7 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\CityContextViewModel.cs" />
     <Compile Include="ViewModels\ClusteredStationViewModel.cs" />
+    <Compile Include="ViewModels\VersionHistoryViewModel.cs" />
     <Compile Include="ViewModels\RentTimerViewModel.cs" />
     <Compile Include="ViewModels\SelectorViewModel.cs" />
     <Compile Include="ViewModels\NavigationRouteLegViewModel.cs" />
@@ -251,6 +253,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ClusteredStation\Pushpin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\VersionHistoryView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

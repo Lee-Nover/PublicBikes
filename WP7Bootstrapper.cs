@@ -48,13 +48,13 @@ namespace Bicikelj
             AddCustomConventions();
         }
 
-        private void InitBugSense()
+        private void InitServices()
         {
             App.Current.UnhandledException += (s, e) => { e.Handled = true; };
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
-            // debug versions and running on emulator shouldn't report exceptions
-#if !DEBUG
+            // debug versions and running on emulator shouldn't report exceptions and analytics
+#if !DEBUG_
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {
@@ -64,19 +64,21 @@ namespace Bicikelj
                     BugSenseHandler.Instance.SendException(e.ExceptionObject);
                 e.Handled = true;
             };
+
+            FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
+
+            var bingCred = App.Current.Resources["BingCredentials"];
+            (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
 #endif
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             base.OnStartup(sender, e);
-            InitBugSense();
+            InitServices();
             LoadDatabase();
             timeActivated = DateTime.Now;
             config.SessionCount++;
-
-            var bingCred = App.Current.Resources["BingCredentials"];
-            (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
         }
 
         protected override void OnActivate(object sender, ActivatedEventArgs e)
@@ -86,7 +88,7 @@ namespace Bicikelj
             if (e.IsApplicationInstancePreserved)
                 return;
 
-            InitBugSense();
+            InitServices();
             LoadDatabase();
         }
 
