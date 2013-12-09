@@ -88,6 +88,9 @@
       <HintPath>packages\WPtoolkit.4.2013.08.16\lib\sl4-windowsphone71\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone.Interop" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>packages\Newtonsoft.Json.5.0.8\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="ServiceStack.Text.WP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\ServiceStack.Text.3.9.71\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
@@ -201,6 +204,7 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\CityContextViewModel.cs" />
     <Compile Include="ViewModels\ClusteredStationViewModel.cs" />
+    <Compile Include="ViewModels\AdsViewModel.cs" />
     <Compile Include="ViewModels\VersionHistoryViewModel.cs" />
     <Compile Include="ViewModels\RentTimerViewModel.cs" />
     <Compile Include="ViewModels\SelectorViewModel.cs" />
@@ -250,7 +254,7 @@
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Assets\BingMapsCredentials.xaml">
+    <Page Include="Assets\ServiceCredentials.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -259,6 +263,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ClusteredStation\Pushpin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AdsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

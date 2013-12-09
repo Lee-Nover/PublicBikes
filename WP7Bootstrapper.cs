@@ -42,6 +42,7 @@ namespace Bicikelj
             container.Singleton<AboutViewModel>();
             container.Singleton<RentTimerViewModel>();
             container.Singleton<CityContextViewModel>();
+            container.Singleton<AdsViewModel>();
 #if DEBUG
             //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
@@ -54,7 +55,7 @@ namespace Bicikelj
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
             // debug versions and running on emulator shouldn't report exceptions and analytics
-#if !DEBUG_
+#if !DEBUG
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {
@@ -66,11 +67,12 @@ namespace Bicikelj
             };
 
             FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
+            AdDealsSDKWP7.AdManager.Init(AdDealsCredentials.ID, AdDealsCredentials.Key);
 
             var bingCred = App.Current.Resources["BingCredentials"];
             (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
 
-            
+            App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
 #endif
         }
 

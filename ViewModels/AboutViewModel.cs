@@ -90,5 +90,11 @@ namespace Bicikelj.ViewModels
             var markeplaceTask = new MarketplaceDetailTask();
             markeplaceTask.Show();
         }
+
+        public void OpenAds()
+        {
+            var adsVM = IoC.Get<AdsViewModel>();
+            NavigationExtension.NavigateTo(adsVM);
+        }
     }
 }

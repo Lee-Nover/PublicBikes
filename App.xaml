@@ -17,7 +17,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Templates/StationTemplates.xaml"/>
 				<ResourceDictionary Source="Assets/Styles.xaml"/>
-				<ResourceDictionary Source="Assets/BingMapsCredentials.xaml"/>
+				<ResourceDictionary Source="Assets/ServiceCredentials.xaml"/>
 				<ResourceDictionary Source="Assets/Icons.xaml"/>
 				<ResourceDictionary Source="Themes/generic.xaml"/>
 			</ResourceDictionary.MergedDictionaries>

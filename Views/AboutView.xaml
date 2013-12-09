@@ -51,6 +51,7 @@ The application uses many different services to provide bike and station availab
                         <TextBlock Text="update the app" Margin="12,0" />
                     </StackPanel>
                 </Button>
+                <Button x:Name="OpenAds">show ads to cross promote this app</Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>
