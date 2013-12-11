@@ -96,5 +96,11 @@ namespace Bicikelj.ViewModels
             var adsVM = IoC.Get<AdsViewModel>();
             NavigationExtension.NavigateTo(adsVM);
         }
+
+        public void OpenVersionHistory()
+        {
+            var versionsVM = IoC.Get<VersionHistoryViewModel>();
+            NavigationExtension.NavigateTo(versionsVM);
+        }
     }
 }

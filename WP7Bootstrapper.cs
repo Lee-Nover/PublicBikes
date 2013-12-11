@@ -43,6 +43,7 @@ namespace Bicikelj
             container.Singleton<RentTimerViewModel>();
             container.Singleton<CityContextViewModel>();
             container.Singleton<AdsViewModel>();
+            container.Singleton<VersionHistoryViewModel>();
 #if DEBUG
             //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif
@@ -51,10 +52,11 @@ namespace Bicikelj
 
         private void InitServices()
         {
+            // debug versions and running on emulator shouldn't report exceptions and analytics
             App.Current.UnhandledException += (s, e) => { e.Handled = true; };
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
-            // debug versions and running on emulator shouldn't report exceptions and analytics
+            
 #if !DEBUG
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>

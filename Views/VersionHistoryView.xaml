@@ -7,13 +7,50 @@
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:conv="clr-namespace:Bicikelj.Converters"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480" >
+    <UserControl.Resources>
+        <conv:DateTimeToStringConverter x:Name="dateToStrConv" />
+        <conv:VersionItemStyleConverter x:Name="viStyleConv">
+            <conv:VersionItemStyleConverter.VersionStyle>
+                <Style TargetType="ContentControl">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <StackPanel Orientation="Horizontal" DataContext="{Binding Version}">
+                                    <TextBlock Text="{Binding Version}" Style="{StaticResource PhoneTextNormalStyle}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding DatePublished, Converter={StaticResource dateToStrConv}, ConverterParameter='d'}" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </conv:VersionItemStyleConverter.VersionStyle>
+            <conv:VersionItemStyleConverter.ChangeStyle>
+                <Style TargetType="ContentControl">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <TextBlock Text="{Binding Change}" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </conv:VersionItemStyleConverter.ChangeStyle>
+        </conv:VersionItemStyleConverter>
+    </UserControl.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent" >
-        <toolkit:LongListSelector x:Name="FlatVersionHistory" ItemTemplate="{StaticResource CaliburnListItem}" Background="{x:Null}" IsFlatList="True" />
+        <toolkit:LongListSelector x:Name="FlatVersionHistory" ItemsSource="{Binding FlatVersionHistory}" Background="{x:Null}" IsFlatList="True">
+            <toolkit:LongListSelector.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Style="{Binding ., Converter={StaticResource viStyleConv}}"></ContentControl>
+                </DataTemplate>
+            </toolkit:LongListSelector.ItemTemplate>
+        </toolkit:LongListSelector>
     </Grid>
 </UserControl>

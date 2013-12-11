@@ -22,7 +22,7 @@ namespace Bicikelj.ViewModels
             if (item is VersionHistory)
                 this.Version = (VersionHistory)item;
             else
-                this.Change = item.ToString();
+                this.Change = "• " + item.ToString();
         }
     }
 
@@ -46,6 +46,7 @@ namespace Bicikelj.ViewModels
                 .Select(vh => new object[] { vh }.Concat(vh.Changes))
                 .SelectMany(o => o)
                 .Select(v => new VersionItemViewModel(v)).ToList();
+            NotifyOfPropertyChange(() => FlatVersionHistory);
         }
 
         protected override void OnActivate()

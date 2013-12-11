@@ -161,6 +161,7 @@
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="Controls\TravelSpeedControl.cs" />
     <Compile Include="Converters\BoolToStringConverter.cs" />
+    <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Converters\VersionItemStyleConverter.cs" />
     <Compile Include="Converters\StationStyleConverter.cs" />
     <Compile Include="Converters\TravelSpeedConverters.cs" />
