@@ -74,7 +74,7 @@
       <HintPath>packages\Coding4Fun.Toolkit.Controls.2.0.7\lib\wp71\Coding4Fun.Toolkit.Controls.dll</HintPath>
     </Reference>
     <Reference Include="FlurryWP8SDK">
-      <HintPath>packages\FlurryWP8SDK.dll</HintPath>
+      <HintPath>FlurryWP8SDK.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Devices.Sensors" />
     <Reference Include="Microsoft.Expression.Interactions, Version=3.7.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -161,6 +161,7 @@
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="Controls\TravelSpeedControl.cs" />
     <Compile Include="Converters\BoolToStringConverter.cs" />
+    <Compile Include="Converters\VersionItemStyleConverter.cs" />
     <Compile Include="Converters\StationStyleConverter.cs" />
     <Compile Include="Converters\TravelSpeedConverters.cs" />
     <Compile Include="Converters\HubTileConverters.cs" />

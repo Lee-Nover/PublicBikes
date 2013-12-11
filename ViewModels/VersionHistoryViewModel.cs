@@ -6,9 +6,26 @@ using BugSense;
 using Microsoft.Phone.Tasks;
 using System;
 using Bicikelj.AzureService;
+using System.Collections.Generic;
 
 namespace Bicikelj.ViewModels
 {
+    public class VersionItemViewModel
+    {
+        public VersionHistory Version { get; set; }
+        public string Change { get; set; }
+
+        public VersionItemViewModel() { }
+        
+        public VersionItemViewModel(object item)
+        {
+            if (item is VersionHistory)
+                this.Version = (VersionHistory)item;
+            else
+                this.Change = item.ToString();
+        }
+    }
+
     public class VersionHistoryViewModel : Screen
     {
         public string SupportedServices { get; set; }
@@ -16,6 +33,7 @@ namespace Bicikelj.ViewModels
         public string AppTitle { get; set; }
         public string VersionNumber { get; set; }
         public VersionHistory[] VersionHistory { get; set; }
+        public List<VersionItemViewModel> FlatVersionHistory { get; private set; }
         SystemConfig config;
 
         protected override void OnInitialize()
@@ -23,6 +41,11 @@ namespace Bicikelj.ViewModels
             base.OnInitialize();
             config = IoC.Get<SystemConfig>();
             VersionHistory = App.CurrentApp.VersionHistory;
+            // flatten the list by creating a new array for VH and appending its Changes, then flatten with SelectMany
+            FlatVersionHistory = VersionHistory
+                .Select(vh => new object[] { vh }.Concat(vh.Changes))
+                .SelectMany(o => o)
+                .Select(v => new VersionItemViewModel(v)).ToList();
         }
 
         protected override void OnActivate()
