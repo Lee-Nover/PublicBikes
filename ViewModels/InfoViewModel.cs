@@ -18,7 +18,7 @@ namespace Bicikelj.ViewModels
 
         public void OpenAbout()
         {
-            Bicikelj.NavigationExtension.NavigateTo(IoC.Get<AboutViewModel>());
+            Bicikelj.NavigationExtension.NavigateTo(IoC.Get<AppInfoViewModel>());
         }
 
         public void OpenRentTimer()

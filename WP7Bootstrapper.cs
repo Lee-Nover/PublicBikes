@@ -44,6 +44,7 @@ namespace Bicikelj
             container.Singleton<CityContextViewModel>();
             container.Singleton<AdsViewModel>();
             container.Singleton<VersionHistoryViewModel>();
+            container.Singleton<AppInfoViewModel>();
 #if DEBUG
             //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #endif

@@ -207,6 +207,7 @@
     <Compile Include="ViewModels\CityContextViewModel.cs" />
     <Compile Include="ViewModels\ClusteredStationViewModel.cs" />
     <Compile Include="ViewModels\AdsViewModel.cs" />
+    <Compile Include="ViewModels\AppInfoViewModel.cs" />
     <Compile Include="ViewModels\VersionHistoryViewModel.cs" />
     <Compile Include="ViewModels\RentTimerViewModel.cs" />
     <Compile Include="ViewModels\SelectorViewModel.cs" />
@@ -269,6 +270,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\AdsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AppInfoView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

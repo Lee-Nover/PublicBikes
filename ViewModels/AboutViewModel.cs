@@ -1,8 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.Linq;
 using Bicikelj.Model;
-using System.Linq;
-using Bicikelj.Views;
-using BugSense;
+using Caliburn.Micro;
 using Microsoft.Phone.Tasks;
 
 namespace Bicikelj.ViewModels
@@ -15,10 +13,9 @@ namespace Bicikelj.ViewModels
         public string VersionNumber { get; set; }
         SystemConfig config;
 
-        protected override void OnInitialize()
+        public AboutViewModel(SystemConfig config)
         {
-            base.OnInitialize();
-            config = IoC.Get<SystemConfig>();
+            this.config = config;
         }
 
         protected override void OnActivate()
@@ -89,18 +86,6 @@ namespace Bicikelj.ViewModels
         {
             var markeplaceTask = new MarketplaceDetailTask();
             markeplaceTask.Show();
-        }
-
-        public void OpenAds()
-        {
-            var adsVM = IoC.Get<AdsViewModel>();
-            NavigationExtension.NavigateTo(adsVM);
-        }
-
-        public void OpenVersionHistory()
-        {
-            var versionsVM = IoC.Get<VersionHistoryViewModel>();
-            NavigationExtension.NavigateTo(versionsVM);
         }
     }
 }

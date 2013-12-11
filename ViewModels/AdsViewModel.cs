@@ -1,12 +1,5 @@
-﻿using Caliburn.Micro;
-using Bicikelj.Model;
-using System.Linq;
-using Bicikelj.Views;
-using BugSense;
-using Microsoft.Phone.Tasks;
-using System;
-using Bicikelj.AzureService;
-using System.Windows.Navigation;
+﻿using System;
+using Caliburn.Micro;
 
 namespace Bicikelj.ViewModels
 {
