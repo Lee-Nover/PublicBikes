@@ -55,6 +55,12 @@ namespace Bicikelj
         {
             // debug versions and running on emulator shouldn't report exceptions and analytics
             App.Current.UnhandledException += (s, e) => { e.Handled = true; };
+            // controls and resources must be initialized
+            AdDealsSDKWP7.AdManager.Init(AdDealsCredentials.ID, AdDealsCredentials.Key);
+            var bingCred = App.Current.Resources["BingCredentials"];
+            (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
+            App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
+
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
                 return;
             
@@ -70,12 +76,6 @@ namespace Bicikelj
             };
 
             FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
-            AdDealsSDKWP7.AdManager.Init(AdDealsCredentials.ID, AdDealsCredentials.Key);
-
-            var bingCred = App.Current.Resources["BingCredentials"];
-            (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
-
-            App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
 #endif
         }
 

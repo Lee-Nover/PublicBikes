@@ -20,7 +20,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <StackPanel Orientation="Horizontal" DataContext="{Binding Version}">
+                                <StackPanel Orientation="Horizontal" DataContext="{Binding Version}" Margin="0,12,0,0">
                                     <TextBlock Text="{Binding Version}" Style="{StaticResource PhoneTextNormalStyle}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                     <TextBlock Text="{Binding DatePublished, Converter={StaticResource dateToStrConv}, ConverterParameter='d'}" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center" />
                                 </StackPanel>
@@ -34,7 +34,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <TextBlock Text="{Binding Change}" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Change}" Margin="24,0,0,0" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
