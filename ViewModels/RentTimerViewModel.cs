@@ -109,6 +109,7 @@ namespace Bicikelj.ViewModels
                 rentStarted = DateTime.Now;
                 rentStarted = rentStarted.Value.AddMilliseconds(-rentStarted.Value.Millisecond);
             }
+            App.CurrentApp.LogAnalyticEvent("Start RentTimer");
             RemainingRentTime = RentTime;
             UpdateControls(false);
             ToggleTimerText = "stop the timer";
@@ -133,6 +134,7 @@ namespace Bicikelj.ViewModels
             NotifyOfPropertyChange(() => ToggleTimerText);
             rentStarted = null;
             if (dispTimer == null) return;
+            App.CurrentApp.LogAnalyticEvent("Stop RentTimer");
             dispTimer.Dispose();
             dispTimer = null;
             RemainingRentTime = RentTime;
@@ -169,6 +171,7 @@ namespace Bicikelj.ViewModels
             }
             RemoveReminder();
             if (dueTime < DateTime.Now) return;
+            App.CurrentApp.LogAnalyticEvent("Created a RentTime reminder");
             reminder = new Reminder("PublicBikesExpirationReminder");
             reminder.Content = "your free ride will end soon. find a dock nearby to avoid extra charges";
             reminder.BeginTime = dueTime - remindBefore;

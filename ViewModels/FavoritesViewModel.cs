@@ -54,6 +54,7 @@ namespace Bicikelj.ViewModels
             this.ActiveItem = null;
             if (view != null)
                 view.Items.SelectedItem = null;
+            App.CurrentApp.LogAnalyticEvent("Opened a Favorite item");
             if (item.Location.Station != null)
                 Bicikelj.NavigationExtension.NavigateTo(new StationViewModel(new StationLocationViewModel(item.Location.Station)), "Detail");
             else
@@ -83,12 +84,14 @@ namespace Bicikelj.ViewModels
                     if (favorites != null)
                         favorites.Add(message.Location);
                     Items.Add(new FavoriteViewModel(message.Location));
+                    App.CurrentApp.LogAnalyticEvent("Favorited an item");
                 }
                 else if (!message.IsFavorite)
                 {
                     if (favorites != null)
                         favorites.Remove(message.Location);
                     Items.Remove(fav);
+                    App.CurrentApp.LogAnalyticEvent("Unfavorited an item");
                 }
             });
         }

@@ -7,6 +7,7 @@ using Caliburn.Micro;
 using Bicikelj.Model;
 using System.Net;
 using System.IO.IsolatedStorage;
+using Bicikelj.Model.Analytics;
 
 namespace Bicikelj
 {
@@ -74,5 +75,13 @@ namespace Bicikelj
         #endregion
 
         public AzureService.VersionHistory[] VersionHistory { get; set; }
+
+        IAnalyticsService analyticsService = null;
+        public void LogAnalyticEvent(string name)
+        {
+            if (analyticsService == null)
+                analyticsService = IoC.Get<IAnalyticsService>();
+            analyticsService.LogEvent(name);
+        }
     }
 }

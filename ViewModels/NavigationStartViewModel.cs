@@ -114,12 +114,14 @@ namespace Bicikelj.ViewModels
         public bool CanFindNearestAvailableBike { get { return IsEnabled; } }
         public void FindNearestAvailableBike()
         {
+            App.CurrentApp.LogAnalyticEvent("Finding nearest bike");
             FindNearestStationWithCondition(null, "finding nearest bike...", (s, a) => { return a.Open && a.Available > 0; });
         }
 
         public bool CanFindNearestFreeStand { get { return IsEnabled; } }
         public void FindNearestFreeStand()
         {
+            App.CurrentApp.LogAnalyticEvent("Finding nearest stand");
             FindNearestStationWithCondition(null, "finding nearest stand...", (s, a) => { return a.Open && a.Free > 0; });
         }
 
@@ -171,6 +173,7 @@ namespace Bicikelj.ViewModels
         public bool CanTakeMeTo { get { return IsEnabled; } }
         public void TakeMeTo()
         {
+            App.CurrentApp.LogAnalyticEvent("Opened NavigationView");
             NavigationViewModel nvm = IoC.Get<NavigationViewModel>();
             // TODO: the viewmodel must handle this itself
             // maybe pass some params in the url?
@@ -181,6 +184,7 @@ namespace Bicikelj.ViewModels
         public bool CanOpenMap { get { return StationsAvailable; } }
         public void OpenMap()
         {
+            App.CurrentApp.LogAnalyticEvent("Opened StationMapView");
             Bicikelj.NavigationExtension.NavigateTo(IoC.Get<StationMapViewModel>());
         }
 

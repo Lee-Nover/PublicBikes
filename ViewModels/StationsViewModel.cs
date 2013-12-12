@@ -40,7 +40,10 @@ namespace Bicikelj.ViewModels
                 filter = value;
                 filterLC = filter.ToLower();
                 if (filterOb != null)
+                {
+                    App.CurrentApp.LogAnalyticEvent("Stations filtered");
                     filterOb.OnNext(filterLC);
+                }
                 NotifyOfPropertyChange(() => Filter);
             }
         }

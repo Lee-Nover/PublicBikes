@@ -170,6 +170,8 @@
     <Compile Include="Converters\FavoriteToIconConverter.cs" />
     <Compile Include="Converters\ValueToVisibilityConverter.cs" />
     <Compile Include="DebugLog.cs" />
+    <Compile Include="Model\Analytics\AnalyticsService.cs" />
+    <Compile Include="Model\Analytics\IAnalyticsService.cs" />
     <Compile Include="Model\BikeServiceProvider.cs" />
     <Compile Include="Model\BikeServiceProviders\AzureServiceProxy.cs" />
     <Compile Include="Model\BikeServiceProviders\ClearChannelService.cs" />

@@ -87,6 +87,7 @@ namespace Bicikelj.ViewModels
                     if (uriValues.ContainsKey("redirect"))
                         uriValues.Remove("redirect");
                     navService.Source = new Uri("/Views/MainView.xaml", UriKind.Relative);
+                    App.CurrentApp.LogAnalyticEvent("Redirecting to " + target);
                     NewThreadScheduler.Default.Schedule(TimeSpan.FromMilliseconds(100), () => {
                         Execute.OnUIThread(() => NavigationExtension.NavigateTo(target, uriValues));
                     });
@@ -169,6 +170,7 @@ namespace Bicikelj.ViewModels
                                     {
                                         if (e.PopUpResult == PopUpResult.Ok)
                                         {
+                                            App.CurrentApp.LogAnalyticEvent("UpdateApp");
                                             var marketplaceTask = new MarketplaceDetailTask();
                                             marketplaceTask.Show();
                                         }

@@ -408,6 +408,7 @@ namespace Bicikelj.ViewModels
 
         public void TrySearch()
         {
+            App.CurrentApp.LogAnalyticEvent("Navigation: Search");
             TakeMeTo(ToLocation);
         }
 

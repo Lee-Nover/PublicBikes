@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define ANALYTICS
+
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +18,7 @@ using System.IO.IsolatedStorage;
 using Coding4Fun.Toolkit.Controls;
 using System.Windows.Navigation;
 using System.Globalization;
+using Bicikelj.Model.Analytics;
 
 namespace Bicikelj
 {
@@ -45,8 +48,11 @@ namespace Bicikelj
             container.Singleton<AdsViewModel>();
             container.Singleton<VersionHistoryViewModel>();
             container.Singleton<AppInfoViewModel>();
-#if DEBUG
+#if DEBUG && !ANALYTICS
+            container.Singleton<IAnalyticsService, NullAnalyticsService>();
             //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
+#else
+            container.Singleton<IAnalyticsService, AnalyticsService>();
 #endif
             AddCustomConventions();
         }
@@ -61,10 +67,16 @@ namespace Bicikelj
             (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
             App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
 
-            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
-                return;
             
-#if !DEBUG
+            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
+            {
+#if !ANALYTICS
+                return;
+#endif
+            }
+            
+
+#if !DEBUG || ANALYTICS
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {

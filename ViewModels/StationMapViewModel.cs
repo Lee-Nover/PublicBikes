@@ -253,7 +253,7 @@ namespace Bicikelj.ViewModels
         public void TapPin(StationViewModel sender, System.Windows.Input.GestureEventArgs e)
         {
             e.Handled = true;
-            
+            App.CurrentApp.LogAnalyticEvent("Tapped a station pin");
             if (sender != null && sender != ActiveItem)
             {
                 Items.Remove(sender);

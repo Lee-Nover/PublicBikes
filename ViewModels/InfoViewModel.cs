@@ -13,6 +13,7 @@ namespace Bicikelj.ViewModels
 
         public void OpenConfig()
         {
+            App.CurrentApp.LogAnalyticEvent("Opened Configuration");
             Bicikelj.NavigationExtension.NavigateTo(IoC.Get<SystemConfigViewModel>());
         }
 
@@ -23,6 +24,7 @@ namespace Bicikelj.ViewModels
 
         public void OpenRentTimer()
         {
+            App.CurrentApp.LogAnalyticEvent("Opened RentTimer");
             Bicikelj.NavigationExtension.NavigateTo(IoC.Get<RentTimerViewModel>());
         }
     }

@@ -39,6 +39,7 @@ namespace Bicikelj.ViewModels
                     return;
                 if (value == config.LocationEnabled)
                     return;
+                App.CurrentApp.LogAnalyticEvent("LocationEnabled changed to " + value.ToString());
                 config.LocationEnabled = value;
                 LocationHelper.IsLocationEnabled = value;
                 NotifyOfPropertyChange(() => LocationEnabled);
@@ -56,6 +57,7 @@ namespace Bicikelj.ViewModels
                 if (value == config.UseImperialUnits)
                     return;
                 config.UseImperialUnits = value;
+                App.CurrentApp.LogAnalyticEvent("ImperialUnits changed to " + value.ToString());
                 NotifyOfPropertyChange(() => UseImperialUnits);
                 events.Publish(config);
             }
@@ -191,6 +193,7 @@ namespace Bicikelj.ViewModels
                 SelectedCity = selvm.SelectedItem as City;
                 selvm = null;
             };
+            App.CurrentApp.LogAnalyticEvent("Selecting city");
             NavigationExtension.NavigateTo(selvm);
         }
     }

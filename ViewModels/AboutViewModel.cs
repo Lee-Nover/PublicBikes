@@ -20,6 +20,7 @@ namespace Bicikelj.ViewModels
 
         protected override void OnActivate()
         {
+            App.CurrentApp.LogAnalyticEvent("Activated AboutView");
             base.OnActivate();
             if (string.IsNullOrEmpty(SupportedServices))
                 UpdateCities();
@@ -73,6 +74,7 @@ namespace Bicikelj.ViewModels
 
         public void RateApp()
         {
+            App.CurrentApp.LogAnalyticEvent("RateApp");
             var marketplaceReviewTask = new MarketplaceReviewTask();
             marketplaceReviewTask.Show();
         }
@@ -84,6 +86,7 @@ namespace Bicikelj.ViewModels
 
         public void UpdateApp()
         {
+            App.CurrentApp.LogAnalyticEvent("UpdateApp");
             var markeplaceTask = new MarketplaceDetailTask();
             markeplaceTask.Show();
         }

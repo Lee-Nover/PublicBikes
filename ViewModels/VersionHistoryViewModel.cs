@@ -40,5 +40,11 @@ namespace Bicikelj.ViewModels
                 .Select(v => new VersionItemViewModel(v)).ToList();
             NotifyOfPropertyChange(() => FlatVersionHistory);
         }
+
+        protected override void OnActivate()
+        {
+            base.OnActivate();
+            App.CurrentApp.LogAnalyticEvent("Activated VersionHistoryView");
+        }
     }
 }
