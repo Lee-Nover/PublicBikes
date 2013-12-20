@@ -41,7 +41,7 @@ namespace Bicikelj.ViewModels
 
         private void UpdateCities()
         {
-            var svclist = "";
+            /*var svclist = "";
             var services = from city in BikeServiceProvider.GetAllCities() orderby city.ServiceName select city.ServiceName;
             foreach (var service in services.Distinct())
                 svclist += service + ", ";
@@ -55,21 +55,21 @@ namespace Bicikelj.ViewModels
 
             SupportedServices = svclist;
             SupportedCountries = countrylist;
-            /*var cities = from city in BikeServiceProvider.GetAllCities() orderby city.Country select city;
-            var country = "";
+            var cities = from city in BikeServiceProvider.GetAllCities() orderby city.Country select city;
+            var ctry = "";
             var list = "";
             foreach (var city in cities)
             {
-                if (!string.Equals(country, city.Country))
+                if (!string.Equals(ctry, city.Country))
                 {
                     list += city.Country + ": ";
-                    country = city.Country;
+                    ctry = city.Country;
                 }
                 list += city.CityName + ", ";
             }
-            SupportedCities = list.Remove(list.Length - 2, 2);*/
+            var SupportedCities = list.Remove(list.Length - 2, 2);
             NotifyOfPropertyChange(() => SupportedServices);
-            NotifyOfPropertyChange(() => SupportedCountries);
+            NotifyOfPropertyChange(() => SupportedCountries);*/
         }
 
         public void RateApp()

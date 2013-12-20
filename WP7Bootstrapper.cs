@@ -83,7 +83,13 @@ namespace Bicikelj
                 e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
                     "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
                 if (!e.Cancel)
-                    BugSenseHandler.Instance.SendException(e.ExceptionObject);
+                {
+                    var wex = e.ExceptionObject as WebExceptionEx;
+                    if (wex != null)
+                        BugSenseHandler.Instance.SendExceptionMessage("RequestedURL", wex.URL, wex);
+                    else
+                        BugSenseHandler.Instance.SendException(e.ExceptionObject);
+                }
                 e.Handled = true;
             };
 

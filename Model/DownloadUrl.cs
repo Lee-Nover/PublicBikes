@@ -22,6 +22,16 @@ namespace Bicikelj.Model
         }
     };
 
+    public class WebExceptionEx : WebException
+    {
+        public string URL { get; set; }
+        public WebExceptionEx(WebException we, string url)
+            : base(we.Message, we, we.Status, we.Response)
+        {
+            this.URL = url;
+        }
+    }
+
     public static class DownloadUrl
     {
         #region Helpers
@@ -133,7 +143,7 @@ namespace Bicikelj.Model
                         if (response == null || response.ContentType != "application/json")
                         {
                             response = null;
-                            var webex = new WebException(we.Message + ": " + url, we, we.Status, we.Response);
+                            var webex = new WebExceptionEx(we, url);
                             observer.OnError(webex);
                             return;
                         }

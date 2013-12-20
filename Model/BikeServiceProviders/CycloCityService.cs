@@ -87,7 +87,7 @@ namespace Bicikelj.Model
             new City(){ CityName = "Seville", Country = "Spain", ServiceName = "SEVici", UrlCityName = "seville", Provider = Instance  },
             new City(){ CityName = "Toulouse", Country = "France", ServiceName = "VélôToulouse", UrlCityName = "toulouse", Provider = Instance },
             new City(){ CityName = "Toyama", Country = "Japan", ServiceName = "CyclOcity", UrlCityName = "toyama", Provider = Instance  },
-            new City(){ CityName = "Valencia", Country = "Spain", ServiceName = "balenbisi", UrlCityName = "valencia", Provider = Instance  }
+            new City(){ CityName = "Valencia", Country = "Spain", ServiceName = "valenbisi", UrlCityName = "valencia", Provider = Instance  }
         };
         #endregion
 
