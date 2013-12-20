@@ -29,11 +29,11 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" x:Name="StationName" TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" />
             <TextBlock Grid.Row="1" x:Name="Address" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
-            <maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" 
+            <maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache"
                       Mode="Road" Center="{Binding GeoLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
-                <maps:MapLayer x:Name="Route" />
+                <maps:MapLayer x:Name="Route" CacheMode="BitmapCache" />
                 <maps:MapLayer x:Name="CurrentLocation">
-                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding }" />
+                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding }" CacheMode="BitmapCache" />
                     <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
@@ -43,11 +43,10 @@
                         <Path Width="28" Height="28" Data="{StaticResource RaceFlagIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
-                <maps:MapLayer x:Name="RoutePins" />
                 <maps:MapItemsControl x:Name="Stations">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Location="{Binding Coordinate}">
+                            <maps:Pushpin Location="{Binding Coordinate}" CacheMode="BitmapCache">
                                 <Path Width="28" Height="28" Data="{StaticResource CyclingIconData}" Fill="White" Stretch="Uniform" />
                             </maps:Pushpin>
                         </DataTemplate>

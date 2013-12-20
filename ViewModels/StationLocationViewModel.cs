@@ -219,6 +219,7 @@ namespace Bicikelj.ViewModels
                     pl.StrokeThickness = 5;
                     pl.Opacity = 0.7;
                     pl.Locations = locCol;
+                    pl.CacheMode = new BitmapCache();
                     view.Route.Children.Clear();
                     view.Route.Children.Add(pl);
                     view.Map.SetView(LocationRect.CreateLocationRect(points));
