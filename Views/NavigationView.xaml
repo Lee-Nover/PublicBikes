@@ -43,11 +43,11 @@
                 </Path>
             </Button>
             <TextBlock Grid.Row="2" x:Name="Address" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
-            <maps:Map Grid.Row="3" x:Name="Map" Margin="12,12,12,0" 
+            <maps:Map Grid.Row="3" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache"
                       Mode="Road" Center="{Binding CurrentLocation.Coordinate}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
-                <maps:MapLayer x:Name="Route" />
+                <maps:MapLayer x:Name="Route" CacheMode="BitmapCache" />
                 <maps:MapLayer x:Name="CurrentLocation">
-                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding Coordinate}" />
+                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding Coordinate}" CacheMode="BitmapCache" />
                     <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>

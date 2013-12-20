@@ -250,12 +250,14 @@
         <Setter Property="Template" Value="{StaticResource PushpinTemplate}" />
         <Setter Property="Background" Value="{StaticResource PhoneAccentTransparentBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource PhoneAccentBrush}" />
+        <Setter Property="CacheMode" Value="BitmapCache" />
     </Style>
     
     <Style x:Key="PushpinTemplateNormal" TargetType="maps:Pushpin">
         <Setter Property="Template" Value="{StaticResource PushpinTemplate}" />
         <Setter Property="Background" Value="{StaticResource PinInactiveBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource PinInactiveBorderBrush}" />
+        <Setter Property="CacheMode" Value="BitmapCache" />
     </Style>
 
     <ControlTemplate x:Key="PushpinClusterTemplate" TargetType="maps:Pushpin" >
@@ -279,6 +281,7 @@
         <Setter Property="Template" Value="{StaticResource PushpinClusterTemplate}" />
         <Setter Property="Background" Value="{StaticResource PinInactiveBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{StaticResource PinInactiveBorderBrush}" />
+        <Setter Property="CacheMode" Value="BitmapCache" />
     </Style>
 
 </ResourceDictionary>

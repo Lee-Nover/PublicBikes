@@ -374,6 +374,7 @@ namespace Bicikelj.ViewModels
                 pl.StrokeThickness = 5;
                 pl.Opacity = 0.7;
                 pl.Locations = locCol;
+                pl.CacheMode = new BitmapCache();
                     
                 // clear the route and remove pins other than CurrentPos and Destination
                 view.Route.Children.Clear();
@@ -398,8 +399,6 @@ namespace Bicikelj.ViewModels
                     idxPoint++;
                 }
                 view.Map.SetView(viewRect);
-                    
-                view.Map.SetView(LocationRect.CreateLocationRect(points));
                 NotifyOfPropertyChange(() => DistanceString);
                 NotifyOfPropertyChange(() => DurationString);
                 NotifyOfPropertyChange(() => CanToggleFavorite);
