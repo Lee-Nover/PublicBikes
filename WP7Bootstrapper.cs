@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define ANALYTICS
+
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -63,16 +65,15 @@ namespace Bicikelj
             AdDealsSDKWP7.AdManager.Init(AdDealsCredentials.ID, AdDealsCredentials.Key);
             var bingCred = App.Current.Resources["BingCredentials"];
             (bingCred as ApplicationIdCredentialsProvider).ApplicationId = BingMapsCredentials.Key;
-            App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
+            if (!App.Current.Resources.Contains("AdDuplexCredentials"))
+                App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
 
-            
+#if DEBUG && !ANALYTICS
             if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
             {
-#if !ANALYTICS
                 return;
-#endif
             }
-            
+#endif
 
 #if !DEBUG || ANALYTICS
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);

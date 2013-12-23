@@ -11,6 +11,24 @@ using System.Diagnostics;
 
 namespace Bicikelj.Model
 {
+    public class SmartBikeService : AzureServiceProxy
+    {
+        public SmartBikeService()
+        {
+            AzureServiceName = "smartbike";
+        }
+
+        public static SmartBikeService Instance = new SmartBikeService();
+
+        protected override IList<City> GetCities()
+        {
+            var result = new List<City>() {
+                new City(){ CityName = "Milano", Country = "Italy", ServiceName = "bikeMi", UrlCityName = "milano", AlternateCityName = "Milan", Provider = Instance }
+            };
+            return result;
+        }
+    }
+
     public class ClearChannelService : BikeServiceProvider
     {
         public class BicingCommand
@@ -45,8 +63,6 @@ namespace Bicikelj.Model
                     return string.Format(StationListUrl_, "www.bicing.cat/ca");
                 case "zaragoza":
                     return string.Format(StationListUrl_, "www.bizizaragoza.com/es");
-                case "milano":
-                    return "http://www.bikemi.com/localizaciones/localizaciones.php";
                 default:
                     return "";
             }
@@ -57,8 +73,7 @@ namespace Bicikelj.Model
             var result = new List<City>() {
                 new City(){ CityName = "Barcelona", Country = "Spain", ServiceName = "bicing", UrlCityName = "barcelona", Provider = Instance },
                 new City(){ CityName = "Zaragoza", Country = "Spain", ServiceName = "bizi Zaragoza", UrlCityName = "zaragoza", Provider = Instance },
-                new City(){ CityName = "Milano", Country = "Italy", ServiceName = "bikeMi", UrlCityName = "milano", AlternateCityName = "Milan", Provider = Instance }
-            };
+             };
             return result;
         }
 
@@ -79,20 +94,7 @@ namespace Bicikelj.Model
                 .Select(cmdList =>
                 {
                     List<StationAndAvailability> sl;
-
-                    switch (cityName)
-                    {
-                        case "milano":
-                            var idxStart = cmdList.IndexOf("exml.parseString('") + 18;
-                            var idxEnd = cmdList.IndexOf("</kml>", idxStart) + 6;
-                            cmdList = cmdList.Substring(idxStart, idxEnd - idxStart);
-                            sl = LoadStationsFromKML(cmdList, cityName);
-                            break;
-                        default:
-                            sl = LoadStationsFromHTML(cmdList, cityName);
-                            break;
-                    }
-                    
+                    sl = LoadStationsFromHTML(cmdList, cityName);
                     UpdateAvailabilityCache(sl);
                     return sl;
                 });
@@ -143,66 +145,6 @@ namespace Bicikelj.Model
 
                 stations.Add(new StationAndAvailability(station, availability));
             }
-            return stations;
-        }
-
-        private static List<StationAndAvailability> LoadStationsFromKML(string stationsStr, string cityName)
-        {
-            if (string.IsNullOrWhiteSpace(stationsStr))
-                return null;
-            var idxNS = stationsStr.IndexOf("xmlns");
-            var idxEnd = stationsStr.IndexOf(">", idxNS);
-            stationsStr = stationsStr.Remove(idxNS, idxEnd - idxNS);
-            XDocument doc = XDocument.Load(new System.IO.StringReader(stationsStr));
-            /*
-             * <description><![CDATA[<div style="margin:10px"><div style="font:bold 11px verdana;color:#ED1B24;margin-bottom:10px">
-             * 01 Duomo - lato Via Mengoni, 0</div><div style="text-align:right;float:left;font:bold 11px verdana">Biciclette<br />Stalli</div><div style="margin-left:5px;float:left;font:bold 11px verdana;color:green">
-             * 19<br />
-             * 4<br /></div></div>]]></description>
-             */
-            var newIndex = 1000;
-            var numbersOnly = new Regex("\\d+", RegexOptions.Compiled);
-            var stations = new List<StationAndAvailability>();
-            foreach (var s in doc.Descendants("Placemark"))
-            {
-                var desc = s.Descendants("description").FirstOrDefault().Value;
-                var descNode = XDocument.Parse(desc);
-                var nodeList = descNode.DescendantNodes().ToList();
-                desc = nodeList[2].ToString();
-                var coords = s.Descendants("coordinates").FirstOrDefault().Value.Split(',');
-                var idxName = 0;
-                while (idxName < desc.Length && char.IsNumber(desc[idxName]))
-                    idxName++;
-                
-                var station = new StationLocation();
-                if (idxName == 0)
-                    station.Number = newIndex++;
-                else
-                {
-                    station.Number = int.Parse(desc.Substring(0, idxName));
-                    while (idxName < desc.Length && !char.IsLetter(desc[idxName]))
-                        idxName++;
-                }
-                idxEnd = desc.LastIndexOf(',') - 1;
-                if (idxEnd <= 0)
-                    idxEnd = desc.Length;
-                station.Name = desc.Substring(idxName, idxEnd - idxName + 1);
-                station.Name = station.Name.Replace("\\", "");
-                station.Latitude = double.Parse(coords[1], CultureInfo.InvariantCulture);
-                station.Longitude = double.Parse(coords[0], CultureInfo.InvariantCulture);
-                station.Open = true;
-                station.City = cityName;
-
-                var availability = new StationAvailability();
-                desc = nodeList[8].ToString();
-                availability.Available = int.Parse(numbersOnly.Match(desc).Value);
-                desc = nodeList[10].ToString();
-                availability.Free = int.Parse(numbersOnly.Match(desc).Value);
-                availability.Open = true;
-                
-                stations.Add(new StationAndAvailability(station, availability));
-            }
-
             return stations;
         }
     }

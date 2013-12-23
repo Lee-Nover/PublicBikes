@@ -19,7 +19,8 @@ exports.extractData = function (data, cityName) {
 function parseData(data, cityName) {
     var aboList = JSON.parse(data);
     var stations = [];
-    var stationCache = {}; // using an object is faster than an array for a dictionary
+    var idxStation = 0;
+    var stationCache = [];
     aboList.forEach(function visitAbo(abo) {
         abo.abo.terminals.forEach(function visitTerminal(terminal) {
             if (!stationCache[terminal.terminalid]) {
@@ -45,7 +46,7 @@ function parseData(data, cityName) {
                     freeDocks: freeHolders,
                     totalDocks: holders
                 }
-                stations.push(station);
+                stations[idxStation++] = station;
                 stationCache[terminal.terminalid] = true;
             }
         })

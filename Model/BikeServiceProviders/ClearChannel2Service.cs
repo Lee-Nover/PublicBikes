@@ -42,7 +42,7 @@ namespace Bicikelj.Model
         protected override IList<City> GetCities()
         {
             var result = new List<City>() {
-                new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", Provider = Instance },
+                new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", AlternateCityName = "antwerp", Provider = Instance },
                 new City(){ CityName = "Mexico City", Country = "Mexico", ServiceName = "ecobici", UrlCityName = "mexicocity", Provider = Instance }
             };
             return result;

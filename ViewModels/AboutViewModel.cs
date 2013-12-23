@@ -2,6 +2,7 @@
 using Bicikelj.Model;
 using Caliburn.Micro;
 using Microsoft.Phone.Tasks;
+using System;
 
 namespace Bicikelj.ViewModels
 {
@@ -74,6 +75,8 @@ namespace Bicikelj.ViewModels
 
         public void RateApp()
         {
+            config.AppRated = true;
+            config.TimeUnrated = TimeSpan.Zero;
             App.CurrentApp.LogAnalyticEvent("RateApp");
             var marketplaceReviewTask = new MarketplaceReviewTask();
             marketplaceReviewTask.Show();
