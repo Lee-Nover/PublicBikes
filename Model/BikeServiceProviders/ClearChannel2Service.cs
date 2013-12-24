@@ -17,21 +17,17 @@ namespace Bicikelj.Model
         {
             switch (cityName)
             {
-                case "antwerpen":
-                    return "https://www.velo-antwerpen.be/localizaciones/station_map.php";
                 case "mexicocity":
                     return "https://www.ecobici.df.gob.mx/localizaciones/localizaciones_body.php";
                 default:
                     return "";
             }
-            
         }
+
         private static string StationInfoUrl(string cityName)
         {
             switch (cityName)
             {
-                case "antwerpen":
-                    return "https://www.velo-antwerpen.be/CallWebService/StationBussinesStatus.php";
                 case "mexicocity":
                     return "https://www.ecobici.df.gob.mx/CallWebService/StationBussinesStatus.php";
                 default:
@@ -42,7 +38,6 @@ namespace Bicikelj.Model
         protected override IList<City> GetCities()
         {
             var result = new List<City>() {
-                new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", AlternateCityName = "antwerp", Provider = Instance },
                 new City(){ CityName = "Mexico City", Country = "Mexico", ServiceName = "ecobici", UrlCityName = "mexicocity", Provider = Instance }
             };
             return result;
@@ -101,7 +96,6 @@ namespace Bicikelj.Model
                 var coordEndPos = s.IndexOf(");", coordPos);
                 var coordStr = s.Substring(coordPos, coordEndPos - coordPos);
                 var coords = coordStr.Split(',');
-                // antwerpen:    data:"idStation=12&addressnew=MDEyIC0gQnJ1c3NlbA==&s_id_idioma=en",
                 // mexico city:  data:"idStation="+89+"&addressnew=ODkgUkVQVUJMSUNBIERFIEdVQVRFTUFMQSAtIE1PTlRFIERFIFBJRURBRA=="+"&s_id_idioma="+"es"
                 dataPos = s.IndexOf(CDataStr, coordEndPos) + CDataStr.Length;
                 var dataEndPos = s.IndexOf("\",", dataPos);
@@ -132,30 +126,13 @@ namespace Bicikelj.Model
             string availStr = "0";
             string slotsStr = "0";
             var bikePos = s.IndexOf("Bicycles", StringComparison.InvariantCultureIgnoreCase);
-            // todo: deleting one char at a time is really stupid and slow
-            // use a regex with split(); var numbersOnly = new Regex("\\d+", RegexOptions.Compiled);
             if (bikePos > 0)
-            {
-                s = s.Remove(0, bikePos + 8);
-                while (!char.IsNumber(s[0]))
-                    s = s.Remove(0, 1);
-                
-                while (char.IsNumber(s[0]))
-                {
-                    availStr += s[0];
-                    s = s.Remove(0, 1);
-                }
-                bikePos = s.IndexOf("Slots", StringComparison.InvariantCultureIgnoreCase);
-                s = s.Remove(0, bikePos + 5);
-                while (!char.IsNumber(s[0]))
-                    s = s.Remove(0, 1);
-                
-                while (char.IsNumber(s[0]))
-                {
-                    slotsStr += s[0];
-                    s = s.Remove(0, 1);
-                }
-            }
+                s = s.Substring(bikePos);
+            var numbersOnly = new Regex("\\d+", RegexOptions.Compiled);
+            var matches = numbersOnly.Matches(s);
+            availStr = matches[0].Value;
+            slotsStr = matches[1].Value;
+            
             return new StationAvailability()
             {
                 Available = int.Parse(availStr),

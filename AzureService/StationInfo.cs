@@ -11,19 +11,21 @@ namespace Bicikelj.AzureService
         public double lat { get; set; }
         public double lng { get; set; }
         public int status { get; set; }
-        public int bikes { get; set; }
-        public int freeDocks { get; set; }
-        public int totalDocks { get; set; }
+        public int? bikes { get; set; }
+        public int? freeDocks { get; set; }
+        public int? totalDocks { get; set; }
 
         public StationAvailability GetAvailability()
         {
+            if (!bikes.HasValue || !freeDocks.HasValue)
+                return null;
             return new StationAvailability()
             {
-                Available = this.bikes,
+                Available = this.bikes.Value,
                 Connected = this.status > 0,
                 Open = this.status > 0,
-                Free = this.freeDocks,
-                Total = this.totalDocks
+                Free = this.freeDocks.Value,
+                Total = this.totalDocks.Value
             };
         }
 
