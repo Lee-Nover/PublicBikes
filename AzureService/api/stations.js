@@ -51,7 +51,7 @@ function downloadData() {
             body = serviceHandlers.extractData(body, cityName);
             processData(body, updateData);
         } else {
-            console.error('Could not get the ' + serviceName + ' service data! Response: ' + response.statusCode + ', Error: ' + error);
+            console.error('Could not get the ' + serviceName + ' service data! Error: ' + error);
         }
     });
 }

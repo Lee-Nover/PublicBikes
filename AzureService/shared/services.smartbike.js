@@ -21,9 +21,8 @@ exports.extractData = function (data, cityName) {
         case 'stockholm':
             return extractFromXML(data, cityName);
         case 'antwerpen':
-            return extractFromHTMLAntwerp(data, cityName);
         case 'mexicocity':
-            break;
+            return extractFromHTMLAntwerpMX(data, cityName);
         case 'milano':
             return extractFromJsonMilano(data, cityName);
         default:
@@ -113,13 +112,15 @@ function extractFromJsonMilano(data, cityName) {
     return JSON.stringify(stations);
 }
 
-function extractFromHTMLAntwerp(data, cityName) {
+function extractFromHTMLAntwerpMX(data, cityName) {
     var stations = [];
 
     var index = 1;
     var idxStation = 0;
-    
+    var isMXC = cityName == 'mexicocity';
     var CCoordStr = 'point = new google.maps.LatLng(';
+    if (isMXC)
+        CCoordStr = 'point = new GLatLng(';
     var CDataStr = 'data:"';
 
     var dataPos = 0;
@@ -131,6 +132,12 @@ function extractFromHTMLAntwerp(data, cityName) {
             endScriptPos = data.length;
         data = data.substr(coordPos, endScriptPos - coordPos);
     }
+    var S = require('string');
+    var filterMX = /\+|\"/g;
+    var toEnc = 'binary';
+    if (isMXC)
+        toEnc = null;
+
     coordPos = data.indexOf(CCoordStr);
     while (coordPos > -1)
     {
@@ -140,14 +147,18 @@ function extractFromHTMLAntwerp(data, cityName) {
         var coordStr = data.substr(coordPos, coordEndPos - coordPos);
         var coords = coordStr.split(',');
         // antwerpen:    data:"idStation=12&addressnew=MDEyIC0gQnJ1c3NlbA==&s_id_idioma=en",
+        // mexico city:  data:"idStation="+89+"&addressnew=ODkgUkVQVUJMSUNBIERFIEdVQVRFTUFMQSAtIE1PTlRFIERFIFBJRURBRA=="+"&s_id_idioma="+"es"
         dataPos = data.indexOf(CDataStr, coordEndPos) + CDataStr.length;
         var dataEndPos = data.indexOf('",', dataPos);
         var dataStr = data.substr(dataPos, dataEndPos - dataPos);
-        var dataValues = dataStr.replace('"', '').replace('+', '').split('&');
+        var dataValues = dataStr.replace(filterMX, '').split('&');
         var value = dataValues[0].split('=')[1];
         index = parseInt(value);
         value = dataValues[1].substr(dataValues[1].indexOf('=') + 1);
-        var title = new Buffer(value, 'base64').toString('utf8');
+        var b64buf = new Buffer(value, 'base64');
+        var title = b64buf.toString(toEnc);
+        if (isMXC)
+            title = S(title).decodeHTMLEntities().s;
         var idxTitle = title.indexOf('-');
         if (idxTitle > 0)
             title = title.substr(idxTitle + 1).trim();

@@ -179,7 +179,6 @@
     <Compile Include="Model\BikeServiceProviders\BixiService.cs" />
     <Compile Include="Model\BikeServiceProviders\SambaService.cs" />
     <Compile Include="Model\BikeServiceProviders\NextBikeService.cs" />
-    <Compile Include="Model\BikeServiceProviders\ClearChannel2Service.cs" />
     <Compile Include="Model\BikeServiceProviders\PubliBikeService.cs" />
     <Compile Include="Model\BikeServiceProviders\CycloCityService.cs" />
     <Compile Include="Model\ServiceCredentials.cs" />

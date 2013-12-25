@@ -17,6 +17,9 @@ emitex = function (evt, arg1) {
                 this.decoder.on('data', function (data) {
                     emit.call(self, 'data', data);
                 });
+                this.decoder.on('end', function () {
+                    emit.call(self, 'end');
+                });
                 this.decoder.on('finish', function () {
                     emit.call(self, 'end');
                 });

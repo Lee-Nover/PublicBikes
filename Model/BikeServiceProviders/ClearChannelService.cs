@@ -25,7 +25,8 @@ namespace Bicikelj.Model
         {
             var result = new List<City>() {
                 new City(){ CityName = "Milano", Country = "Italy", ServiceName = "bikeMi", UrlCityName = "milano", AlternateCityName = "Milan", Provider = Instance },
-                new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", AlternateCityName = "antwerp", Provider = Instance }
+                new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", AlternateCityName = "antwerp", Provider = Instance },
+                new City(){ CityName = "Mexico City", Country = "Mexico", ServiceName = "ecobici", UrlCityName = "mexicocity", Provider = Instance }
             };
             return result;
         }
