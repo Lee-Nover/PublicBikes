@@ -64,6 +64,9 @@ namespace Bicikelj.ViewModels
                 return;
             if (availability == null || forceUpdate || !cityContext.IsAvailabilityValid(Location.Location))
             {
+                // we might lose the city if the sensor changes .. 
+                // should not happen if the location was gotten by the nearest supported city
+                // link stationLocation with city and let it continue to work
                 events.Publish(BusyState.Busy("checking availability..."));
 
                 var availObs = cityContext.GetAvailability(Location.Location);

@@ -242,29 +242,68 @@ namespace Bicikelj.ViewModels
                 .Do(sl => city.Stations = sl);
         }
 
+        public City GetCityForStation(StationLocation station)
+        {
+            City result = null;
+            if (station != null)
+            {
+                result = City;
+                if (result == null || result.Provider == null || !string.Equals(station.City, result.UrlCityName))
+                    result = BikeServiceProvider.FindByCityName(station.City);
+            }
+            return result;
+        }
+
+        public bool GetCityForStation(StationLocation station, out City scity)
+        {
+            scity = GetCityForStation(station);
+            return scity != null;
+        }
+
         public IObservable<StationAvailability> GetAvailability(StationLocation station)
         {
-            return city.Provider
-                .GetAvailability(station)
-                .Do(a =>
-                {
-                    if (a != null) station.Open = a.Open;
-                });
+            City scity = null;
+            if (!GetCityForStation(station, out scity))
+            {
+                // maybe notify/log the error
+                return Observable.Empty<StationAvailability>();
+            }
+            else
+                return scity.Provider
+                    .GetAvailability(station)
+                    .Do(a =>
+                    {
+                        if (a != null) station.Open = a.Open;
+                    });
         }
 
         public IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
-            return city.Provider
-                .GetAvailability2(station)
-                .Do(a =>
-                {
-                    if (a != null) station.Open = a.Availability.Open;
-                });
+            City scity = null;
+            if (!GetCityForStation(station, out scity))
+            {
+                // maybe notify/log the error
+                return Observable.Empty<StationAndAvailability>();
+            }
+            else
+                return scity.Provider
+                    .GetAvailability2(station)
+                    .Do(a =>
+                    {
+                        if (a != null) station.Open = a.Availability.Open;
+                    });
         }
 
         public bool IsAvailabilityValid(StationLocation station)
         {
-            return city.Provider.IsAvailabilityValid(station);
+            City scity = null;
+            if (!GetCityForStation(station, out scity))
+            {
+                // maybe notify/log the error
+                return false;
+            }
+            else
+                return scity.Provider.IsAvailabilityValid(station);
         }
 
         private IObservable<List<StationLocation>> obsStations = null;

@@ -190,7 +190,8 @@ namespace Bicikelj.ViewModels
             selvm.ItemTemplate = sysConfView.Resources["citySelectorItemTmpl"] as DataTemplate;
             selvm.Deactivated += (s, e) =>
             {
-                SelectedCity = selvm.SelectedItem as City;
+                if (selvm != null && this != null)
+                    SelectedCity = selvm.SelectedItem as City;
                 selvm = null;
             };
             App.CurrentApp.LogAnalyticEvent("Selecting city");

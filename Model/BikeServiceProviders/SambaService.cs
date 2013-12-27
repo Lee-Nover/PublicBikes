@@ -7,13 +7,38 @@ using System.Text.RegularExpressions;
 
 namespace Bicikelj.Model
 {
-    public class SambaService : BikeServiceProvider
+    public class SambaService : AzureServiceProxy
     {
+        public SambaService()
+        {
+            AzureServiceName = "samba";
+        }
+
         public static SambaService Instance = new SambaService();
 
-        private static string StationListUrl = "http://www.movesamba.com/{0}/mapaestacao.asp";
+        protected override IList<City> GetCities()
+        {
+            var result = new List<City>() {
+                new City(){ CityName = "Recife", Country = "Brasil", ServiceName = "BikePE", UrlCityName = "bikepe", Provider = Instance },
+                new City(){ CityName = "Petrolina", Country = "Brasil", ServiceName = "PetroBike", UrlCityName = "petrobike", Provider = Instance },
+                new City(){ CityName = "Porto Alegre", Country = "Brasil", ServiceName = "bike PoA", UrlCityName = "bikepoa", Provider = Instance },
+                //new City(){ CityName = "Porto Leve", Country = "Brasil", ServiceName = "PortoLeve", UrlCityName = "portoleve", Provider = Instance },
+                new City(){ CityName = "Rio de Janeiro", Country = "Brasil", ServiceName = "Bike Rio", UrlCityName = "sambarjpt", AlternateCityName = "Rio", Provider = Instance },
+                new City(){ CityName = "São Paulo", Country = "Brasil", ServiceName = "Bike Sampa", UrlCityName = "bikesampa", Provider = Instance },
+                new City(){ CityName = "Santos", Country = "Brasil", ServiceName = "Bike Santos", UrlCityName = "bikesantos", Provider = Instance },
+                new City(){ CityName = "Sorocaba", Country = "Brasil", ServiceName = "Samba", UrlCityName = "sorocaba", Provider = Instance }
+            };
+            return result;
+        }
+    }
 
-        // todo: add availability caching and read from cache until some time pases, eg. 5 min
+    #region SambaServiceOld
+    /*
+    public class SambaServiceOld : BikeServiceProvider
+    {
+        public static SambaServiceOld Instance = new SambaServiceOld();
+
+        private static string StationListUrl = "http://www.movesamba.com/{0}/mapaestacao.asp";
 
         protected override IList<City> GetCities()
         {
@@ -179,5 +204,6 @@ namespace Bicikelj.Model
 
             return result;
         }
-    }
+    }*/
+    #endregion
 }
