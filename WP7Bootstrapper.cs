@@ -76,6 +76,7 @@ namespace Bicikelj
 #endif
 
 #if !DEBUG || ANALYTICS
+            FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
             BugSenseHandler.Instance.UnhandledException += (sender, e) =>
             {
@@ -88,11 +89,9 @@ namespace Bicikelj
                         BugSenseHandler.Instance.SendExceptionMessage("RequestedURL", wex.URL, wex);
                     else
                         BugSenseHandler.Instance.SendException(e.ExceptionObject);
+                    FlurryWP8SDK.Api.LogError(e.Comment, e.ExceptionObject);
                 }
-                e.Handled = true;
             };
-
-            FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
 #endif
         }
 

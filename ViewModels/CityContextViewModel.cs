@@ -122,10 +122,11 @@ namespace Bicikelj.ViewModels
                         else
                         {
                             newCity = BikeServiceProvider.FindByCityName(city.Locality);
-                            if (newCity == null)
+                            if (newCity == null && this.city == null)
                                 newCity = new City() { Country = city.CountryRegion, CityName = city.Locality };
                         }
-                        SetCity(newCity);
+                        if (newCity != null || this.city == null)
+                            SetCity(newCity);
                     },
                     error =>
                     {
@@ -237,9 +238,10 @@ namespace Bicikelj.ViewModels
 
         private IObservable<List<StationLocation>> DownloadStations()
         {
-            return city
+            var _city = city;
+            return _city
                 .DownloadStations()
-                .Do(sl => city.Stations = sl);
+                .Do(sl => { if (_city != null) _city.Stations = sl; });
         }
 
         public City GetCityForStation(StationLocation station)
