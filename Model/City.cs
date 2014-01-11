@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System;
+using System.Device.Location;
 
 namespace Bicikelj.Model
 {
@@ -11,6 +12,10 @@ namespace Bicikelj.Model
         public string Country { get; set; }
         public string ServiceName { get; set; }
         public string UrlCityName { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        [IgnoreDataMember]
+        public GeoCoordinate Coordinate { get { return new GeoCoordinate(Latitude, Longitude); } }
         [IgnoreDataMember]
         public string AlternateCityName { get; set; }
         public List<StationLocation> Stations { get; set; }

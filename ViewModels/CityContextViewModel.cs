@@ -98,6 +98,7 @@ namespace Bicikelj.ViewModels
                 if (config.LocationEnabled.GetValueOrDefault())
                     events.Publish(BusyState.Busy("getting current location..."));
                 dispCurrentCity = LocationHelper.GetCurrentAddress()
+                    .Retry(1)
                     .Catch<IAddress, WebException>(webex =>
                     {
                         dispCurrentCity = null;
@@ -134,6 +135,27 @@ namespace Bicikelj.ViewModels
                         string msg = "could not get the current address";
                         events.Publish(new ErrorState(error, msg));
                     });
+
+                /* get the nearest service
+                dispCurrentCity = LocationHelper.GetCurrentLocation()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .Select(addr => addr.Coordinate)
+                    .DistinctUntilChanged()
+                    .Subscribe(coord =>
+                    {
+                        events.Publish(BusyState.NotBusy());
+                        if (coord != null)
+                            newCity = BikeServiceProvider.FindNearestCity(coord);
+                        if ((newCity != null && newCity.Coordinate.GetDistanceTo(coord) < 20000) || this.city == null)
+                            SetCity(newCity);
+                    },
+                    error =>
+                    {
+                        dispCurrentCity = null;
+                        string msg = "could not get the current address";
+                        events.Publish(new ErrorState(error, msg));
+                    });
+                 */
             }
         }
 

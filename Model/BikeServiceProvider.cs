@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Device.Location;
 
 namespace Bicikelj.Model
 {
@@ -46,6 +47,7 @@ namespace Bicikelj.Model
         protected Dictionary<string, CachedAvailability> AvailabilityCache = new Dictionary<string, CachedAvailability>();
         protected void UpdateAvailabilityCache(IEnumerable<StationAndAvailability> list)
         {
+            if (list == null) return;
             foreach (var item in list)
                 UpdateAvailabilityCacheItem(item);
         }
@@ -110,6 +112,18 @@ namespace Bicikelj.Model
                 c.UrlCityName.Equals(cityName, StringComparison.InvariantCultureIgnoreCase)
                 || c.CityName.Equals(cityName, StringComparison.InvariantCultureIgnoreCase)
                 || (!string.IsNullOrEmpty(c.AlternateCityName) && cityName.ToLowerInvariant().Contains(c.AlternateCityName.ToLowerInvariant()))).FirstOrDefault();
+
+            return result;
+        }
+
+        public static City FindNearestCity(GeoCoordinate position)
+        {
+            City result = null;
+
+            var allCities = GetAllCities();
+            result = allCities
+                .OrderBy(city => city.Coordinate.GetDistanceTo(position))
+                .FirstOrDefault();
 
             return result;
         }

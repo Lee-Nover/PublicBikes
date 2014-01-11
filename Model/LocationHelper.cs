@@ -4,14 +4,12 @@ using System.Device.Location;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using Bicikelj.Model.Bing;
-using ServiceStack.Text;
-using Microsoft.Phone.Controls.Maps;
-using System.Reactive.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Concurrency;
-using System.Diagnostics;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using Bicikelj.Model.Bing;
 using Microsoft.Devices.Sensors;
+using Microsoft.Phone.Controls.Maps;
 
 namespace Bicikelj.Model
 {
@@ -103,6 +101,7 @@ namespace Bicikelj.Model
                             observer.OnNext(lastCompassData);
                         };
                         EventHandler<CalibrationEventArgs> compassCalibration = (sender, e) => {
+                            if (!lastCompassData.IsAccurate) return;
                             lastCompassData.IsAccurate = false;
                             observer.OnNext(lastCompassData);
                         };
