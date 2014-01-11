@@ -42,12 +42,49 @@ function processData(data, onUpdate) {
     respondResult(result);
 }
 
+function getCharset(ct)
+{
+    if (ct == null)
+        return '';
+    var rxcs = /(?=charset=)([^"';,\s\r\n])*/;
+    var cs = rxcs.exec(ct);
+    if (cs)
+        if (Array.isArray(cs))
+            cs = cs[0].substr(8);
+        else
+            cs = cs.substr(8);
+    return cs || '';
+}
+
+function decodeBody(response, body) {
+    if (Buffer.isBuffer(body)) {
+        var contentType = response.headers['content-type'] || '';
+        var charset = getCharset(contentType);
+        var bodyStr = '';
+        if (charset == '' && contentType.indexOf('html')) {
+            bodyStr = body.toString();
+            charset = getCharset(bodyStr);
+        }
+        
+        if (charset != '') {
+            var dec = require('iconv-lite');
+            var result = dec.decode(body, charset);
+            return result;
+        } else {
+            if (bodyStr == '')
+                bodyStr = body.toString();
+            return bodyStr;
+        }
+    } else return body;
+}
+
 function downloadData() {
     console.log('Downloading the ' + serviceName + ' service data ...');
     var request = require('../shared/crequest');
     var cityListUrl = serviceHandlers.getUrl(cityName);
-    request(cityListUrl, function (error, response, body) {
+    request(cityListUrl, { encoding: null }, function (error, response, body) {
         if (!error && response && response.statusCode == 200) {
+            body = decodeBody(response, body);
             body = serviceHandlers.extractData(body, cityName);
             processData(body, updateData);
         } else {
