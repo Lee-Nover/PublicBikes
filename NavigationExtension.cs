@@ -14,7 +14,9 @@ namespace Bicikelj
         {
             IoC.Get<IPhoneService>().State[HostPageViewModel.TARGET_VM_KEY] = targetModel;
             IoC.Get<IPhoneService>().State[HostPageViewModel.TARGET_VM_CTX] = context;
-            IoC.Get<INavigationService>().UriFor<HostPageViewModel>().WithParam<string>(vm => vm.DisplayName, targetModel.GetType().Name).Navigate();
+            App.Current.RootVisual.Dispatcher.BeginInvoke(() => {
+                IoC.Get<INavigationService>().UriFor<HostPageViewModel>().WithParam<string>(vm => vm.DisplayName, targetModel.GetType().Name).Navigate();
+            });
         }
 
         public static void NavigateTo(string targetModelName, IDictionary<string, string> properties, string context = null)
