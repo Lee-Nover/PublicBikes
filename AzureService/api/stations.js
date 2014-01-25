@@ -5,12 +5,18 @@ var response; // response object
 var serviceName;
 var cityName;
 var stationId;
+var stationIdList;
 
 function respondResult(result) {
     if (result !== null)
         response.send(200, result);
     else
         response.send(404, { message: 'Stations for city ' + cityName + ' not found!' });
+}
+
+function respondError(error) {
+    console.error(error);
+    response.send(500, error);
 }
 
 function updateData(data) {
@@ -23,7 +29,15 @@ function processData(data, onUpdate) {
     var result = null;
     if (onUpdate && stations && stations[0])
         onUpdate(data);
-    if (stationId != null) {
+    stationIdList
+    if (stationIdList != null && stationIdList.length > 1) {
+        result = [];
+        stations.forEach(function visitStationId(station) {
+            if (stationIdList.indexOf(station.id.toString()) != -1) {
+                result.push(station);
+            }
+        });
+    } else if (stationId != null) {
         stations.forEach(function visitStationId(station) {
             if (station.id == stationId) {
                 result = station;
@@ -46,7 +60,7 @@ function getCharset(ct)
 {
     if (ct == null)
         return '';
-    var rxcs = /(?=charset=)([^"';,\s\r\n])*/;
+    var rxcs = /(?=charset=)([^"';,\s\r\n])*/i;
     var cs = rxcs.exec(ct);
     if (cs)
         if (Array.isArray(cs))
@@ -88,7 +102,7 @@ function downloadData() {
             body = serviceHandlers.extractData(body, cityName);
             processData(body, updateData);
         } else {
-            console.error('Could not get the ' + serviceName + ' service data! Error: ' + error);
+            respondError('Could not get the ' + serviceName + ' service data! Error: ' + error);
         }
     });
 }
@@ -104,8 +118,10 @@ exports.get = function (req, res) {
     serviceName = req.params.service;
     cityName = req.params.city || req.query.city;
     stationId = req.params.id || req.query.id;
+    stationIdList = stationId != null ? stationId.split(',') : null;
+    
     if (serviceName == null || cityName == null) {
-        res.send(400, "ServiceName and City are required");
+        res.send(400, 'ServiceName and City are required');
         return;
     }
     try {
@@ -120,11 +136,10 @@ exports.get = function (req, res) {
         serviceCache = require('../shared/serviceCache');
         serviceCache.serviceName = serviceName;
         serviceCache.serviceData = serviceData;
-        var city = serviceHandlers.cacheByCity ? cityName : "";
-        serviceCache.checkServiceData(city, downloadData, processData);
+        var city = serviceHandlers.cacheByCity ? cityName : '';
+        serviceCache.checkServiceData(city, respondError, downloadData, processData);
     } else {
         var err = 'Handler not found for service "' + serviceName + '"';
-        console.error(err);
-        res.send(500, err);
+        respondError(err);
     }
 };
