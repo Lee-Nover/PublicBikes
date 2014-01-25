@@ -141,11 +141,11 @@ namespace Bicikelj.ViewModels
         private StationMapView view;
         private bool zoomDone = false;
         private bool tilesLoaded = false;
-        protected override void OnViewAttached(object view, object context)
+        protected override void OnViewLoaded(object view)
         {
-            base.OnViewAttached(view, context);
+            base.OnViewLoaded(view);
             this.view = view as StationMapView;
-            if (view != null)
+            if (this.view != null)
             {
                 var map = this.view.Map;
                 if (!Compass.IsSupported)
