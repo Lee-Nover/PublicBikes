@@ -38,6 +38,8 @@ namespace Bicikelj.Model
                     city.Country = country;
                     city.ServiceName = (string)xcountry.Attribute("name");
                     city.Provider = Instance;
+                    city.Latitude = (double)xcountry.Attribute("lat");
+                    city.Longitude = (double)xcountry.Attribute("lng");
 
                     foreach (var place in xcity.Descendants("place"))
                     {

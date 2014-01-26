@@ -43,6 +43,11 @@ namespace Bicikelj.ViewModels
             cityContext = IoC.Get<CityContextViewModel>();
             this.Location = location;
             this.Availability = availability;
+            if (location != null)
+            {
+                Location.ActivateWith(this);
+                Location.DeactivateWith(this);
+            }
         }
 
         public GeoCoordinate Coordinate { get { return GetCoordinate(); } }

@@ -53,9 +53,7 @@ namespace Bicikelj.ViewModels
 
             this.Items.RemoveRange(toRemove);
             if (addingItemsDisp != null)
-            {
-                addingItemsDisp.Dispose();
-            }
+                ReactiveExtensions.Dispose(ref addingItemsDisp);
 
             addingItemsDisp = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter))
                 .ToObservable()

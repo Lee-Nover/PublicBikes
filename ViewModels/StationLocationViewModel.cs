@@ -133,7 +133,6 @@ namespace Bicikelj.ViewModels
         protected override void OnActivate()
         {
             base.OnActivate();
-
         }
 
         protected override void OnDeactivate(bool close)
