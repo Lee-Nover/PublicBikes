@@ -29,7 +29,7 @@ namespace Bicikelj.Model
                 //new City(){ CityName = "Milwaukee", Country = "United States", ServiceName = "B-cycle", UrlCityName = "milwaukee", Provider = Instance },
                 new City(){ CityName = "Nashville", Country = "United States", ServiceName = "B-cycle", UrlCityName = "nashville", Provider = Instance },
                 new City(){ CityName = "Omaha", Country = "United States", ServiceName = "B-cycle", UrlCityName = "omaha", Provider = Instance },
-                new City(){ CityName = "Savannah", Country = "United States", ServiceName = "B-cycle", UrlCityName = "catbike", Provider = Instance },
+                //new City(){ CityName = "Savannah", Country = "United States", ServiceName = "B-cycle", UrlCityName = "catbike", Provider = Instance },
                 new City(){ CityName = "San Antonio", Country = "United States", ServiceName = "B-cycle", UrlCityName = "sanantonio", Provider = Instance },
                 new City(){ CityName = "Spartanburg", Country = "United States", ServiceName = "B-cycle", UrlCityName = "spartanburg", Provider = Instance }
             };

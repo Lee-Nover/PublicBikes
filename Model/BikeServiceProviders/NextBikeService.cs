@@ -28,29 +28,19 @@ namespace Bicikelj.Model
                 foreach (var xcity in xcountry.Descendants("city"))
                 {
                     var cname = (string)xcity.Attribute("name");
-                    if (!string.Equals(cname, cityName, StringComparison.InvariantCultureIgnoreCase))
+                    var alias = (string)xcity.Attribute("alias");
+                    if (!string.Equals(cname, cityName, StringComparison.InvariantCultureIgnoreCase)
+                        && !string.Equals(alias, cityName, StringComparison.InvariantCultureIgnoreCase))
                         continue;
-
-                    var city = new City();
-                    city.CityName = (string)xcity.Attribute("name");
-                    if (!string.IsNullOrEmpty(xcity.Attribute("alias").Value))
-                        city.AlternateCityName = (string)xcity.Attribute("alias");
-                    city.Country = country;
-                    city.ServiceName = (string)xcountry.Attribute("name");
-                    city.Provider = Instance;
-                    city.Latitude = (double)xcity.Attribute("lat");
-                    city.Longitude = (double)xcity.Attribute("lng");
 
                     foreach (var place in xcity.Descendants("place"))
                     {
                         var station = new StationLocation();
+                        station.City = cityName;
                         station.Number = (int)place.Attribute("uid");
                         station.Name = (string)place.Attribute("name");
-                        //station.Address = (string)place.Attribute("address"),
-                        //station.FullAddress = (string)place.Attribute("fullAddress"),
                         station.Latitude = (double)place.Attribute("lat");
                         station.Longitude = (double)place.Attribute("lng");
-                        station.City = city.CityName;
 
                         var availability = new StationAvailability();
                         var availStr = (string)place.Attribute("bikes");
@@ -79,28 +69,37 @@ namespace Bicikelj.Model
         {
             switch (domain)
             {
-                case "de": return "Germany";
-                case "nz": return "New Zealand";
-                case "at": return "Austria";
+                // germany
+                case "de":
+                case "nb":
+                case "sz":
+                case "eg":
+                case "mr": return "Germany";
+                // austria
+                case "at":
                 case "la": return "Austria";
                 case "ch": return "Switzerland";
                 case "lv": return "Latvia";
-                case "pl": return "Poland";
-                case "nb": return "Germany";
-                case "tr": return "Turkey";
-                case "mr": return "Germany";
-                case "cy": return "Cyprus";
-                case "bb": return "Poland";
-                case "pb": return "Poland";
-                case "ob": return "Poland";
-                case "az": return "Azerbaijan";
-                case "vp": return "Poland";
+                // poland
+                case "pl":
+                case "bb":
+                case "pb":
+                case "ob":
+                case "kp":
+                case "vp":
                 case "tp": return "Poland";
-                case "nk": return "Turkey";
+                // turkey
+                case "nk":
+                case "tr": return "Turkey";
+                // others
+                case "nz": return "New Zealand";
+                case "cy": return "Cyprus";
+                case "az": return "Azerbaijan";
                 case "me": return "United Arab Emirates";
                 case "hr": return "Croatia";
-                case "sz": return "Germany";
-                case "eg": return "Germany";
+                case "uk": return "United Kingdom";
+                case "bg": return "Bolgaria";
+                case "mb": return "Hungary";
                 default:
                     return domain;
             }

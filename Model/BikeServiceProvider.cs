@@ -101,11 +101,11 @@ namespace Bicikelj.Model
             return allCities;
         }
 
-        private static bool AreCoordinatesOk(double latitude, double longitude)
+        public static bool AreCoordinatesOk(double latitude, double longitude)
         {
             var lat = (int)latitude;
             var lng = (int)longitude;
-            return !(lat == 0 && lat == 180 || lat == 180 && lng == 0);
+            return !(lat == 0 && lng == 180 || lat == 180 && lng == 0 || lat == 0 && lng == 0);
         }
 
         private static void UpdateCityCoordinates()
@@ -121,11 +121,15 @@ namespace Bicikelj.Model
                     var city = allCities.Where(c =>
                         string.Equals(country, c.Country, StringComparison.InvariantCultureIgnoreCase) &&
                         string.Equals(cname, c.CityName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                    if (city != null && AreCoordinatesOk(city.Latitude, city.Longitude))
+                    if (city != null)
                     {
                         city.Latitude = (double)xcity.Attribute("lat");
                         city.Longitude = (double)xcity.Attribute("lng");
                         city.Radius = (int)xcity.Attribute("radius");
+                        if (!AreCoordinatesOk(city.Latitude, city.Longitude))
+                        {
+                            Console.WriteLine("how?");
+                        }
                     }
                     else if (city == null)
                     {
@@ -140,7 +144,8 @@ namespace Bicikelj.Model
             var log = new DebugLog(typeof(BikeServiceProvider));
             foreach (var city in GetAllCities())
             {
-                if (city.Latitude != 0 && city.Longitude != 0)
+                //if (city.Latitude != 0 && city.Longitude != 0)
+                if (city.Radius > 0)
                     continue;
 
                 List<StationLocation> _stations = null;
@@ -166,13 +171,16 @@ namespace Bicikelj.Model
                 if (_stations == null)
                     continue;
                 _stations = FilterInvalidStations(_stations);
-                var stationsArea = LocationHelper.GetLocationRect(_stations);
-                city.Latitude = stationsArea.Center.Latitude;
-                city.Longitude = stationsArea.Center.Longitude;
-                city.Radius = (stationsArea.Center.GetDistanceTo(stationsArea.Northeast)
-                    + stationsArea.Center.GetDistanceTo(stationsArea.Northwest)
-                    + stationsArea.Center.GetDistanceTo(stationsArea.Southeast)
-                    + stationsArea.Center.GetDistanceTo(stationsArea.Southwest)) / 4;
+                if (_stations.Count > 0)
+                {
+                    var stationsArea = LocationHelper.GetLocationRect(_stations);
+                    city.Latitude = stationsArea.Center.Latitude;
+                    city.Longitude = stationsArea.Center.Longitude;
+                    city.Radius = (stationsArea.Center.GetDistanceTo(stationsArea.Northeast)
+                        + stationsArea.Center.GetDistanceTo(stationsArea.Northwest)
+                        + stationsArea.Center.GetDistanceTo(stationsArea.Southeast)
+                        + stationsArea.Center.GetDistanceTo(stationsArea.Southwest)) / 4;
+                }
             }
             SaveCityCoordinates(allCities);
         }
@@ -243,7 +251,7 @@ namespace Bicikelj.Model
 
             var allCities = GetAllCities();
             result = allCities
-                .Where(city => city.Coordinate.GetDistanceTo(position) <= maxDistanceKm * 1000)
+                .Where(city => city.Coordinate.GetDistanceTo(position) <= Math.Max(maxDistanceKm * 1000, Math.Max(Math.Min(30000, city.Radius), 1000) + 1000))
                 .OrderBy(city => city.Coordinate.GetDistanceTo(position))
                 .FirstOrDefault();
 
