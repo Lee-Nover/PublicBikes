@@ -60,12 +60,14 @@ namespace Bicikelj.ViewModels
 
             ReactiveExtensions.SetSyncScheduler();
             viewChecked = true;
+
             ActivateItem(Items[0]);
 
             CheckRedirect();
 
             NewThreadScheduler.Default.Schedule(TimeSpan.FromSeconds(3), () =>
                 {
+                    //BikeServiceProvider.ExportCityCoordinates();
                     CheckLocationServices();
                     CheckRating();
                     CheckUpdate();

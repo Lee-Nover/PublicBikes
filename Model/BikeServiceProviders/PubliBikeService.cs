@@ -117,6 +117,8 @@ namespace Bicikelj.Model
                             Country = DomainNameToCountry(xcity.Country),
                             ServiceName = serviceName,
                             UrlCityName = xcity.City,
+                            Latitude = abo.Abo.Lat,
+                            Longitude = abo.Abo.Lng,
                             //UID = (string)xcity.Attribute("uid"),
                             Provider = Instance
                         };
@@ -125,7 +127,14 @@ namespace Bicikelj.Model
                         result.Add(city);
                     }
                     else if (city.ServiceName.IndexOf(serviceName, StringComparison.InvariantCultureIgnoreCase) < 0)
+                    {
                         city.ServiceName += ", " + serviceName;
+                        if (!string.Equals(serviceName, "SwissPass", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            city.Latitude = abo.Abo.Lat;
+                            city.Longitude = abo.Abo.Lng;
+                        }
+                    }
                 }
             }
             return result;

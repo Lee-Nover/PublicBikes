@@ -9,6 +9,7 @@
     "cheerio": "0.12.4",
     "express": "3.4.4",
     "request": "~2.30.0",
-    "iconv-lite": "~0.2.11"
+    "iconv-lite": "~0.2.11",
+    "string": "1.8.0"
   }
 }

@@ -95,15 +95,15 @@ function LoadStationsFromHTML_RIO(s, cityName)
         dataStr = s.substr(dataPos, dataEndPos - dataPos);
         dataValues = eval('[' + dataStr + ']');
 
-        var num = dataValues[0];
-        if (num != null) {
+        var num = tryParseNum(dataValues[0]);
+        if (num != null && dataValues[6] != 'I' && dataValues[7] != 'BL' && num < 900) {
             var total = tryParseNum(dataValues[8], 0);
             var available = tryParseNum(dataValues[9], 0);
             if (total < available)
                 total = available;
 
             var station = {
-                id: parseInt(num),
+                id: num,
                 name: dataValues[1],
                 address: dataValues[2],
                 city: cityName,

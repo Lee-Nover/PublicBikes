@@ -5,6 +5,12 @@ using System.Device.Location;
 
 namespace Bicikelj.Model
 {
+    public class CityConfig
+    {
+        public TimeSpan RemindBefore { get; set; }
+        public TimeSpan FreeRentTime { get; set; }
+    }
+
     public class City
     {
         public string UID { get; set; }
@@ -14,6 +20,8 @@ namespace Bicikelj.Model
         public string UrlCityName { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        [IgnoreDataMember]
+        public double Radius { get; set; }
         [IgnoreDataMember]
         public GeoCoordinate Coordinate { get { return new GeoCoordinate(Latitude, Longitude); } }
         [IgnoreDataMember]

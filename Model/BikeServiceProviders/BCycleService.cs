@@ -14,7 +14,7 @@ namespace Bicikelj.Model
         protected override IList<City> GetCities()
         {
             var result = new List<City>() {
-                new City(){ CityName = "Battle Creek", Country = "United States", ServiceName = "B-cycle", UrlCityName = "battlecreek", Provider = Instance },
+                //new City(){ CityName = "Battle Creek", Country = "United States", ServiceName = "B-cycle", UrlCityName = "battlecreek", Provider = Instance },
                 new City(){ CityName = "Boulder", Country = "United States", ServiceName = "B-cycle", UrlCityName = "boulder", Provider = Instance },
                 new City(){ CityName = "Broward", Country = "United States", ServiceName = "B-cycle", UrlCityName = "broward", Provider = Instance },
                 new City(){ CityName = "Charlotte", Country = "United States", ServiceName = "B-cycle", UrlCityName = "charlotte", Provider = Instance },
@@ -26,9 +26,10 @@ namespace Bicikelj.Model
                 new City(){ CityName = "Houston", Country = "United States", ServiceName = "B-cycle", UrlCityName = "houston", Provider = Instance },
                 new City(){ CityName = "Kansas City", Country = "United States", ServiceName = "B-cycle", UrlCityName = "kansascity", Provider = Instance },
                 new City(){ CityName = "Madison", Country = "United States", ServiceName = "B-cycle", UrlCityName = "madison", Provider = Instance },
-                new City(){ CityName = "Milwaukee", Country = "United States", ServiceName = "B-cycle", UrlCityName = "milwaukee", Provider = Instance },
+                //new City(){ CityName = "Milwaukee", Country = "United States", ServiceName = "B-cycle", UrlCityName = "milwaukee", Provider = Instance },
                 new City(){ CityName = "Nashville", Country = "United States", ServiceName = "B-cycle", UrlCityName = "nashville", Provider = Instance },
                 new City(){ CityName = "Omaha", Country = "United States", ServiceName = "B-cycle", UrlCityName = "omaha", Provider = Instance },
+                new City(){ CityName = "Savannah", Country = "United States", ServiceName = "B-cycle", UrlCityName = "catbike", Provider = Instance },
                 new City(){ CityName = "San Antonio", Country = "United States", ServiceName = "B-cycle", UrlCityName = "sanantonio", Provider = Instance },
                 new City(){ CityName = "Spartanburg", Country = "United States", ServiceName = "B-cycle", UrlCityName = "spartanburg", Provider = Instance }
             };

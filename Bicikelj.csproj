@@ -365,6 +365,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\city-coordinates.xml" />
     <Content Include="Assets\PubliBike-services.zip" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
