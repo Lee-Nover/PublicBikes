@@ -92,6 +92,16 @@ namespace Bicikelj
                     FlurryWP8SDK.Api.LogError(e.Comment, e.ExceptionObject);
                 }
             };
+#else
+            App.Current.UnhandledException += (s, e) =>
+                {
+                    //App.CurrentApp.Events.Publish(new ErrorState(e.ExceptionObject));
+                    Execute.OnUIThread(() =>
+                    {
+                        e.Handled = MessageBox.Show("Continue after this exception?\n" + e.ExceptionObject.Message,
+                            "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.OK;
+                    });
+                };
 #endif
         }
 
