@@ -29,14 +29,14 @@
     			</VisualState>
     			<VisualState x:Name="IsInaccurate">
     				<Storyboard>
-    					<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="CalibrationWarning" d:IsOptimized="True"/>
-    					<DoubleAnimation Duration="0" To="0.5" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="OrientationArrow" d:IsOptimized="True"/>
+                        <DoubleAnimation Duration="0:0:0.8" From="0.3" To="1" RepeatBehavior="Forever" AutoReverse="True" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="CalibrationWarning" />
+    					<DoubleAnimation Duration="0" To="0.4" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="OrientationArrow" d:IsOptimized="True"/>
     				</Storyboard>
     			</VisualState>
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
-        <ScrollViewer>
-            <StackPanel Name="CalibrationView" Background="{StaticResource PhoneBackgroundBrush}" Opacity="0.8" Visibility="Collapsed" >
+        <ScrollViewer Name="CalibrationView" Background="{x:Null}" Visibility="Collapsed">
+            <StackPanel Background="{StaticResource PhoneBackgroundBrush}" Opacity="0.8" >
                 <Image Source="/Images/calibrate_compass.png" HorizontalAlignment="Center" MaxHeight="240"/>
                 <TextBlock Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" TextAlignment="Center">
                     The compass on your device needs to be calibrated.
