@@ -184,6 +184,7 @@
     <Compile Include="Model\BikeServiceProviders\NextBikeService.cs" />
     <Compile Include="Model\BikeServiceProviders\PubliBikeService.cs" />
     <Compile Include="Model\BikeServiceProviders\CycloCityService.cs" />
+    <Compile Include="Model\CompassProvider.cs" />
     <Compile Include="Model\NetworkHelper.cs" />
     <Compile Include="Model\ServiceCredentials.cs" />
     <Compile Include="Model\BusyState.cs" />

@@ -88,7 +88,6 @@ namespace Bicikelj.ViewModels
         public LocationViewModel CurrentLocation { get; set; }
         private IDisposable currentGeo;
         private IDisposable stationObs;
-        private IDisposable compassObs;
 
         private StationViewModel activeItem;
         public StationViewModel ActiveItem {
@@ -226,16 +225,6 @@ namespace Bicikelj.ViewModels
 
                         Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
                     });
-            
-            if (compassObs == null)
-                compassObs = LocationHelper.GetCurrentCompassSmooth()
-                    .SubscribeOn(ThreadPoolScheduler.Instance)
-                    .ObserveOn(syncContext)
-                    .Subscribe(cd =>
-                    {
-                        CurrentHeading = cd.Reading.Value.TrueHeading;
-                        HeadingAccuracy = cd.Reading.Value.HeadingAccuracy;
-                    });
         }
 
         protected override void OnDeactivate(bool close)
@@ -244,7 +233,6 @@ namespace Bicikelj.ViewModels
             {
                 ReactiveExtensions.Dispose(ref currentGeo);
                 ReactiveExtensions.Dispose(ref stationObs);
-                ReactiveExtensions.Dispose(ref compassObs);
             }
             base.OnDeactivate(close);
         }
@@ -261,30 +249,6 @@ namespace Bicikelj.ViewModels
             }
             else
                 ActiveItem = null;
-        }
-
-        private double currentHeading = 0;
-        public double CurrentHeading
-        {
-            get { return currentHeading; }
-            set
-            {
-                if (value == currentHeading) return;
-                currentHeading = value;
-                NotifyOfPropertyChange(() => CurrentHeading);
-            }
-        }
-
-        private double headingAccuray = 0;
-        public double HeadingAccuracy
-        {
-            get { return headingAccuray; }
-            set
-            {
-                if (value == headingAccuray) return;
-                headingAccuray = value;
-                NotifyOfPropertyChange(() => HeadingAccuracy);
-            }
         }
     }
 }

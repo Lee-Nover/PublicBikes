@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using Bicikelj.Model;
 
 namespace Bicikelj.Controls
 {
@@ -29,7 +30,6 @@ namespace Bicikelj.Controls
             if (d == null)
                 return;
 
-            //compass.Rotation.Angle = compass.Heading;
             compass.AnimateHeadingAnimation.To = compass.Heading;
             if (compass.AnimateHeadingStoryboard.GetCurrentState() == ClockState.Stopped)
                 compass.AnimateHeadingStoryboard.Stop();
@@ -58,6 +58,27 @@ namespace Bicikelj.Controls
                 VisualStateManager.GoToState(compass, "IsInaccurate", true);
         }
 
+
+        public ICompassProvider CompassProvider
+        {
+            get { return (ICompassProvider)GetValue(CompassProviderProperty); }
+            set {
+                if (CompassProvider != null)
+                    CompassProvider.HeadingChanged -= HandleCompass;
+                SetValue(CompassProviderProperty, value);
+                if (CompassProvider != null)
+                    CompassProvider.HeadingChanged += HandleCompass;
+            }
+        }
+        public static readonly DependencyProperty CompassProviderProperty =
+            DependencyProperty.Register("CompassProvider", typeof(ICompassProvider), typeof(Compass), new PropertyMetadata(null));
+
+        
+        private void HandleCompass(object sender, HeadingAndAccuracy haa)
+        {
+            Heading = haa.Heading;
+            HeadingAccuracy = haa.Accuracy;
+        }
 
         public bool IsHeadingAccurate
         {

@@ -65,7 +65,7 @@
                 </maps:MapItemsControl>
             </maps:Map>
             
-            <bctl:Compass Grid.Row="1" x:Name="Compass" Heading="{Binding CurrentHeading}" HeadingAccuracy="{Binding HeadingAccuracy}" />
+            <bctl:Compass Grid.Row="1" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" />
 
             <!-- down here so it's on top of the Map -->
             <!--Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
