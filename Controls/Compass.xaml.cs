@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace Bicikelj.Controls
@@ -28,7 +29,7 @@ namespace Bicikelj.Controls
             if (d == null)
                 return;
 
-            compass.Rotation.Angle = compass.Heading;
+            //compass.Rotation.Angle = compass.Heading;
             compass.AnimateHeadingAnimation.To = compass.Heading;
             if (compass.AnimateHeadingStoryboard.GetCurrentState() == ClockState.Stopped)
                 compass.AnimateHeadingStoryboard.Stop();
@@ -58,28 +59,21 @@ namespace Bicikelj.Controls
         }
 
 
-        public Visibility CalibrationVisibility
-        {
-            get { return (Visibility)GetValue(CalibrationVisibilityProperty); }
-            set { SetValue(CalibrationVisibilityProperty, value); }
-        }
-        public static readonly DependencyProperty CalibrationVisibilityProperty =
-            DependencyProperty.Register("CalibrationVisibility", typeof(Visibility), typeof(Compass), new PropertyMetadata(Visibility.Collapsed));
-
-
         public bool IsHeadingAccurate
         {
             get { return HeadingAccuracy < 20; }
         }
 
-        public void ShowCalibration(object sender, RoutedEventArgs e)
+        private void ShowCalibration(object sender, GestureEventArgs e)
         {
-            CalibrationVisibility = Visibility.Visible;
+            CalibrationView.Visibility = Visibility.Visible;
+            HeadingView.Visibility = Visibility.Collapsed;
         }
 
-        public void HideCalibration(object sender, RoutedEventArgs e)
+        private void HideCalibration(object sender, RoutedEventArgs e)
         {
-            CalibrationVisibility = Visibility.Collapsed;
+            CalibrationView.Visibility = Visibility.Collapsed;
+            HeadingView.Visibility = Visibility.Visible;
         }
 
         #region INotifyPropertyChanged Members
@@ -92,5 +86,6 @@ namespace Bicikelj.Controls
         }
 
         #endregion
+
     }
 }

@@ -1,4 +1,4 @@
-﻿#define ANALYTICS
+﻿#define ANALYTICS_
 
 using System;
 using System.Collections.Generic;

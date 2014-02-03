@@ -270,20 +270,7 @@ namespace Bicikelj.ViewModels
             set
             {
                 if (value == currentHeading) return;
-                var rotation = value - currentHeading;
-
-                if (Math.Abs(rotation) > 180)
-                    currentHeading  += rotation > 0 ? -360 : 360;
-                
                 currentHeading = value;
-                if (view != null)
-                {
-                    view.daAnimateHeading.To = currentHeading;
-                    if (view.sbAnimateHeading.GetCurrentState() == ClockState.Stopped)
-                        view.sbAnimateHeading.Stop();
-                    view.sbAnimateHeading.Begin();
-                }
-                
                 NotifyOfPropertyChange(() => CurrentHeading);
             }
         }

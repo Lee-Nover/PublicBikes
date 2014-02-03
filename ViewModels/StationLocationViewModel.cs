@@ -130,9 +130,43 @@ namespace Bicikelj.ViewModels
             OptimumMapZoom(view as Detail);
         }
 
+        private double currentHeading = 0;
+        public double CurrentHeading
+        {
+            get { return currentHeading; }
+            set
+            {
+                if (value == currentHeading) return;
+                currentHeading = value;
+                NotifyOfPropertyChange(() => CurrentHeading);
+            }
+        }
+
+        private double headingAccuray = 0;
+        public double HeadingAccuracy
+        {
+            get { return headingAccuray; }
+            set
+            {
+                if (value == headingAccuray) return;
+                headingAccuray = value;
+                NotifyOfPropertyChange(() => HeadingAccuracy);
+            }
+        }
+
         protected override void OnActivate()
         {
             base.OnActivate();
+            var syncContext = ReactiveExtensions.SyncScheduler;
+            if (compassObs == null)
+                compassObs = LocationHelper.GetCurrentCompassSmooth()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .ObserveOn(syncContext)
+                    .Subscribe(cd =>
+                    {
+                        CurrentHeading = cd.Reading.Value.TrueHeading;
+                        HeadingAccuracy = cd.Reading.Value.HeadingAccuracy;
+                    });
         }
 
         protected override void OnDeactivate(bool close)
@@ -144,6 +178,7 @@ namespace Bicikelj.ViewModels
         public LocationRect ViewRect;
         private Detail view;
         private IDisposable dispCurrentAddr = null;
+        private IDisposable compassObs;
 
         public void OptimumMapZoom(Detail ov)
         {

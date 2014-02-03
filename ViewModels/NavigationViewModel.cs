@@ -103,8 +103,33 @@ namespace Bicikelj.ViewModels
         public LocationViewModel DestinationLocation { get; set; }
         private IDisposable currentGeo;
         private IDisposable stationObs;
+        private IDisposable compassObs;
         private GeoCoordinate lastCoordinate = null;
         private Map map;
+
+        private double currentHeading = 0;
+        public double CurrentHeading
+        {
+            get { return currentHeading; }
+            set
+            {
+                if (value == currentHeading) return;
+                currentHeading = value;
+                NotifyOfPropertyChange(() => CurrentHeading);
+            }
+        }
+
+        private double headingAccuray = 0;
+        public double HeadingAccuracy
+        {
+            get { return headingAccuray; }
+            set
+            {
+                if (value == headingAccuray) return;
+                headingAccuray = value;
+                NotifyOfPropertyChange(() => HeadingAccuracy);
+            }
+        }
 
         protected override void OnViewAttached(object view, object context)
         {
@@ -208,6 +233,16 @@ namespace Bicikelj.ViewModels
                     {
                         stationObs = null;
                         events.Publish(new ErrorState(error, "stations could not be loaded"));
+                    });
+
+            if (compassObs == null)
+                compassObs = LocationHelper.GetCurrentCompassSmooth()
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .ObserveOn(syncContext)
+                    .Subscribe(cd =>
+                    {
+                        CurrentHeading = cd.Reading.Value.TrueHeading;
+                        HeadingAccuracy = cd.Reading.Value.HeadingAccuracy;
                     });
 
             CheckNavigateRequest();

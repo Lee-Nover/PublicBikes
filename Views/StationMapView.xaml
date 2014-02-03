@@ -16,14 +16,6 @@
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
     <!--LayoutRoot is the root grid where all page content is placed-->
     <UserControl.Resources>
-        <Storyboard x:Name="sbAnimateHeading">
-            <DoubleAnimation
-                x:Name="daAnimateHeading"
-                Duration="0:0:1"
-                FillBehavior="HoldEnd"
-                Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
-                Storyboard.TargetName="OrientationArrow" />
-        </Storyboard>
         <conv:StationStyleConverter x:Name="stationStyleConverter" SingleStyle="{StaticResource PushpinTemplateNormal}" ClusterStyle="{StaticResource PushpinClusterTemplateNormal}" />
     </UserControl.Resources>
     <Grid x:Name="LayoutRoot" Background="Transparent" >
@@ -40,7 +32,7 @@
                       Mode="Road" 
                       LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" ZoomBarVisibility="Visible" ScaleVisibility="Visible"
                       CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)">
-            	<maps:MapLayer x:Name="Route" />
+                <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
                     <bctl:LocationAccuracy x:Name="Accuracy" CacheMode="BitmapCache" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
                     <maps:Pushpin PositionOrigin="BottomCenter" x:Name="CurrentLocationPin" CacheMode="BitmapCache" Location="{Binding Coordinate}" Style="{StaticResource PushpinTemplateNormal}" >
@@ -72,7 +64,7 @@
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
             </maps:Map>
-			
+            
             <bctl:Compass Grid.Row="1" x:Name="Compass" Heading="{Binding CurrentHeading}" HeadingAccuracy="{Binding HeadingAccuracy}" />
 
             <!-- down here so it's on top of the Map -->
