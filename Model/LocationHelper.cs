@@ -66,9 +66,25 @@ namespace Bicikelj.Model
         }
     }
 
+    public struct CompassReadingEx
+    {
+        public double HeadingAccuracy { get; set; }
+        public double MagneticHeading { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
+        public double TrueHeading { get; set; }
+
+        public CompassReadingEx(CompassReading reading) : this()
+        {
+            this.HeadingAccuracy = reading.HeadingAccuracy;
+            this.MagneticHeading = reading.MagneticHeading;
+            this.Timestamp = reading.Timestamp;
+            this.TrueHeading = reading.TrueHeading;
+        }
+    }
+
     public class CompassData
     {
-        public CompassReading? Reading;
+        public CompassReadingEx? Reading;
         public bool IsSupported;
         public bool IsAccurate;
         public bool IsValid;
@@ -95,7 +111,7 @@ namespace Bicikelj.Model
                         lastCompassData.IsSupported = true;
                         EventHandler<SensorReadingEventArgs<CompassReading>> compassChanged = (sender, e) =>
                         {
-                            lastCompassData.Reading = e.SensorReading;
+                            lastCompassData.Reading = new CompassReadingEx(e.SensorReading);
                             lastCompassData.IsAccurate = e.SensorReading.HeadingAccuracy < 20;
                             lastCompassData.IsValid = compass.IsDataValid;
                             observer.OnNext(lastCompassData);
@@ -134,12 +150,28 @@ namespace Bicikelj.Model
         public static IObservable<double> GetCurrentHeading()
         {
             return GetCurrentCompass()
-                .Where(data => data.IsValid && data.IsAccurate)
-                .Select(data => data.Reading.GetValueOrDefault().TrueHeading)
+                .Where(data => data.IsValid && data.IsAccurate && data.Reading.HasValue)
+                .Select(data => data.Reading.Value.TrueHeading)
                 .Buffer(TimeSpan.FromSeconds(1))
                 .Where(headings => headings.Count > 0)
                 .Select(headings => headings.Average())
                 .Where(heading => !double.IsNaN(heading));
+        }
+
+        public static IObservable<CompassData> GetCurrentCompassSmooth()
+        {
+            return GetCurrentCompass()
+                .Buffer(TimeSpan.FromSeconds(1))
+                .Where(records => records.Count > 0)
+                .Select(records => 
+                    {
+                        var cd = records.Last();
+                        var reading = cd.Reading.Value;
+                        reading.TrueHeading = records.Average(r => r.Reading.Value.TrueHeading);
+                        cd.Reading = reading;
+                        return cd;
+                    })
+                .Where(cd => !double.IsNaN(cd.Reading.Value.TrueHeading));
         }
         #endregion
 

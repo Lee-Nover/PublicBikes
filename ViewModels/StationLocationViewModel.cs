@@ -170,6 +170,7 @@ namespace Bicikelj.ViewModels
                             return Observable.Empty<GeoAddress>();
                         })
                         .ObserveOn(ThreadPoolScheduler.Instance)
+                        // todo: do it once, then only if the user refreshes
                         .Subscribe(geoAddr => CalculateRoute(geoAddr.Coordinate, GeoLocation));
             }
         }

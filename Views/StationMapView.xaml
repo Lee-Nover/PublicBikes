@@ -72,17 +72,13 @@
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
             </maps:Map>
+			
+            <bctl:Compass Grid.Row="1" x:Name="Compass" Heading="{Binding CurrentHeading}" HeadingAccuracy="{Binding HeadingAccuracy}" />
 
             <!-- down here so it's on top of the Map -->
             <!--Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                 <ContentControl x:Name="ActiveItem" cal:View.Context="InfoBar" HorizontalContentAlignment="Stretch" />
             </Border-->
-
-            <Path Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="24,12,12,12" x:Name="OrientationArrow" Opacity="0.7" CacheMode="BitmapCache" Width="36" Height="48" Data="{StaticResource Navigation2IconData}" Fill="{StaticResource PhoneAccentTransparentBrush}" Stroke="{StaticResource PhoneAccentBrush}" StrokeThickness="4" Stretch="Fill" RenderTransformOrigin="0.5,0.5">
-                <Path.RenderTransform>
-                    <RotateTransform x:Name="ArrowRotation" CenterX="0.5" CenterY="0.5" />
-                </Path.RenderTransform>
-            </Path>
 
             <!-- down here so the ActiveItemContainer is animated under this -->
             <Border Grid.Row="0" Background="{StaticResource PhoneBackgroundBrush}">

@@ -124,47 +124,6 @@ namespace Bicikelj.ViewModels
                 if (config.LocationEnabled.GetValueOrDefault())
                     events.Publish(BusyState.Busy("getting current location..."));
                 
-                /* deprecated
-                dispCurrentCity = LocationHelper.GetCurrentAddress()
-                    .Retry(1)
-                    .Catch<IAddress, WebException>(webex =>
-                    {
-                        dispCurrentCity = null;
-                        string msg = "could not get the current address. check your internet connection.";
-                        events.Publish(new ErrorState(webex, msg));
-                        return Observable.Empty<IAddress>();
-                    })
-                    .SubscribeOn(ThreadPoolScheduler.Instance)
-                    .Select(addr =>
-                    {
-                        events.Publish(BusyState.NotBusy());
-                        if (addr != null)
-                            return new RegionAndLocality(addr.CountryRegion, addr.Locality);
-                        else
-                            return null;// new RegionAndLocality(null, LocationHelper.UnknownLocation);
-                    })
-                    .DistinctUntilChanged()
-                    .Subscribe(city =>
-                    {
-                        if (city == null)
-                            newCity = null;
-                        else
-                        {
-                            newCity = BikeServiceProvider.FindByCityName(city.Locality);
-                            if (newCity == null && this.city == null)
-                                newCity = new City() { Country = city.CountryRegion, CityName = city.Locality };
-                        }
-                        if (newCity != null || this.city == null)
-                            SetCity(newCity);
-                    },
-                    error =>
-                    {
-                        dispCurrentCity = null;
-                        string msg = "could not get the current address";
-                        events.Publish(new ErrorState(error, msg));
-                    });
-                */
-
                 GeoCoordinate lastPos = null;
                 // get the nearest service
                 dispCurrentCity = LocationHelper.GetCurrentLocation()
@@ -212,7 +171,7 @@ namespace Bicikelj.ViewModels
             if (saveCity == null || string.IsNullOrEmpty(saveCity.UrlCityName) || saveCity.Favorites == null || saveCity.Stations == null)
                 return;
             
-            saveCity.Favorites.Apply((f) =>
+            saveCity.Favorites.Apply(f =>
             {
                 if (f != null)
                     f.City = saveCity.UrlCityName;

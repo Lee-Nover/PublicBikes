@@ -147,7 +147,7 @@ namespace Bicikelj.ViewModels
             {
                 var map = this.view.Map;
                 if (!Compass.IsSupported)
-                    this.view.OrientationArrow.Visibility = Visibility.Collapsed;
+                    this.view.Compass.Visibility = Visibility.Collapsed;
 
                 map.ViewChangeStart += (sender, e) => {
                     zoomDone = false;
@@ -228,12 +228,13 @@ namespace Bicikelj.ViewModels
                     });
             
             if (compassObs == null)
-                compassObs = LocationHelper.GetCurrentHeading()
+                compassObs = LocationHelper.GetCurrentCompassSmooth()
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .ObserveOn(syncContext)
-                    .Subscribe(heading =>
+                    .Subscribe(cd =>
                     {
-                        CurrentHeading = heading;
+                        CurrentHeading = cd.Reading.Value.TrueHeading;
+                        HeadingAccuracy = cd.Reading.Value.HeadingAccuracy;
                     });
         }
 
@@ -269,6 +270,11 @@ namespace Bicikelj.ViewModels
             set
             {
                 if (value == currentHeading) return;
+                var rotation = value - currentHeading;
+
+                if (Math.Abs(rotation) > 180)
+                    currentHeading  += rotation > 0 ? -360 : 360;
+                
                 currentHeading = value;
                 if (view != null)
                 {
@@ -279,6 +285,18 @@ namespace Bicikelj.ViewModels
                 }
                 
                 NotifyOfPropertyChange(() => CurrentHeading);
+            }
+        }
+
+        private double headingAccuray = 0;
+        public double HeadingAccuracy
+        {
+            get { return headingAccuray; }
+            set
+            {
+                if (value == headingAccuray) return;
+                headingAccuray = value;
+                NotifyOfPropertyChange(() => HeadingAccuracy);
             }
         }
     }

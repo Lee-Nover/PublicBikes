@@ -55,8 +55,9 @@
     <Reference Include="AdDealsSDKWP7">
       <HintPath>AdDealsSDKWP7.dll</HintPath>
     </Reference>
-    <Reference Include="AdDuplex.WindowsPhone">
-      <HintPath>packages\AdDuplexWP8.2.8.0.4\lib\sl4-wp71\AdDuplex.WindowsPhone.dll</HintPath>
+    <Reference Include="AdDuplex.WindowsPhone, Version=2.7.0.7, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\AdDuplexWP8.2.8.0.7\lib\sl4-wp71\AdDuplex.WindowsPhone.dll</HintPath>
     </Reference>
     <Reference Include="BugSense, Version=3.5.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -114,8 +115,7 @@
       <HintPath>packages\Rx-Linq.2.2.2\lib\windowsphone71\System.Reactive.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.PlatformServices, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\Rx-PlatformServices.2.2.2\lib\windowsphone71\System.Reactive.PlatformServices.dll</HintPath>
+      <HintPath>packages\Rx-PlatformServices.2.2.3\lib\windowsphone71\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -153,6 +153,9 @@
     <Compile Include="Controls\BindableApplicationBar.cs" />
     <Compile Include="Controls\BindableApplicationBarButton.cs" />
     <Compile Include="Controls\BindableApplicationBarMenuItem.cs" />
+    <Compile Include="Controls\Compass.xaml.cs">
+      <DependentUpon>Compass.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\HubTileWithContent.cs" />
     <Compile Include="Controls\LocationAccuracy.xaml.cs">
       <DependentUpon>LocationAccuracy.xaml</DependentUpon>
@@ -245,6 +248,10 @@
     </Page>
     <Page Include="CM.Contrib\Dialogs\DialogView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Compass.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\LocationAccuracy.xaml">
@@ -380,6 +387,7 @@
     <Folder Include="SampleData\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\calibrate_compass.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Resource Include="Images\PublicBikeLogo200.png" />
     <Resource Include="Images\PublicBikeLogo173.png" />
