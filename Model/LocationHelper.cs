@@ -166,12 +166,15 @@ namespace Bicikelj.Model
                 .Select(records => 
                     {
                         var cd = records.Last();
-                        var reading = cd.Reading.Value;
-                        reading.TrueHeading = records.Average(r => r.Reading.Value.TrueHeading);
-                        cd.Reading = reading;
+                        if (cd.Reading.HasValue)
+                        {
+                            var reading = cd.Reading.Value;
+                            reading.TrueHeading = records.Average(r => r.Reading.Value.TrueHeading);
+                            cd.Reading = reading;
+                        }
                         return cd;
                     })
-                .Where(cd => !double.IsNaN(cd.Reading.Value.TrueHeading));
+                .Where(cd => !cd.IsSupported || !cd.Reading.HasValue || !double.IsNaN(cd.Reading.Value.TrueHeading));
         }
         #endregion
 

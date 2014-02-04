@@ -2,6 +2,7 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Caliburn.Micro;
+using Microsoft.Devices.Sensors;
 
 namespace Bicikelj.Model
 {
@@ -20,6 +21,7 @@ namespace Bicikelj.Model
     public interface ICompassProvider
     {
         event EventHandler<HeadingAndAccuracy> HeadingChanged;
+        bool IsSupported { get; }
     }
 
     public class CompassProvider : ICompassProvider
@@ -38,14 +40,22 @@ namespace Bicikelj.Model
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(cd =>
                     {
-                        var reading = cd.Reading.Value;
-                        if (headingChanged != null)
+                        if (cd.IsValid && cd.IsSupported && cd.Reading.HasValue)
                         {
-                            if (reading.HeadingAccuracy <= 20 && reading.HeadingAccuracy < lastAccuracy && lastAccuracy > 20)
-                                vibrateController.Start(TimeSpan.FromMilliseconds(200));
-                            headingChanged(this, new HeadingAndAccuracy(reading.TrueHeading, reading.HeadingAccuracy));
+                            var reading = cd.Reading.Value;
+                            if (headingChanged != null)
+                            {
+                                if (reading.HeadingAccuracy <= 20 && reading.HeadingAccuracy < lastAccuracy && lastAccuracy > 20)
+                                    vibrateController.Start(TimeSpan.FromMilliseconds(200));
+                                headingChanged(this, new HeadingAndAccuracy(reading.TrueHeading, reading.HeadingAccuracy));
+                            }
+                            lastAccuracy = reading.HeadingAccuracy;
                         }
-                        lastAccuracy = reading.HeadingAccuracy;
+                        else
+                        {
+                            lastAccuracy = 180;
+                            headingChanged(this, new HeadingAndAccuracy(0, 180));
+                        }
                     });
         }
 
@@ -77,6 +87,8 @@ namespace Bicikelj.Model
                     StopObserving();
             }
         }
+
+        public bool IsSupported { get { return Compass.IsSupported; } }
 
         #endregion
     }

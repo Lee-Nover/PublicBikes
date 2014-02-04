@@ -145,9 +145,6 @@ namespace Bicikelj.ViewModels
             if (this.view != null)
             {
                 var map = this.view.Map;
-                if (!Compass.IsSupported)
-                    this.view.Compass.Visibility = Visibility.Collapsed;
-
                 map.ViewChangeStart += (sender, e) => {
                     zoomDone = false;
                     tilesLoaded = false;

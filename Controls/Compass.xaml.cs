@@ -68,6 +68,10 @@ namespace Bicikelj.Controls
                 SetValue(CompassProviderProperty, value);
                 if (CompassProvider != null)
                     CompassProvider.HeadingChanged += HandleCompass;
+                if (CompassProvider.IsSupported)
+                    this.Visibility = Visibility.Visible;
+                else
+                    this.Visibility = Visibility.Collapsed;
             }
         }
         public static readonly DependencyProperty CompassProviderProperty =
