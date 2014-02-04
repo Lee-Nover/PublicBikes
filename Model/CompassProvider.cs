@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using Caliburn.Micro;
 
 namespace Bicikelj.Model
 {
@@ -25,16 +26,26 @@ namespace Bicikelj.Model
     {
         private IDisposable compassObs;
 
+        private double lastAccuracy = 0;
+        private IVibrateController vibrateController = null;
+
         private void StartObserving()
         {
+            vibrateController = IoC.Get<IVibrateController>();
             if (compassObs == null)
                 compassObs = LocationHelper.GetCurrentCompassSmooth()
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(cd =>
                     {
+                        var reading = cd.Reading.Value;
                         if (headingChanged != null)
-                            headingChanged(this, new HeadingAndAccuracy(cd.Reading.Value.TrueHeading, cd.Reading.Value.HeadingAccuracy));
+                        {
+                            if (reading.HeadingAccuracy <= 20 && reading.HeadingAccuracy < lastAccuracy && lastAccuracy > 20)
+                                vibrateController.Start(TimeSpan.FromMilliseconds(200));
+                            headingChanged(this, new HeadingAndAccuracy(reading.TrueHeading, reading.HeadingAccuracy));
+                        }
+                        lastAccuracy = reading.HeadingAccuracy;
                     });
         }
 

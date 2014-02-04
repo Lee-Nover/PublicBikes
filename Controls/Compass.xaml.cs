@@ -50,7 +50,7 @@ namespace Bicikelj.Controls
             if (d == null)
                 return;
 
-            compass.HeadingAccuracyText.Text = compass.HeadingAccuracy.ToString("0.0") + "°";
+            compass.HeadingAccuracyText.Text = ((int)compass.HeadingAccuracy).ToString() + "°";
             compass.NotifyOfPropertyChange("IsHeadingAccurate");
             if (compass.IsHeadingAccurate)
                 VisualStateManager.GoToState(compass, "IsAccurate", true);
@@ -82,7 +82,7 @@ namespace Bicikelj.Controls
 
         public bool IsHeadingAccurate
         {
-            get { return HeadingAccuracy < 20; }
+            get { return HeadingAccuracy <= 20; }
         }
 
         private void ShowCalibration(object sender, GestureEventArgs e)
