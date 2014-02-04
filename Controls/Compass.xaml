@@ -11,7 +11,7 @@
         <Storyboard x:Name="AnimateHeadingStoryboard">
             <DoubleAnimation
                 x:Name="AnimateHeadingAnimation"
-                Duration="0:0:1"
+                Duration="0:0:0.6"
                 FillBehavior="HoldEnd"
                 Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
                 Storyboard.TargetName="HeadingView" />

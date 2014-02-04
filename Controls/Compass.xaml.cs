@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Bicikelj.Model;
+using System;
 
 namespace Bicikelj.Controls
 {
@@ -29,8 +30,20 @@ namespace Bicikelj.Controls
             var compass = d as Compass;
             if (d == null)
                 return;
+            
+            var oldHeading = (double)e.OldValue;
+            var newHeading = (double)e.NewValue;
+            var delta = newHeading - oldHeading;
+            if (Math.Abs(delta) > 180)
+            {
+                if (delta < 0)
+                    oldHeading -= 360;
+                else
+                    oldHeading += 360;
+            }
 
-            compass.AnimateHeadingAnimation.To = compass.Heading;
+            compass.AnimateHeadingAnimation.From = oldHeading;
+            compass.AnimateHeadingAnimation.To = newHeading;
             if (compass.AnimateHeadingStoryboard.GetCurrentState() == ClockState.Stopped)
                 compass.AnimateHeadingStoryboard.Stop();
             compass.AnimateHeadingStoryboard.Begin();
