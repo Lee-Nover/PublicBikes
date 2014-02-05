@@ -89,6 +89,7 @@
       <HintPath>packages\WPtoolkit.4.2013.08.16\lib\sl4-windowsphone71\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone.Interop" />
+    <Reference Include="Microsoft.Xna.Framework" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>packages\Newtonsoft.Json.5.0.8\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -186,6 +187,7 @@
     <Compile Include="Model\BikeServiceProviders\CycloCityService.cs" />
     <Compile Include="Model\CompassProvider.cs" />
     <Compile Include="Model\NetworkHelper.cs" />
+    <Compile Include="Model\Sensors.cs" />
     <Compile Include="Model\ServiceCredentials.cs" />
     <Compile Include="Model\BusyState.cs" />
     <Compile Include="Model\BingMaps.cs" />

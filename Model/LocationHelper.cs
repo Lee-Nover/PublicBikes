@@ -35,14 +35,6 @@ namespace Bicikelj.Model
         Fast
     }
 
-    public class GeoStatusAndPos
-    {
-        public GeoPositionStatus? Status { get; set; }
-        public GeoCoordinate Coordinate { get; set; }
-        public DateTimeOffset? LastUpdate { get; set; }
-        public bool IsEmpty { get { return Coordinate == null; } }
-    }
-
     public class GeoAddress : GeoStatusAndPos
     {
         public IAddress Address { get; set; }
@@ -66,223 +58,15 @@ namespace Bicikelj.Model
         }
     }
 
-    public struct CompassReadingEx
-    {
-        public double HeadingAccuracy { get; set; }
-        public double MagneticHeading { get; set; }
-        public DateTimeOffset Timestamp { get; set; }
-        public double TrueHeading { get; set; }
-
-        public CompassReadingEx(CompassReading reading) : this()
-        {
-            this.HeadingAccuracy = reading.HeadingAccuracy;
-            this.MagneticHeading = reading.MagneticHeading;
-            this.Timestamp = reading.Timestamp;
-            this.TrueHeading = reading.TrueHeading;
-        }
-    }
-
-    public class CompassData
-    {
-        public CompassReadingEx? Reading;
-        public bool IsSupported;
-        public bool IsAccurate;
-        public bool IsValid;
-    }
-
     public static class LocationHelper
     {
         public const string UnknownLocation = "(unknown location)";
 
+        public static bool IsLocationEnabled { get { return Sensors.IsLocationEnabled; } set { Sensors.IsLocationEnabled = value; } }
+
         #region Reactive
 
-        #region Compass
-        private static CompassData lastCompassData = new CompassData();
-        private static Compass compass = new Compass();
-        private static IObservable<CompassData> observableCompass = null;
-        public static IObservable<CompassData> GetCurrentCompass()
-        {
-            if (observableCompass == null)
-            {
-                observableCompass = Observable.Create<CompassData>(observer =>
-                {
-                    if (Compass.IsSupported)
-                    {
-                        lastCompassData.IsSupported = true;
-                        EventHandler<SensorReadingEventArgs<CompassReading>> compassChanged = (sender, e) =>
-                        {
-                            lastCompassData.Reading = new CompassReadingEx(e.SensorReading);
-                            lastCompassData.IsAccurate = e.SensorReading.HeadingAccuracy < 20;
-                            lastCompassData.IsValid = compass.IsDataValid;
-                            observer.OnNext(lastCompassData);
-                        };
-                        EventHandler<CalibrationEventArgs> compassCalibration = (sender, e) => {
-                            if (!lastCompassData.IsAccurate) return;
-                            lastCompassData.IsAccurate = false;
-                            observer.OnNext(lastCompassData);
-                        };
-                        compass.CurrentValueChanged += compassChanged;
-                        compass.Calibrate += compassCalibration;
-                        compass.TimeBetweenUpdates = TimeSpan.FromMilliseconds(120);
-                        compass.Start();
-                        return Disposable.Create(() =>
-                        {
-                            compass.CurrentValueChanged -= compassChanged;
-                            compass.Calibrate -= compassCalibration;
-                            compass.Stop();
-                            observableCompass = null;
-                        });
-                    }
-                    else
-                    {
-                        lastCompassData.IsSupported = false;
-                        observer.OnNext(lastCompassData);
-                        observer.OnCompleted();
-                        return Disposable.Create(() => observableCompass = null);
-                    }
-                })
-                .Publish(lastCompassData)
-                .RefCount();
-            }
-            return observableCompass;
-        }
-
-        public static IObservable<double> GetCurrentHeading()
-        {
-            return GetCurrentCompass()
-                .Where(data => data.IsValid && data.IsAccurate && data.Reading.HasValue)
-                .Select(data => data.Reading.Value.TrueHeading)
-                .Buffer(TimeSpan.FromSeconds(1))
-                .Where(headings => headings.Count > 0)
-                .Select(headings => headings.Average())
-                .Where(heading => !double.IsNaN(heading));
-        }
-
-        public static IObservable<CompassData> GetCurrentCompassSmooth()
-        {
-            return GetCurrentCompass()
-                .Buffer(TimeSpan.FromSeconds(1))
-                .Where(records => records.Count > 0)
-                .Select(records => 
-                    {
-                        var cd = records.Last();
-                        if (cd.Reading.HasValue)
-                        {
-                            var reading = cd.Reading.Value;
-                            reading.TrueHeading = records.Average(r => r.Reading.Value.TrueHeading);
-                            cd.Reading = reading;
-                        }
-                        return cd;
-                    })
-                .Where(cd => !cd.IsSupported || !cd.Reading.HasValue || !double.IsNaN(cd.Reading.Value.TrueHeading));
-        }
-        #endregion
-
-        #region Location
-        private static readonly GeoCoordinateWatcher geoCoordinateWatcher = new GeoCoordinateWatcher();
-        private static IObservable<GeoStatusAndPos> observableGeo = null;
-        private static IObserver<GeoStatusAndPos> geoObserver = null;
-        private static GeoStatusAndPos geoPos = new GeoStatusAndPos();
-
-        private static bool isLocationEnabled;
-
-        public static bool IsLocationEnabled
-        {
-            get { return isLocationEnabled; }
-            set {
-                if (value == isLocationEnabled)
-                    return;
-                isLocationEnabled = value;
-                if (geoObserver == null)
-                    return;
-
-                if (isLocationEnabled)
-                {
-                    geoCoordinateWatcher.Start();
-                    if (geoCoordinateWatcher.Status == GeoPositionStatus.Disabled)
-                    {
-                        geoPos.Status = GeoPositionStatus.Disabled;
-                        geoPos.Coordinate = GeoCoordinate.Unknown;
-                        geoObserver.OnNext(geoPos);
-                    }
-                    else
-                    {
-                        geoPos.Status = geoCoordinateWatcher.Status;
-                        if (geoCoordinateWatcher.Position != null)
-                        {
-                            geoPos.Coordinate = geoCoordinateWatcher.Position.Location;
-                            geoPos.LastUpdate = geoCoordinateWatcher.Position.Timestamp;
-                        }
-                        geoObserver.OnNext(geoPos);
-                    }
-                }
-                else
-                {
-                    geoCoordinateWatcher.Stop();
-                    geoPos.Status = GeoPositionStatus.Disabled;
-                    geoObserver.OnNext(geoPos);
-                }
-            }
-        }
-
-        public static IObservable<GeoStatusAndPos> GetCurrentLocation()
-        {
-            if (observableGeo == null)
-            {
-                observableGeo = Observable.Create<GeoStatusAndPos>(observer =>
-                {
-                    geoObserver = observer;
-                    EventHandler<GeoPositionStatusChangedEventArgs> statusChanged = (sender, e) =>
-                    {
-                        if (!isLocationEnabled)
-                        {
-                            geoPos.Status = GeoPositionStatus.Disabled;
-                            geoPos.Coordinate = GeoCoordinate.Unknown;
-                        }
-                        else
-                            geoPos.Status = e.Status;
-                        observer.OnNext(geoPos);
-                    };
-                    EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>> positionChanged = (sender, e) =>
-                    {
-                        if (!isLocationEnabled)
-                        {
-                            geoPos.Status = GeoPositionStatus.Disabled;
-                            geoPos.Coordinate = GeoCoordinate.Unknown;
-                        }
-                        else
-                        {
-                            geoPos.Coordinate = e.Position.Location;
-                            geoPos.LastUpdate = e.Position.Timestamp;
-                        }
-                        observer.OnNext(geoPos);
-                    };
-                    geoCoordinateWatcher.StatusChanged += statusChanged;
-                    geoCoordinateWatcher.PositionChanged += positionChanged;
-                    geoCoordinateWatcher.Start(false);
-                    var isEnabled = isLocationEnabled && geoPos.Status != GeoPositionStatus.Disabled;
-                    if (!isEnabled)
-                    {
-                        geoPos.Status = GeoPositionStatus.Disabled;
-                        geoPos.Coordinate = GeoCoordinate.Unknown;
-                        observer.OnNext(geoPos);
-                    }
-
-                    return Disposable.Create(() =>
-                    {
-                        geoCoordinateWatcher.StatusChanged -= statusChanged;
-                        geoCoordinateWatcher.PositionChanged -= positionChanged;
-                        geoCoordinateWatcher.Stop();
-                        observableGeo = null;
-                        geoObserver = null;
-                    });
-                })
-                .ObserveOn(ThreadPoolScheduler.Instance)
-                .Publish(geoPos)
-                .RefCount();
-            }
-            return observableGeo;
-        }
+        public static IObservable<GeoStatusAndPos> GetCurrentLocation() { return Sensors.GetCurrentLocation(); }
 
         public static IObservable<IAddress> FindAddress(GeoCoordinate coordinate)
         {
@@ -296,7 +80,7 @@ namespace Bicikelj.Model
         public static IObservable<GeoAddress> GetCurrentGeoAddress(bool distinctOnly = true)
         {
             if (distinctOnly)
-                return GetCurrentLocation()
+                return Sensors.GetCurrentLocation()
                     .Where(pos => { return !pos.IsEmpty && pos.Status.GetValueOrDefault() == GeoPositionStatus.Ready; })
                     .DistinctUntilChanged(pos => pos.Coordinate)
                     .SelectMany(pos =>
@@ -304,7 +88,7 @@ namespace Bicikelj.Model
                            .Select(addr => new GeoAddress(pos, addr))
                     );
             else
-                return GetCurrentLocation()
+                return Sensors.GetCurrentLocation()
                     .Where(pos => { return !pos.IsEmpty && pos.Status.GetValueOrDefault() == GeoPositionStatus.Ready; })
                     .SelectMany(pos =>
                         FindAddress(pos.Coordinate)
@@ -322,14 +106,12 @@ namespace Bicikelj.Model
             return GetCurrentAddress().Select(addr => addr == null ? UnknownLocation : addr.Locality);
         }
         
-        #endregion
-
         public static IObservable<IEnumerable<StationLocation>> SortByNearest(IEnumerable<StationLocation> stations)
         {
             if (stations == null)
                 return Observable.Return<IEnumerable<StationLocation>>(null);
             else
-                return GetCurrentLocation()
+                return Sensors.GetCurrentLocation()
                     .Where(pos => { 
                         return !pos.IsEmpty && pos.Status.GetValueOrDefault() != GeoPositionStatus.Initializing
                             /*&& pos.Coordinate.HorizontalAccuracy < 100*/;
