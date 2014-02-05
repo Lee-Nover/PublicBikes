@@ -106,7 +106,7 @@ namespace Bicikelj.Model
             return observableMotion;
         }
 
-        private static float GetViewDirection(AttitudeReading e)
+        private static float GetCameraDirection(AttitudeReading e)
         {
             var yaw = MathHelper.ToDegrees(e.Yaw);
             var roll = MathHelper.ToDegrees(e.Roll);
@@ -134,11 +134,11 @@ namespace Bicikelj.Model
             return compassDirection;
         }
 
-        public static IObservable<float> GetCurrentOrientation()
+        public static IObservable<float> GetCurrentCameraOrientation()
         {
             return GetCurrentMotion()
-                .Where(data => data.IsAccurate && data.Reading.HasValue)
-                .Select(data => GetViewDirection(data.Reading.Value.Attitude));
+                .Where(data => data.Reading.HasValue)
+                .Select(data => GetCameraDirection(data.Reading.Value.Attitude));
         }
 
         #endregion
@@ -220,6 +220,7 @@ namespace Bicikelj.Model
                         reading.TrueHeading = records.Average(r => r.Reading.Value.TrueHeading);
                         cd.Reading = reading;
                     }
+                    
                     return cd;
                 })
                 .Where(cd => !cd.IsSupported || !cd.Reading.HasValue || !double.IsNaN(cd.Reading.Value.TrueHeading));
