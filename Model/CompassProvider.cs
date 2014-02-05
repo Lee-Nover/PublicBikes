@@ -35,7 +35,7 @@ namespace Bicikelj.Model
         {
             vibrateController = IoC.Get<IVibrateController>();
             if (compassObs == null)
-                compassObs = LocationHelper.GetCurrentCompassSmooth()
+                compassObs = Sensors.GetCurrentCompassSmooth()
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(cd =>
