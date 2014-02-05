@@ -88,7 +88,13 @@ namespace Bicikelj.Model
             }
         }
 
-        public bool IsSupported { get { return Compass.IsSupported; } }
+        public bool IsSupported { get { 
+#if WINDOWS_PHONE_8 // Windows Phone 8
+            return Compass.GetDefault() != null;
+#else
+            return Compass.IsSupported;
+#endif
+        } }
 
         #endregion
     }

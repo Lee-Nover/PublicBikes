@@ -35,12 +35,7 @@ namespace Bicikelj.Controls
             var newHeading = (double)e.NewValue;
             var delta = newHeading - oldHeading;
             if (Math.Abs(delta) > 180)
-            {
-                if (delta < 0)
-                    oldHeading -= 360;
-                else
-                    oldHeading += 360;
-            }
+                oldHeading += delta < 0 ? -360 : 360;
 
             compass.AnimateHeadingAnimation.From = oldHeading;
             compass.AnimateHeadingAnimation.To = newHeading;
