@@ -139,6 +139,7 @@ namespace Bicikelj.ViewModels
         public LocationRect ViewRect;
         private Detail view;
         private IDisposable dispCurrentAddr = null;
+        private bool routeCalculated = false;
 
         public void OptimumMapZoom(Detail ov)
         {
@@ -165,7 +166,6 @@ namespace Bicikelj.ViewModels
                             return Observable.Empty<GeoAddress>();
                         })
                         .ObserveOn(ThreadPoolScheduler.Instance)
-                        // todo: do it once, then only if the user refreshes
                         .Subscribe(geoAddr => CalculateRoute(geoAddr.Coordinate, GeoLocation));
             }
         }
@@ -175,15 +175,22 @@ namespace Bicikelj.ViewModels
             CurrentLocation = from;
             NotifyOfPropertyChange(() => CurrentLocation);
 
-            if (!cityCtx.IsCurrentCitySelected())
+            if (routeCalculated || !cityCtx.IsCurrentCitySelected())
                 return;
 
             events.Publish(BusyState.Busy("calculating route..."));
             LocationHelper.CalculateRoute(new GeoCoordinate[] { from, to })
                 //.ObserveOn(ReactiveExtensions.SyncScheduler)
+                .Finally(() => routeCalculated = true)
                 .Subscribe(
                     nav => MapRoute(nav),
                     e => events.Publish(new ErrorState(e, "could not calculate route")));
+        }
+
+        public void RefreshRoute()
+        {
+            routeCalculated = false;
+            CalculateRoute(CurrentLocation, GeoLocation);
         }
 
         private void MapRoute(NavigationResponse routeResponse)

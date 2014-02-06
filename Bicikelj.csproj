@@ -390,6 +390,7 @@
     <Folder Include="SampleData\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\appbar.reroute.png" />
     <Content Include="Images\calibrate_compass.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Resource Include="Images\PublicBikeLogo200.png" />

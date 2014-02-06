@@ -453,6 +453,7 @@ namespace Bicikelj.ViewModels
 
         public void TakeMeTo(GeoCoordinate location)
         {
+            lastCoordinate = location;
             if (config.LocationEnabled.GetValueOrDefault())
                 LocationHelper.GetCurrentLocation()
                     .SubscribeOn(ThreadPoolScheduler.Instance)
@@ -465,6 +466,14 @@ namespace Bicikelj.ViewModels
                 e => events.Publish(new ErrorState(e, "could not get current location")));
             else if (CurrentLocation.Coordinate != null)
                 FindBestRoute(CurrentLocation.Coordinate, location);
+            NotifyOfPropertyChange(() => CanRefreshRoute);
+        }
+
+        public bool CanRefreshRoute { get { return lastCoordinate != null && !lastCoordinate.IsUnknown; } }
+        public void RefreshRoute()
+        {
+            if (CanRefreshRoute)
+                TakeMeTo(lastCoordinate);
         }
 
         private bool isFavorite;

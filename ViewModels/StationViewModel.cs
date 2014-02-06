@@ -110,5 +110,12 @@ namespace Bicikelj.ViewModels
         {
             Bicikelj.NavigationExtension.NavigateTo(this, "Detail");
         }
+
+        public bool CanRefreshRoute { get { return Location != null; } }
+        public void RefreshRoute()
+        {
+            if (Location != null)
+                Location.RefreshRoute();
+        }
     }
 }

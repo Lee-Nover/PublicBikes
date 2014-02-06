@@ -83,6 +83,8 @@
                                                   IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
                 <bab:BindableApplicationBarButton x:Name="EditName" Text="edit" IsEnabled="{Binding CanEditName}"
                                                   IconUri="/Images/appbar.edit.png" />
+                <bab:BindableApplicationBarButton x:Name="RefreshRoute" Text="reroute" IsEnabled="{Binding CanRefreshRoute}"
+                                                  IconUri="Images/appbar.reroute.png" />
             </bab:BindableApplicationBar.Buttons>
         </bab:AppBarCM>
     </Grid>
