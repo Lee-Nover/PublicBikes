@@ -109,9 +109,14 @@ namespace Bicikelj.Model
 
         private static float GetCameraDirection(AttitudeReading e)
         {
-            var yaw = MathHelper.ToDegrees(e.Yaw);
-            var roll = MathHelper.ToDegrees(e.Roll);
-            var pitch = MathHelper.ToDegrees(e.Pitch);
+            return GetCameraDirection(e.Roll, e.Yaw, e.Pitch);
+        }
+
+        private static float GetCameraDirection(float roll, float yaw, float pitch)
+        {
+            yaw = MathHelper.ToDegrees(yaw);
+            roll = MathHelper.ToDegrees(roll);
+            pitch = MathHelper.ToDegrees(pitch);
 
             if (roll < -20 && roll > -160)
                 return Normalize(360 - yaw + 90);
@@ -241,9 +246,14 @@ namespace Bicikelj.Model
                     cd.IsValid = data.IsValid;
                     var reading = new CompassReadingEx();
                     var okRecords = records.Where(r => r.Reading.HasValue);
-                    var roll = MathHelper.ToDegrees(okRecords.Average(r => r.Reading.Value.Attitude.Roll));
                     var yaw = MathHelper.ToDegrees(okRecords.Average(r => r.Reading.Value.Attitude.Yaw));
-                    reading.TrueHeading = 360d - (int)yaw;
+                    /*var roll = MathHelper.ToDegrees(okRecords.Average(r => r.Reading.Value.Attitude.Roll));
+                    var pitch = MathHelper.ToDegrees(okRecords.Average(r => r.Reading.Value.Attitude.Pitch));
+                    var dir = GetCameraDirection(roll, yaw, pitch);
+                    if (dir != -1)
+                        reading.TrueHeading = dir;
+                    else*/
+                        reading.TrueHeading = 360d - (int)yaw;
                     if (data.Reading.HasValue)
                         reading.Timestamp = data.Reading.Value.Timestamp;
                     reading.MagneticHeading = reading.TrueHeading;

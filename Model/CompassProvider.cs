@@ -3,6 +3,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using Caliburn.Micro;
 using Microsoft.Devices.Sensors;
+using Microsoft.Phone.Controls;
 
 namespace Bicikelj.Model
 {
@@ -46,9 +47,26 @@ namespace Bicikelj.Model
                             var reading = cd.Reading.Value;
                             if (headingChanged != null)
                             {
+                                var heading = reading.TrueHeading;
+                                var displayOrientation = ((PhoneApplicationFrame)App.Current.RootVisual).Orientation;
+                                switch (displayOrientation)
+                                {
+                                    case PageOrientation.LandscapeLeft:
+                                        heading += 90;
+                                        break;
+                                    case PageOrientation.LandscapeRight:
+                                        heading -= 90;
+                                        break;
+                                    case PageOrientation.PortraitDown:
+                                        heading += 180;
+                                        break;
+                                    case PageOrientation.PortraitUp:
+                                        break;// no change
+                                }
+                                heading %= 360;
                                 if (reading.HeadingAccuracy <= 20 && reading.HeadingAccuracy < lastAccuracy && lastAccuracy > 20)
                                     vibrateController.Start(TimeSpan.FromMilliseconds(200));
-                                headingChanged(this, new HeadingAndAccuracy(reading.TrueHeading, reading.HeadingAccuracy));
+                                headingChanged(this, new HeadingAndAccuracy(heading, reading.HeadingAccuracy));
                             }
                             lastAccuracy = reading.HeadingAccuracy;
                         }
