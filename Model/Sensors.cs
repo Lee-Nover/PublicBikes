@@ -70,6 +70,7 @@ namespace Bicikelj.Model
                         {
                             lastMotion.Reading = e.SensorReading;
                             lastMotion.IsValid = motion.IsDataValid;
+                            lastMotion.IsAccurate = motion.IsDataValid;
                             observer.OnNext(lastMotion);
                         };
                         EventHandler<CalibrationEventArgs> motionCalibration = (sender, e) =>
@@ -217,10 +218,38 @@ namespace Bicikelj.Model
                     if (cd.Reading.HasValue)
                     {
                         var reading = cd.Reading.Value;
-                        reading.TrueHeading = records.Average(r => r.Reading.Value.TrueHeading);
+                        reading.TrueHeading = records.Where(r => r.Reading.HasValue).Average(r => r.Reading.Value.TrueHeading);
                         cd.Reading = reading;
                     }
                     
+                    return cd;
+                })
+                .Where(cd => !cd.IsSupported || !cd.Reading.HasValue || !double.IsNaN(cd.Reading.Value.TrueHeading));
+        }
+
+        public static IObservable<CompassData> GetCurrentMotionAsCompass()
+        {
+            return GetCurrentMotion()
+                .Buffer(TimeSpan.FromSeconds(1))
+                .Where(records => records.Count > 0)
+                .Select(records =>
+                {
+                    var data = records.Last();
+                    var cd = new CompassData();
+                    cd.IsAccurate = data.IsAccurate;
+                    cd.IsSupported = data.IsSupported;
+                    cd.IsValid = data.IsValid;
+                    var reading = new CompassReadingEx();
+                    var okRecords = records.Where(r => r.Reading.HasValue);
+                    var roll = MathHelper.ToDegrees(okRecords.Average(r => r.Reading.Value.Attitude.Roll));
+                    var yaw = MathHelper.ToDegrees(okRecords.Average(r => r.Reading.Value.Attitude.Yaw));
+                    reading.TrueHeading = 360d - (int)yaw;
+                    if (data.Reading.HasValue)
+                        reading.Timestamp = data.Reading.Value.Timestamp;
+                    reading.MagneticHeading = reading.TrueHeading;
+                    reading.HeadingAccuracy = cd.IsAccurate ? 10 : 180;
+                    cd.Reading = reading;
+
                     return cd;
                 })
                 .Where(cd => !cd.IsSupported || !cd.Reading.HasValue || !double.IsNaN(cd.Reading.Value.TrueHeading));
