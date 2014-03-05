@@ -197,5 +197,10 @@ namespace Bicikelj.ViewModels
             App.CurrentApp.LogAnalyticEvent("Selecting city");
             NavigationExtension.NavigateTo(selvm);
         }
+
+        public void ShowPrivacyPolicy()
+        {
+            NavigationExtension.NavigateTo(IoC.Get<AppInfoViewModel>());
+        }
     }
 }

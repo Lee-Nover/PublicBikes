@@ -57,10 +57,28 @@ namespace Bicikelj
             AddCustomConventions();
         }
 
+        public static void AddDetailedStack(Exception e)
+        {
+            var st = new System.Diagnostics.StackTrace(e);
+            if (st == null) return;
+            var detailedStack = "";
+            for (int idxFrame = 4; idxFrame < st.FrameCount; idxFrame++)
+            {
+                var frame = st.GetFrame(idxFrame);
+                var method = frame.GetMethod();
+                var parameters = "";
+                foreach (var param in method.GetParameters())
+                    parameters += param.ToString() + ", ";
+                if (parameters.Length > 2)
+                    parameters = parameters.Remove(parameters.Length - 2);
+                var line = string.Format("0x{0:x4} {1}.{2}({3})", frame.GetILOffset(), method.ReflectedType.Name, method.Name, parameters);
+                detailedStack += line + Environment.NewLine;
+            }
+            e.Data.Add("DetailedStack", detailedStack);
+        }
+
         private void InitServices()
         {
-            // debug versions and running on emulator shouldn't report exceptions and analytics
-            App.Current.UnhandledException += (s, e) => { e.Handled = true; };
             // controls and resources must be initialized
             AdDealsSDKWP7.AdManager.Init(AdDealsCredentials.ID, AdDealsCredentials.Key);
             var bingCred = App.Current.Resources["BingCredentials"];
@@ -68,22 +86,21 @@ namespace Bicikelj
             if (!App.Current.Resources.Contains("AdDuplexCredentials"))
                 App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
 
-#if DEBUG && !ANALYTICS
-            if (string.Equals(DeviceStatus.DeviceName, "XDeviceEmulator", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return;
-            }
-#endif
-
 #if !DEBUG || ANALYTICS
             FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
             BugSenseHandler.Instance.InitAndStartSession(Application, BugSenseCredentials.Key);
-            BugSenseHandler.Instance.UnhandledException += (sender, e) =>
+            BugSenseHandler.Instance.UnhandledException += (s, e) =>
             {
                 e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
                     "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
                 if (!e.Cancel)
                 {
+                    if (e.ExceptionObject.Data != null && e.ExceptionObject.Data.Contains("DetailedStack"))
+                    {
+                        var extraData = new BugSense.Models.CrashExtraData() { Key = "DetailedStack", Value = (string)e.ExceptionObject.Data["DetailedStack"] };
+                        BugSenseHandler.Instance.ClearCrashExtraData();
+                        BugSenseHandler.Instance.AddCrashExtraData(extraData);
+                    }
                     var wex = e.ExceptionObject as WebExceptionEx;
                     if (wex != null)
                         BugSenseHandler.Instance.SendExceptionMessage("RequestedURL", wex.URL, wex);
@@ -95,7 +112,6 @@ namespace Bicikelj
 #else
             App.Current.UnhandledException += (s, e) =>
                 {
-                    //App.CurrentApp.Events.Publish(new ErrorState(e.ExceptionObject));
                     Execute.OnUIThread(() =>
                     {
                         e.Handled = MessageBox.Show("Continue after this exception?\n" + e.ExceptionObject.Message,

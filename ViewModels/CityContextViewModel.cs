@@ -121,16 +121,17 @@ namespace Bicikelj.ViewModels
             }
             else if (dispCurrentCity == null)
             {
+                GeoCoordinate lastPos = null;
                 if (config.LocationEnabled.GetValueOrDefault())
                     events.Publish(BusyState.Busy("getting current location..."));
-                
-                GeoCoordinate lastPos = null;
+
                 // get the nearest service
                 dispCurrentCity = LocationHelper.GetCurrentLocation()
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Select(addr => addr.Coordinate)
                     .DistinctUntilChanged()
                     .Do(coord => lastPos = coord)
+                    .Where(coord => !coord.IsUnknown)
                     .SelectMany(coord => Observable.Return<City>(BikeServiceProvider.FindNearestCity(coord, 3)))
                     .SelectMany(_city =>
                         {

@@ -103,7 +103,7 @@ namespace Bicikelj.ViewModels
             {
                 Execute.OnUIThread(() =>
                 {
-                    config.LocationEnabled = (MessageBox.Show("Location services are not enabled. They are needed to provide current location and routing. Is it ok to enable them?", "location services", MessageBoxButton.OKCancel) == MessageBoxResult.OK);
+                    config.LocationEnabled = (MessageBox.Show("Location services are not enabled. They are needed to provide current location and routing. They can be enabled and disabled in application settings or in phone system settings for all applications.\nIs it ok to enable them now?", "location services", MessageBoxButton.OKCancel) == MessageBoxResult.OK);
                 });
 
                 IoC.Get<IEventAggregator>().Publish(IoC.Get<SystemConfig>());
