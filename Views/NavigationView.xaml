@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
-    xmlns:bab="clr-namespace:BindableApplicationBar"
+    xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     x:Class="Bicikelj.Views.NavigationView"
@@ -77,16 +77,16 @@
             <TextBlock Grid.Row="4" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
             <TextBlock Grid.Row="5" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
         </Grid>
-        <bab:AppBarCM x:Name="AppBar" IsVisible="True" >
-            <bab:BindableApplicationBar.Buttons>
-                <bab:BindableApplicationBarButton x:Name="ToggleFavorite" Text="favorite" IsEnabled="{Binding CanToggleFavorite}"
+        <bab:BindableAppBar x:Name="AppBar" IsVisible="True" >
+            <bab:BindableAppBar.Buttons>
+                <bab:BindableAppBarButton x:Name="ToggleFavorite" Text="{Binding IsFavorite, Converter={StaticResource FavoriteToTextVerbConverter}}"
                                                   IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
-                <bab:BindableApplicationBarButton x:Name="EditName" Text="edit" IsEnabled="{Binding CanEditName}"
+                <bab:BindableAppBarButton x:Name="EditName" Text="edit" 
                                                   IconUri="/Images/appbar.edit.png" />
-                <bab:BindableApplicationBarButton x:Name="RefreshRoute" Text="reroute" IsEnabled="{Binding CanRefreshRoute}"
+                <bab:BindableAppBarButton x:Name="RefreshRoute" Text="reroute" 
                                                   IconUri="Images/appbar.reroute.png" />
-            </bab:BindableApplicationBar.Buttons>
-        </bab:AppBarCM>
+            </bab:BindableAppBar.Buttons>
+        </bab:BindableAppBar>
     </Grid>
  
 </UserControl>

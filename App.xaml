@@ -30,6 +30,7 @@
             <cvt:PinTypeToIconConverter x:Key="PinTypeToIconConverter" />
             <cvt:BoolToStringConverter x:Key="BoolToStringConverter" />
             <cvt:TravelSpeedConverter x:Key="TravelSpeedConverter" />
+            <cvt:FavoriteToTextVerbConverter x:Key="FavoriteToTextVerbConverter" />
             <model:CompassProvider x:Key="CompassProvider" />
         </ResourceDictionary>
     </Application.Resources>

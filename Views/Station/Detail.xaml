@@ -11,7 +11,7 @@
     xmlns:vsl="clr-namespace:Bicikelj.Views.StationLocation"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
-    xmlns:bab="clr-namespace:BindableApplicationBar"
+    xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
@@ -31,16 +31,16 @@
             <ContentControl x:Name="Availability" Grid.Row="1" HorizontalContentAlignment="Stretch" Margin="0,0,0,12" />        
         </Grid>
 
-        <bab:AppBarCM x:Name="AppBar" IsVisible="True" >
-                <bab:BindableApplicationBar.Buttons>
-                    <bab:BindableApplicationBarButton x:Name="ToggleFavorite" 
-                                         Text="favorite"
+        <bab:BindableAppBar x:Name="AppBar" IsVisible="True" >
+            <bab:BindableAppBar.Buttons>
+                    <bab:BindableAppBarButton x:Name="ToggleFavorite" 
+                                         Text="{Binding IsFavorite, Converter={StaticResource FavoriteToTextVerbConverter}}"
                                          IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
-                <bab:BindableApplicationBarButton x:Name="RefreshRoute" IsEnabled="{Binding CanRefreshRoute}"
+                    <bab:BindableAppBarButton x:Name="RefreshRoute" 
                                          Text="reroute"
                                          IconUri="Images/appbar.reroute.png" />
-            </bab:BindableApplicationBar.Buttons>
-        </bab:AppBarCM>
+            </bab:BindableAppBar.Buttons>
+        </bab:BindableAppBar>
     </Grid>
     
 </UserControl>

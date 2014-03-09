@@ -21,8 +21,8 @@
                         <Setter.Value>
                             <ControlTemplate>
                                 <StackPanel Orientation="Horizontal" DataContext="{Binding Version}" Margin="0,12,0,0">
+                                    <TextBlock Text="{Binding DatePublished, Converter={StaticResource dateToStrConv}, ConverterParameter='d'}" Style="{StaticResource PhoneTextNormalStyle}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                     <TextBlock Text="{Binding Version}" Style="{StaticResource PhoneTextNormalStyle}" FontWeight="SemiBold" VerticalAlignment="Center" />
-                                    <TextBlock Text="{Binding DatePublished, Converter={StaticResource dateToStrConv}, ConverterParameter='d'}" Style="{StaticResource PhoneTextNormalStyle}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </ControlTemplate>
                         </Setter.Value>
@@ -45,10 +45,10 @@
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent" >
-        <toolkit:LongListSelector x:Name="FlatVersionHistory" ItemsSource="{Binding FlatVersionHistory}" Background="{x:Null}" IsFlatList="True">
+        <toolkit:LongListSelector x:Name="FlatVersionHistory" ItemsSource="{Binding FlatVersionHistory}" Background="{x:Null}" IsFlatList="True" toolkit:TiltEffect.SuppressTilt="True">
             <toolkit:LongListSelector.ItemTemplate>
                 <DataTemplate>
-                    <ContentControl Style="{Binding ., Converter={StaticResource viStyleConv}}"></ContentControl>
+                    <ContentControl Style="{Binding ., Converter={StaticResource viStyleConv}}"/>
                 </DataTemplate>
             </toolkit:LongListSelector.ItemTemplate>
         </toolkit:LongListSelector>

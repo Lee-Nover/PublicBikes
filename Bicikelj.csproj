@@ -66,6 +66,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Caliburn.Micro.1.5.2\lib\wp71\Caliburn.Micro.dll</HintPath>
     </Reference>
+    <Reference Include="Caliburn.Micro.BindableAppBar">
+      <HintPath>packages\Caliburn.Micro.BindableAppBar.1.0.5.0\lib\wp71\Caliburn.Micro.BindableAppBar.dll</HintPath>
+    </Reference>
     <Reference Include="Caliburn.Micro.Extensions, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Caliburn.Micro.1.5.2\lib\wp71\Caliburn.Micro.Extensions.dll</HintPath>
@@ -148,11 +151,6 @@
     <Compile Include="CM.Contrib\Dialogs\Information.cs" />
     <Compile Include="CM.Contrib\Dialogs\Question.cs" />
     <Compile Include="CM.Contrib\Dialogs\Warning.cs" />
-    <Compile Include="Controls\AppBarCM.cs" />
-    <Compile Include="Controls\Bindable.cs" />
-    <Compile Include="Controls\BindableApplicationBar.cs" />
-    <Compile Include="Controls\BindableApplicationBarButton.cs" />
-    <Compile Include="Controls\BindableApplicationBarMenuItem.cs" />
     <Compile Include="Controls\Compass.xaml.cs">
       <DependentUpon>Compass.xaml</DependentUpon>
     </Compile>
@@ -164,6 +162,7 @@
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="Controls\TravelSpeedControl.cs" />
     <Compile Include="Converters\BoolToStringConverter.cs" />
+    <Compile Include="Converters\FavoriteToTextConverter.cs" />
     <Compile Include="Converters\DateTimeToStringConverter.cs" />
     <Compile Include="Converters\VersionItemStyleConverter.cs" />
     <Compile Include="Converters\StationStyleConverter.cs" />
@@ -389,6 +388,8 @@
     <Folder Include="SampleData\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\appbar.download.png" />
+    <Content Include="Images\appbar.mail.png" />
     <Content Include="Images\appbar.reroute.png" />
     <Content Include="Images\calibrate_compass.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
@@ -397,7 +398,6 @@
     <Resource Include="Images\PublicBikeLogo62.png" />
     <Content Include="Assets\nextbike-cities.xml" />
     <Content Include="Images\PublicBikeLogo99.png" />
-    <Resource Include="Images\appbar.button.png" />
     <Content Include="Images\appbar.edit.png" />
     <Content Include="Images\appbar.star.add.png" />
     <Content Include="Images\appbar.star.delete.png" />

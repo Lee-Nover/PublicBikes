@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using Bicikelj.Controls;
 using Bicikelj.Model;
 using Bicikelj.ViewModels;
-using BindableApplicationBar;
 using BugSense;
 using Caliburn.Micro;
 using Microsoft.Phone.Controls;
@@ -19,6 +18,8 @@ using Coding4Fun.Toolkit.Controls;
 using System.Windows.Navigation;
 using System.Globalization;
 using Bicikelj.Model.Analytics;
+using Caliburn.Micro.BindableAppBar;
+
 
 namespace Bicikelj
 {
@@ -260,25 +261,27 @@ namespace Bicikelj
             ConventionManager.AddElementConvention<MapLayer>(MapLayer.DataContextProperty, "DataContext", "Tap");
             ConventionManager.AddElementConvention<HubTile>(HubTile.TitleProperty, "Title", "Tap");
             ConventionManager.AddElementConvention<AppBarButton>(null, "Message", "Click");
-            ConventionManager.AddElementConvention<AppBarCM>(FrameworkElement.DataContextProperty, "DataContext", "Loaded");
             //ConventionManager.AddElementConvention<MenuItem>(ItemsControl.ItemsSourceProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<MenuItem>(MenuItem.DataContextProperty, "DataContext", "Click");
             ConventionManager.AddElementConvention<TravelSpeedControl>(TravelSpeedControl.SpeedProperty, "Speed", "Change");
             ConventionManager.AddElementConvention<TimeSpanPicker>(TimeSpanPicker.ValueProperty, "Value", "ValueChanged");
 
-            ConventionManager.AddElementConvention<BindableApplicationBarMenuItem>(FrameworkElement.DataContextProperty, "DataContext", "Click");
-            var aaf = ActionMessage.ApplyAvailabilityEffect;
+            /*var aaf = ActionMessage.ApplyAvailabilityEffect;
             ActionMessage.ApplyAvailabilityEffect = (context =>
             {
-                if (context.Source is BindableApplicationBarMenuItem)
+                if (context.Source is BindableAppBarMenuItem)
                 {
-                    var bmi = context.Source as BindableApplicationBarMenuItem;
+                    var bmi = context.Source as BindableAppBarMenuItem;
                     if (context.CanExecute != null)
                         bmi.IsEnabled = context.CanExecute();
                     return bmi.IsEnabled;
                 }
                 return aaf(context);
-            });
+            });*/
+
+            // App Bar Conventions
+            ConventionManager.AddElementConvention<BindableAppBarButton>(Control.IsEnabledProperty, "DataContext", "Click");
+            ConventionManager.AddElementConvention<BindableAppBarMenuItem>(Control.IsEnabledProperty, "DataContext", "Click");
 
             Microsoft.Phone.Controls.TiltEffect.TiltableItems.Add(typeof(HubTile));
         }

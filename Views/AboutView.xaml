@@ -6,6 +6,7 @@
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:bctl="clr-namespace:Bicikelj.Controls" 
+    xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
     x:Class="Bicikelj.Views.AboutView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -35,33 +36,27 @@ The application uses many different services to provide bike and station availab
                         <Hyperlink TargetName="_blank" NavigateUri="https://github.com/Lee-Nover/PublicBikes/issues">project page</Hyperlink>
                     </Paragraph>
                 </RichTextBox>
-                <Button x:Name="RateApp" IsTabStop="False" Margin="0,24,0,0">
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
-                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
-                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
-                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
-                        <Path Data="{StaticResource FavoriteIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
-                        <TextBlock Text="rate the app" Margin="12,0" />
-                    </StackPanel>
-                </Button>
-                <Button x:Name="UpdateApp" Visibility="{Binding IsUpdateAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource UpdateIconData}" Stretch="Uniform" Fill="{StaticResource PhoneForegroundBrush}" Height="24" Width="24" />
-                        <TextBlock Text="update the app" Margin="12,0" />
-                    </StackPanel>
-                </Button>
                 <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,12,12,0">
-					<Run FontWeight="Bold">Usage of Location Service APIs</Run>
-					<LineBreak/>
-					<Run>Location data is used to improve the application experience and is never stored nor is it disclosed outside of the application. Location services may be turned off in application settings or globally for all applications in system settings. Location data enables searching for the nearest free bike or an available bike stand and for navigating to an address or known location.</Run>
-					<LineBreak/>
-					<LineBreak/>
-					<Run FontWeight="Bold">Usage of anonymous device information</Run>
-					<LineBreak/>
-					<Run>When an error occurs in the application, anonymous device information is collected to help correct the error. The user can choose not to send the data. The information included in the reports is related only to the error that occured and includes: the Application version, OS version, device model, display dimensions, country of usage, locale (formatting), operator name, available data connections (wifi / cellular). No user identifiable data is collected such as user ID, phone number*, emails* or location data. * not supported by the system.</Run>
-				</TextBlock>
+                    <Run FontWeight="Bold">Usage of Location Service APIs</Run>
+                    <LineBreak/>
+                    <Run>Location data is used to improve the application experience and is never stored nor is it disclosed outside of the application. Location services may be turned off in application settings or globally for all applications in system settings. Location data enables searching for the nearest free bike or an available bike stand and for navigating to an address or known location.</Run>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run FontWeight="Bold">Usage of anonymous device information</Run>
+                    <LineBreak/>
+                    <Run>When an error occurs in the application, anonymous device information is collected to help correct the error. The user can choose not to send the data. The information included in the reports is related only to the error that occured and includes: the Application version, OS version, device model, display dimensions, country of usage, locale (formatting), operator name, available data connections (wifi / cellular). No user identifiable data is collected such as user ID, phone number*, emails* or location data. * not supported by the system.</Run>
+                </TextBlock>
             </StackPanel>
         </ScrollViewer>
+        <bab:BindableAppBar x:Name="AppBar" IsVisible="True">
+            <bab:BindableAppBar.Buttons>
+                <bab:BindableAppBarButton x:Name="RateApp" Text="rate app"
+                                                  IconUri="/Images/appbar.star.png" />
+                <bab:BindableAppBarButton x:Name="UpdateApp" Text="update" Visibility="{Binding IsUpdateAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
+                                                  IconUri="/Images/appbar.download.png" />
+                <bab:BindableAppBarButton x:Name="SendFeedback" Text="feedback"
+                                                  IconUri="/Images/appbar.mail.png" />
+            </bab:BindableAppBar.Buttons>
+        </bab:BindableAppBar>
     </Grid>
 </UserControl>

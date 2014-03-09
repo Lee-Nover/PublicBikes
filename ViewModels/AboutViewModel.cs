@@ -87,11 +87,24 @@ namespace Bicikelj.ViewModels
             get { return config != null && !string.IsNullOrEmpty(config.UpdateAvailable); }
         }
 
+        public bool CanUpdateApp()
+        {
+            return IsUpdateAvailable;
+        }
+
         public void UpdateApp()
         {
             App.CurrentApp.LogAnalyticEvent("UpdateApp");
             var markeplaceTask = new MarketplaceDetailTask();
             markeplaceTask.Show();
+        }
+
+        public void SendFeedback()
+        {
+            var emailTask = new EmailComposeTask();
+            emailTask.Subject = AppTitle + " " + VersionNumber + " feedback";
+            emailTask.To = "twocans@windowslive.com";
+            emailTask.Show();
         }
     }
 }
