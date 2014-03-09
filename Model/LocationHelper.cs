@@ -210,19 +210,23 @@ namespace Bicikelj.Model
         public static string GetDistanceString(double distance, bool imperial = false)
         {
             string[,] unit = { { "ft", "mi" }, { "m", "km" } };
-            string[] format = { "#.00 ", "# " };
-            bool moreThan1km = distance > 1000;
+            string[] format = { "# ", "0.00 " };
+            bool mOrKm = false;
             if (imperial)
-                if (moreThan1km)
-                    distance *= 0.000621371;
-                else
-                    distance *= 3.28084;
+            {
+                var miles = distance * 0.000621371;
+                mOrKm = miles >= 0.5;
+                distance *= mOrKm ? 0.000621371 : 3.28084;
+            }
             else
-                if (moreThan1km)
+            {
+                mOrKm = distance >= 1000;
+                if (mOrKm)
                     distance /= 1000;
+            }
             int idx1 = imperial ? 0 : 1;
-            int idx2 = moreThan1km ? 1 : 0;
-            return distance.ToString(format[moreThan1km ? 0 : 1]) + unit[idx1, idx2];
+            int idx2 = mOrKm ? 1 : 0;
+            return distance.ToString(format[idx2]) + unit[idx1, idx2];
         }
 
         public static double GetTravelSpeed(TravelType type, TravelSpeed speed, bool imperial = false)
