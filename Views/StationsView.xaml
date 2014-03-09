@@ -26,9 +26,13 @@
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Path Width="18" Height="18" Data="{StaticResource FavoriteIconData}" Visibility="{Binding IsFavorite, Converter={StaticResource ValueToVisibilityConverter}}" Fill="White" Stretch="Uniform" Margin="12,0,-8,0" />
-                                <TextBlock Grid.Column="1" Text="{Binding StationName}" Style="{StaticResource PhoneTextLargeStyle}" />
+                                <TextBlock Text="{Binding StationName}" Style="{StaticResource PhoneTextLargeStyle}" />
                             </StackPanel>
-                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Address}" Style="{StaticResource PhoneTextSubtleStyle}" />
+                            <StackPanel Orientation="Horizontal">
+                                <!-- todo: add an orientation indicator -->
+                                <TextBlock Text="{Binding DistanceValueString}" Style="{StaticResource PhoneTextSubtleStyle}" Visibility="{Binding IsLocationEnabled, Converter={StaticResource ValueToVisibilityConverter}}"/>
+                                <TextBlock Text="{Binding Address}" Style="{StaticResource PhoneTextSubtleStyle}" />
+                            </StackPanel>
                         </StackPanel>
                         <Path MaxHeight="42" Data="{StaticResource ClosedSignIconData}" Visibility="{Binding Open, Converter={StaticResource ValueToVisibilityInvConverter}}" Fill="#FFFFB5AC" Stretch="Uniform" Stroke="{StaticResource PinInactiveBorderBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" />
                     </Grid>

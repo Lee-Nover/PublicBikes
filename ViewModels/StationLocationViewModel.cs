@@ -64,12 +64,13 @@ namespace Bicikelj.ViewModels
                 NotifyOfPropertyChange(() => DistanceString);
             }
         }
+        private GeoCoordinate startLocation = null;
         private double travelDistance = double.NaN;
         private double travelDuration = double.NaN;
         public double Distance {
             get
             {
-                if (!double.IsNaN(travelDistance))
+                if (!double.IsNaN(travelDistance) && IsNearStartLocation())
                     return travelDistance;
                 double result = double.NaN;
                 if (GeoLocation != null && CurrentLocation != null)
@@ -77,6 +78,13 @@ namespace Bicikelj.ViewModels
                 return result;
             }
         }
+
+        public bool IsNearStartLocation()
+        {
+            return startLocation != null && CurrentLocation != null && startLocation.GetDistanceTo(currentLocation) < 50;
+        }
+
+        public bool IsLocationEnabled { get { return config.LocationEnabled.GetValueOrDefault(); } }
 
         public string DistanceString
         {
@@ -173,6 +181,7 @@ namespace Bicikelj.ViewModels
         public void CalculateRoute(GeoCoordinate from, GeoCoordinate to)
         {
             CurrentLocation = from;
+            startLocation = from;
             NotifyOfPropertyChange(() => CurrentLocation);
 
             if (routeCalculated || !cityCtx.IsCurrentCitySelected())

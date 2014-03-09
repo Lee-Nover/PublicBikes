@@ -11,6 +11,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
+using System.Device.Location;
 
 namespace Bicikelj.ViewModels
 {
@@ -108,7 +109,7 @@ namespace Bicikelj.ViewModels
 
             if (stationsObs == null)
             {
-                stationsObs = 
+                stationsObs =
                     filterObs
                     .Throttle(TimeSpan.FromMilliseconds(200))
                     .SelectMany(cityContext.GetStations())
@@ -116,7 +117,19 @@ namespace Bicikelj.ViewModels
                     .Delay(dueTime)
                     .Select(s => { if (s == null) return new List<StationLocation>(); else return s; })
                     .SelectMany(s => LocationHelper.SortByNearest(s))
-                    .Select(s => s.Select(station => new StationLocationViewModel(station)))
+                    .Select(s =>
+                        {
+                            GeoCoordinate currentLocation = null;
+                            if (LocationHelper.IsLocationEnabled && !LocationHelper.LastPosition.IsEmpty 
+                                && LocationHelper.LastPosition.Status.GetValueOrDefault() == GeoPositionStatus.Ready)
+                                currentLocation = LocationHelper.LastPosition.Coordinate;
+                            return s.Select(station =>
+                            {
+                                var slvm = new StationLocationViewModel(station);
+                                slvm.CurrentLocation = currentLocation;
+                                return slvm;
+                            });
+                        })
                     .Do(s => this.stations = s.ToList())
                     .Select(s => s.Where(sl => MatchesFilter(sl)))
                     .ObserveOn(ReactiveExtensions.SyncScheduler)

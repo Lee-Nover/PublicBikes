@@ -64,6 +64,8 @@ namespace Bicikelj.Model
 
         public static bool IsLocationEnabled { get { return Sensors.IsLocationEnabled; } set { Sensors.IsLocationEnabled = value; } }
 
+        public static GeoStatusAndPos LastPosition { get { return Sensors.LastPosition; } }
+
         #region Reactive
 
         public static IObservable<GeoStatusAndPos> GetCurrentLocation() { return Sensors.GetCurrentLocation(); }

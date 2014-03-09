@@ -275,6 +275,8 @@ namespace Bicikelj.Model
 
         private static bool isLocationEnabled;
 
+        public static GeoStatusAndPos LastPosition { get { return geoPos; } }
+
         public static bool IsLocationEnabled
         {
             get { return isLocationEnabled; }
