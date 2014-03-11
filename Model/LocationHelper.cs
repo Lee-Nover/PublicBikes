@@ -66,6 +66,14 @@ namespace Bicikelj.Model
 
         public static GeoStatusAndPos LastPosition { get { return Sensors.LastPosition; } }
 
+        public static GeoCoordinate LastCoordinate { get {
+            var lastPos = LastPosition;
+            if (!IsLocationEnabled || lastPos == null || lastPos.IsEmpty || lastPos.Status != GeoPositionStatus.Ready)
+                return null;
+            else
+                return lastPos.Coordinate; 
+        } }
+
         #region Reactive
 
         public static IObservable<GeoStatusAndPos> GetCurrentLocation() { return Sensors.GetCurrentLocation(); }

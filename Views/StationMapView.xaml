@@ -5,19 +5,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:maps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
-    xmlns:bab="clr-namespace:BindableApplicationBar"
+    xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:conv="clr-namespace:Bicikelj.Converters"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:gart="clr-namespace:GART.Controls;assembly=GART"
     x:Class="Bicikelj.Views.StationMapView"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
     <!--LayoutRoot is the root grid where all page content is placed-->
     <UserControl.Resources>
         <conv:StationStyleConverter x:Name="stationStyleConverter" SingleStyle="{StaticResource PushpinTemplateNormal}" ClusterStyle="{StaticResource PushpinClusterTemplateNormal}" />
+        <conv:BoolToStringValuesConverter x:Name="displayModeTextConv" TrueValue="map" FalseValue="AR" />
+        <conv:BoolToStringValuesConverter x:Name="displayModeIconConv" TrueValue="/images/appbar.map.png" FalseValue="/images/appbar.view.png" />
     </UserControl.Resources>
+    <UserControl.FontFamily>
+        <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+    </UserControl.FontFamily>
+    <UserControl.FontSize>
+        <StaticResource ResourceKey="PhoneFontSizeNormal"/>
+    </UserControl.FontSize>
+    <UserControl.Foreground>
+        <StaticResource ResourceKey="PhoneForegroundBrush"/>
+    </UserControl.Foreground>
     <Grid x:Name="LayoutRoot" Background="Transparent" >
        
         <!--ContentPanel - place additional content here-->
@@ -31,7 +40,7 @@
             <maps:Map Grid.Row="1" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache"
                       Mode="Road" 
                       LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" ZoomBarVisibility="Visible" ScaleVisibility="Visible"
-                      CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)">
+                      CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)" Visibility="{Binding DisplayingAR, Converter={StaticResource ValueToVisibilityInvConverter}}">
                 <maps:MapLayer x:Name="Route" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
                     <bctl:LocationAccuracy x:Name="Accuracy" CacheMode="BitmapCache" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
@@ -48,8 +57,7 @@
                 <maps:MapItemsControl x:Name="Items">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <maps:Pushpin Name="Pin" Style="{Binding ., Converter={StaticResource stationStyleConverter}}" Opacity="0" PositionOrigin="BottomCenter" Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" CacheMode="BitmapCache" >
-                                <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False"  />
+                            <maps:Pushpin x:Name="Pin" Style="{Binding ., Converter={StaticResource stationStyleConverter}}" Opacity="0" PositionOrigin="BottomCenter" Location="{Binding Coordinate}" cal:View.Context="Pushpin" cal:Message.Attach="TapPin($dataContext, $eventArgs)" CacheMode="BitmapCache" >
                                 <maps:Pushpin.Triggers>
                                     <EventTrigger RoutedEvent="Canvas.Loaded">
                                         <BeginStoryboard>
@@ -59,11 +67,17 @@
                                         </BeginStoryboard>
                                     </EventTrigger>
                                 </maps:Pushpin.Triggers>
+                                <ContentControl cal:View.Model="{Binding}" cal:View.Context="Pushpin" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" IsTabStop="False"  />
                             </maps:Pushpin>
                         </DataTemplate>
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
             </maps:Map>
+            <gart:ARDisplay x:Name="ARDisplay" Grid.Row="1" Margin="12,12,12,0" CacheMode="BitmapCache" 
+                            Visibility="{Binding DisplayingAR, Converter={StaticResource ValueToVisibilityConverter}}"
+                            CameraEnabled="True">
+                <gart:VideoPreview />
+            </gart:ARDisplay>
             
             <bctl:Compass Grid.Row="1" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" />
 
@@ -80,6 +94,13 @@
                 </StackPanel>
             </Border>
         </Grid>
+        <bab:BindableAppBar x:Name="AppBar" IsVisible="False">
+            <bab:BindableAppBar.Buttons>
+                <bab:BindableAppBarButton x:Name="ToggleDisplayMode" 
+                                         Text="{Binding DisplayingAR, Converter={StaticResource displayModeTextConv}}"
+                                         IconUri="{Binding DisplayingAR, Converter={StaticResource displayModeIconConv}}" />
+            </bab:BindableAppBar.Buttons>
+        </bab:BindableAppBar>
     </Grid>
  
 </UserControl>

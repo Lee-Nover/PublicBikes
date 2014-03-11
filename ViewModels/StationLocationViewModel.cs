@@ -29,6 +29,12 @@ namespace Bicikelj.ViewModels
             InternalSetLocation(stationLocation);
         }
 
+        public StationLocationViewModel(StationLocation stationLocation, GeoCoordinate currentPos)
+            : this(stationLocation)
+        {
+            SetCurrentLocation(currentPos);
+        }
+
         private void InternalSetLocation(StationLocation stationLocation)
         {
             this.stationLocation = stationLocation;
@@ -64,6 +70,11 @@ namespace Bicikelj.ViewModels
                 NotifyOfPropertyChange(() => DistanceString);
             }
         }
+        public void SetCurrentLocation(GeoCoordinate value)
+        {
+            currentLocation = value;
+        }
+
         private GeoCoordinate startLocation = null;
         private double travelDistance = double.NaN;
         private double travelDuration = double.NaN;

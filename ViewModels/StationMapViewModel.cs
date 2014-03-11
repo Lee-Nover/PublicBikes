@@ -10,6 +10,7 @@ using Caliburn.Micro;
 using Microsoft.Devices.Sensors;
 using System.Windows;
 using System.Device.Location;
+using GART.Data;
 
 namespace Bicikelj.ViewModels
 {
@@ -38,6 +39,14 @@ namespace Bicikelj.ViewModels
                 this.Items.Clear();
                 return;
             }
+            this.view.ARDisplay.ARItems.Clear();
+            foreach (var st in stations)
+            {
+                var arItem = new ARItem();
+                arItem.GeoLocation = st.Location.GeoLocation;
+                arItem.Content = st;
+                this.view.ARDisplay.ARItems.Add(arItem);
+            }
             
             var map = this.view.Map;
             var clusters = StationClusterer.ClusterStations(stations, map, Math.Min(map.ActualWidth, map.ActualHeight) / 6);
@@ -62,6 +71,7 @@ namespace Bicikelj.ViewModels
                 .ObserveOn(ReactiveExtensions.SyncScheduler)
                 .Subscribe(s => this.Items.Add(s));
             NotifyOfPropertyChange(() => Items);
+            
         }
 
         public StationMapViewModel(IEventAggregator events, SystemConfig config, CityContextViewModel cityContext)
@@ -249,6 +259,27 @@ namespace Bicikelj.ViewModels
             }
             else
                 ActiveItem = null;
+        }
+
+        private bool displayingAR = false;
+        public bool DisplayingAR { 
+            get { return displayingAR; }
+            set
+            {
+                if (value == displayingAR) return;
+                displayingAR = value;
+                if (this.view != null)
+                    if (displayingAR)
+                        this.view.ARDisplay.StartServices();
+                    else
+                        this.view.ARDisplay.StopServices();
+                NotifyOfPropertyChange(() => DisplayingAR);
+            }
+        }
+
+        public void ToggleDisplayMode()
+        {
+            DisplayingAR = !DisplayingAR;
         }
     }
 }

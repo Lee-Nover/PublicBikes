@@ -383,5 +383,20 @@ namespace Bicikelj.ViewModels
         {
             return city != null && string.Equals(CurrentCity, City.CityName, StringComparison.InvariantCultureIgnoreCase);
         }
+
+        public void RefreshStations()
+        {
+            if (city == null) return;
+            lock (cityLoadStates)
+            {
+                cityLoadStates[city] = CityLoadState.NotLoaded;
+                city.Stations.Clear();
+                var cityFile = "Cities\\" + city.UrlCityName;
+                using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
+                    if (myIsolatedStorage.FileExists(cityFile))
+                        myIsolatedStorage.DeleteFile(cityFile);
+            }
+            subCity.OnNext(city);
+        }
     }
 }

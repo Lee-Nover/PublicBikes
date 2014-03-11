@@ -117,19 +117,7 @@ namespace Bicikelj.ViewModels
                     .Delay(dueTime)
                     .Select(s => { if (s == null) return new List<StationLocation>(); else return s; })
                     .SelectMany(s => LocationHelper.SortByNearest(s))
-                    .Select(s =>
-                        {
-                            GeoCoordinate currentLocation = null;
-                            if (LocationHelper.IsLocationEnabled && !LocationHelper.LastPosition.IsEmpty 
-                                && LocationHelper.LastPosition.Status.GetValueOrDefault() == GeoPositionStatus.Ready)
-                                currentLocation = LocationHelper.LastPosition.Coordinate;
-                            return s.Select(station =>
-                            {
-                                var slvm = new StationLocationViewModel(station);
-                                slvm.CurrentLocation = currentLocation;
-                                return slvm;
-                            });
-                        })
+                    .Select(s => s.Select(station => new StationLocationViewModel(station, LocationHelper.LastCoordinate)))
                     .Do(s => this.stations = s.ToList())
                     .Select(s => s.Where(sl => MatchesFilter(sl)))
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
@@ -167,6 +155,11 @@ namespace Bicikelj.ViewModels
         public void Dispose()
         {
             ReactiveExtensions.Dispose(ref stationsObs);
+        }
+
+        public void DownloadStations()
+        {
+            cityContext.RefreshStations();
         }
     }
 }

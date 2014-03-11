@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -39,5 +40,12 @@
                 </DataTemplate>
             </toolkit:LongListSelector.ItemTemplate>
         </toolkit:LongListSelector>
+        <bab:BindableAppBar x:Name="AppBar" IsVisible="True">
+            <bab:BindableAppBar.Buttons>
+                <bab:BindableAppBarButton x:Name="DownloadStations" 
+                                         Text="refresh"
+                                         IconUri="/images/appbar.refresh.png" />
+            </bab:BindableAppBar.Buttons>
+        </bab:BindableAppBar>
     </Grid>
 </UserControl>

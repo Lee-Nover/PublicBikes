@@ -79,6 +79,9 @@
     <Reference Include="FlurryWP8SDK">
       <HintPath>FlurryWP8SDK.dll</HintPath>
     </Reference>
+    <Reference Include="GART">
+      <HintPath>packages\GART\GART.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Devices.Sensors" />
     <Reference Include="Microsoft.Expression.Interactions, Version=3.7.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>Bin\Debug\Microsoft.Expression.Interactions.dll</HintPath>
@@ -390,7 +393,11 @@
   <ItemGroup>
     <Content Include="Images\appbar.download.png" />
     <Content Include="Images\appbar.mail.png" />
+    <Content Include="Images\appbar.map-location.png" />
+    <Content Include="Images\appbar.map.png" />
+    <Content Include="Images\appbar.refresh.png" />
     <Content Include="Images\appbar.reroute.png" />
+    <Content Include="Images\appbar.view.png" />
     <Content Include="Images\calibrate_compass.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Resource Include="Images\PublicBikeLogo200.png" />
