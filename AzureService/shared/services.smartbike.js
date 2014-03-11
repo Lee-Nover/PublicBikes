@@ -183,11 +183,12 @@ function extractFromJsonMX(data, cityName) {
     var stationList = JSON.parse(data);
     var stations = [];
     var idxStation = 0;
+    var filterName = /^([\d\s-])*/;
     stationList.forEach(function visitStation(s) {
         var station = {
             id: s.id,
-            name: s.name,
-            address: s.address,
+            name: s.name.replace(filterName, ''),
+            address: s.address.replace(filterName, ''),
             city: cityName,
             lat: s.lat,
             lng: s.lon,
