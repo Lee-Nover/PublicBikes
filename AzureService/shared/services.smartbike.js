@@ -8,7 +8,7 @@ exports.getUrl = function(cityName) {
         case 'antwerpen':
             return "https://www.velo-antwerpen.be/localizaciones/station_map.php";
         case 'mexicocity':
-            return "https://www.ecobici.df.gob.mx/localizaciones/localizaciones_body.php";
+            return "https://www.ecobici.df.gob.mx/availability_map/getJsonObject";
         case "milano":
             return "https://www.bikemi.com/it/mappa-stazioni.aspx";
         default:
@@ -21,8 +21,9 @@ exports.extractData = function (data, cityName) {
         case 'stockholm':
             return extractFromXML(data, cityName);
         case 'antwerpen':
+            return extractFromHTMLAntwerp(data, cityName);
         case 'mexicocity':
-            return extractFromHTMLAntwerpMX(data, cityName);
+            return extractFromJsonMX(data, cityName);
         case 'milano':
             return extractFromJsonMilano(data, cityName);
         default:
@@ -175,5 +176,27 @@ function extractFromHTMLAntwerpMX(data, cityName) {
         }
         stations[idxStation++] = station;
     };
+    return JSON.stringify(stations);
+}
+
+function extractFromJsonMX(data, cityName) {
+    var stationList = JSON.parse(data);
+    var stations = [];
+    var idxStation = 0;
+    stationList.forEach(function visitStation(s) {
+        var station = {
+            id: s.id,
+            name: s.name,
+            address: s.address,
+            city: cityName,
+            lat: s.lat,
+            lng: s.lon,
+            status: s.status == "OPN" ? 1 : 0,
+            bikes: parseInt(s.bikes),
+            freeDocks: parseInt(s.slots),
+            totalDocks: parseInt(s.bikes) + parseInt(s.slots)
+        }
+        stations[idxStation++] = station;    
+    });
     return JSON.stringify(stations);
 }

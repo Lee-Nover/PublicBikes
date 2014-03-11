@@ -37,8 +37,6 @@ namespace Bicikelj.Model
             {
                 case "antwerpen":
                     return "https://www.velo-antwerpen.be/CallWebService/StationBussinesStatus.php";
-                case "mexicocity":
-                    return "https://www.ecobici.df.gob.mx/CallWebService/StationBussinesStatus.php";
                 default:
                     return "";
             }
@@ -49,7 +47,6 @@ namespace Bicikelj.Model
             switch (station.City)
             {
                 case "antwerpen":
-                case "mexicocity":
                     var csa = GetAvailabilityFromCache(station);
                     if (csa.Availability != null)
                         return Observable.Return<StationAndAvailability>(csa);
