@@ -12,7 +12,7 @@ namespace Bicikelj.Converters
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return ValueToVisibilityConverter.GetVisibility(value);
+            return ValueToVisibilityConverter.GetVisibility(value, parameter);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -20,8 +20,10 @@ namespace Bicikelj.Converters
             throw new NotImplementedException();
         }
 
-        public static Visibility GetVisibility(object value)
+        public static Visibility GetVisibility(object value, object parameter = null)
         {
+            if (parameter != null)
+                return value == parameter ? Visibility.Visible : Visibility.Collapsed;
             if (value == null)
                 return Visibility.Collapsed;
             else if (value is string)

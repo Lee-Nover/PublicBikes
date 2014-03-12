@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Device.Location;
 using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Windows.Media.Animation;
 using Bicikelj.Model;
 using Bicikelj.Views;
 using Caliburn.Micro;
-using Microsoft.Devices.Sensors;
-using System.Windows;
-using System.Device.Location;
 using GART.Data;
 
 namespace Bicikelj.ViewModels
@@ -39,14 +37,11 @@ namespace Bicikelj.ViewModels
                 this.Items.Clear();
                 return;
             }
-            this.view.ARDisplay.ARItems.Clear();
-            foreach (var st in stations)
-            {
-                var arItem = new ARItem();
-                arItem.GeoLocation = st.Location.GeoLocation;
-                arItem.Content = st;
-                this.view.ARDisplay.ARItems.Add(arItem);
-            }
+            
+            this.view.ARDisplay.ARItems = new ObservableCollection<ARItem>(stations.Select(st => new ARItem() {
+                Content = st,
+                GeoLocation = st.Coordinate
+            }));
             
             var map = this.view.Map;
             var clusters = StationClusterer.ClusterStations(stations, map, Math.Min(map.ActualWidth, map.ActualHeight) / 6);
@@ -80,6 +75,9 @@ namespace Bicikelj.ViewModels
             this.cityContext = cityContext;
             this.config = config;
             this.CurrentLocation = new LocationViewModel();
+#if DEBUG
+            IsAppBarVisible = true;
+#endif
         }
 
         private string fromLocation;
@@ -280,6 +278,21 @@ namespace Bicikelj.ViewModels
         public void ToggleDisplayMode()
         {
             DisplayingAR = !DisplayingAR;
+        }
+
+        public bool IsAppBarVisible { get; set; }
+
+        private string _ARDisplayModeStr = "VideoPreview";
+        public string ARDisplayModeStr { 
+            get { return _ARDisplayModeStr; }
+            set { SetARDisplayMode(value); }
+        }
+
+        public void SetARDisplayMode(string value)
+        {
+            if (value == _ARDisplayModeStr) return;
+            _ARDisplayModeStr = value;
+            NotifyOfPropertyChange(() => ARDisplayModeStr);
         }
     }
 }

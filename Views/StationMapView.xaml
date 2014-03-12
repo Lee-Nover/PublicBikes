@@ -75,11 +75,23 @@
             </maps:Map>
             <gart:ARDisplay x:Name="ARDisplay" Grid.Row="1" Margin="12,12,12,0" CacheMode="BitmapCache" 
                             Visibility="{Binding DisplayingAR, Converter={StaticResource ValueToVisibilityConverter}}"
-                            CameraEnabled="True">
-                <gart:VideoPreview />
+                            CameraEnabled="True" cal:Message.Attach="[Event Tap] = [Action TapPin($dataContext, $eventArgs)]">
+                <gart:VideoPreview Canvas.ZIndex="1" />
+                <!--gart:OverheadMap Visibility="{Binding AROverheadMap, Converter={StaticResource ValueToVisibilityConverter}}" /-->
+                <gart:WorldView NearClippingPlane="1" FarClippingPlane="1500" MinItemScale="1" MaxItemScale="1" Canvas.ZIndex="2">
+                    <gart:WorldView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid x:Name="Root" DataContext="{Binding Content}" VerticalAlignment="Center" HorizontalAlignment="Center" Canvas.ZIndex="10"
+                                  cal:Message.Attach="[Event Tap] = [Action TapPin($dataContext, $eventArgs)]">
+                                <Rectangle x:Name="ContentBorder_" Stroke="{StaticResource PinInactiveBorderBrush}" Fill="{StaticResource PinInactiveBackgroundBrush}" StrokeThickness="4"  RadiusX="3" RadiusY="3" MinWidth="{Binding ActualHeight, ElementName=ContentBorder_}" />
+                                <ContentControl x:Name="Content" cal:View.Model="{Binding}" cal:View.Context="Pushpin" Margin="6" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                            </Grid>
+                        </DataTemplate>
+                    </gart:WorldView.ItemTemplate>
+                </gart:WorldView>
             </gart:ARDisplay>
-            
-            <bctl:Compass Grid.Row="1" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" />
+
+            <bctl:Compass Grid.Row="1" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" Visibility="{Binding DisplayingAR, Converter={StaticResource ValueToVisibilityInvConverter}}" />
 
             <!-- down here so it's on top of the Map -->
             <!--Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
@@ -94,12 +106,17 @@
                 </StackPanel>
             </Border>
         </Grid>
-        <bab:BindableAppBar x:Name="AppBar" IsVisible="False">
+        <bab:BindableAppBar x:Name="AppBar" IsVisible="{Binding IsAppBarVisible}">
             <bab:BindableAppBar.Buttons>
                 <bab:BindableAppBarButton x:Name="ToggleDisplayMode" 
                                          Text="{Binding DisplayingAR, Converter={StaticResource displayModeTextConv}}"
                                          IconUri="{Binding DisplayingAR, Converter={StaticResource displayModeIconConv}}" />
             </bab:BindableAppBar.Buttons>
+            <!--bab:BindableAppBar.MenuItems>
+                <bab:BindableAppBarMenuItem cal:Message.Attach="SetARDisplayMode('VideoPreview')" Text="video preview" />
+                <bab:BindableAppBarMenuItem cal:Message.Attach="SetARDisplayMode('OverheadMap')" Text="overhead map" />
+                <bab:BindableAppBarMenuItem cal:Message.Attach="SetARDisplayMode('WorldView')" Text="world view" />
+            </bab:BindableAppBar.MenuItems-->
         </bab:BindableAppBar>
     </Grid>
  
