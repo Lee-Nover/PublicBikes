@@ -40,7 +40,7 @@
                 </DataTemplate>
             </toolkit:LongListSelector.ItemTemplate>
         </toolkit:LongListSelector>
-        <bab:BindableAppBar x:Name="AppBar" IsVisible="True">
+        <bab:BindableAppBar x:Name="AppBar" IsVisible="{Binding IsActive}">
             <bab:BindableAppBar.Buttons>
                 <bab:BindableAppBarButton x:Name="DownloadStations" 
                                          Text="refresh"
