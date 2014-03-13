@@ -73,12 +73,12 @@
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
             </maps:Map>
-            <gart:ARDisplay x:Name="ARDisplay" Grid.Row="1" Margin="12,12,12,0" CacheMode="BitmapCache" 
+            <gart:ARDisplay x:Name="ARDisplay" Grid.Row="1" Margin="12,12,12,0" CacheMode="BitmapCache" Canvas.ZIndex="0"
                             Visibility="{Binding DisplayingAR, Converter={StaticResource ValueToVisibilityConverter}}"
                             CameraEnabled="True" cal:Message.Attach="[Event Tap] = [Action TapPin($dataContext, $eventArgs)]">
                 <gart:VideoPreview Canvas.ZIndex="1" />
                 <!--gart:OverheadMap Visibility="{Binding AROverheadMap, Converter={StaticResource ValueToVisibilityConverter}}" /-->
-                <gart:WorldView NearClippingPlane="1" FarClippingPlane="1500" MinItemScale="1" MaxItemScale="1" Canvas.ZIndex="2">
+                <gart:WorldView NearClippingPlane="1" FarClippingPlane="1500" MinItemScale="0.999999" MaxItemScale="1" Canvas.ZIndex="2">
                     <gart:WorldView.ItemTemplate>
                         <DataTemplate>
                             <Grid x:Name="Root" DataContext="{Binding Content}" VerticalAlignment="Center" HorizontalAlignment="Center" Canvas.ZIndex="10"

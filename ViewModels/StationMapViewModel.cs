@@ -9,6 +9,7 @@ using Bicikelj.Model;
 using Bicikelj.Views;
 using Caliburn.Micro;
 using GART.Data;
+using Microsoft.Phone.Controls;
 
 namespace Bicikelj.ViewModels
 {
@@ -153,6 +154,12 @@ namespace Bicikelj.ViewModels
             if (this.view != null)
             {
                 var map = this.view.Map;
+                var frame = App.CurrentApp.RootVisual as PhoneApplicationFrame;
+                frame.OrientationChanged += (sender, args) =>
+                {
+                    this.view.ARDisplay.HandleOrientationChange(args);
+                };
+
                 map.ViewChangeStart += (sender, e) => {
                     zoomDone = false;
                     tilesLoaded = false;
