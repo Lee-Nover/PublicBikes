@@ -9,6 +9,7 @@
                             xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
                             xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
                             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+                            xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="768" d:DesignWidth="480"
                             Style="{StaticResource DefaultPageStyle}">
@@ -19,6 +20,6 @@
             <controls:Panorama.Background>
                 <ImageBrush ImageSource="/Images/Ljubljana-header2.png" Opacity="0.25" />
             </controls:Panorama.Background>
-        </controls:Panorama>		
+        </controls:Panorama>
     </Grid>
 </phone:PhoneApplicationPage>
