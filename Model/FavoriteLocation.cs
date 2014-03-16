@@ -96,7 +96,8 @@ namespace Bicikelj.Model
                 return false;
             // if either object has a Station then compare their instances
             if (Station != null || other.Station != null)
-                return Station == other.Station;
+                return (Station == other.Station) || ((Station != null && other.Station != null && Station.Number == other.Station.Number));
+
             // if either object has a Coordinate then compare their Latitude and Longitude
             if (Coordinate != null || other.Coordinate != null)
                 if (Coordinate == null || other.Coordinate == null)

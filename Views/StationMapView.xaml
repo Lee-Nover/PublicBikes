@@ -18,16 +18,7 @@
         <conv:BoolToStringValuesConverter x:Name="displayModeTextConv" TrueValue="map" FalseValue="AR" />
         <conv:BoolToStringValuesConverter x:Name="displayModeIconConv" TrueValue="/images/appbar.map.png" FalseValue="/images/appbar.view.png" />
     </UserControl.Resources>
-    <UserControl.FontFamily>
-        <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
-    </UserControl.FontFamily>
-    <UserControl.FontSize>
-        <StaticResource ResourceKey="PhoneFontSizeNormal"/>
-    </UserControl.FontSize>
-    <UserControl.Foreground>
-        <StaticResource ResourceKey="PhoneForegroundBrush"/>
-    </UserControl.Foreground>
-    <Grid x:Name="LayoutRoot" Background="Transparent" >
+    <Grid x:Name="LayoutRoot" Background="{x:Null}" >
        
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentGrid" Margin="12,0,12,12" >
@@ -109,14 +100,9 @@
         <bab:BindableAppBar x:Name="AppBar" IsVisible="{Binding IsAppBarVisible}">
             <bab:BindableAppBar.Buttons>
                 <bab:BindableAppBarButton x:Name="ToggleDisplayMode" 
-                                         Text="{Binding DisplayingAR, Converter={StaticResource displayModeTextConv}}"
-                                         IconUri="{Binding DisplayingAR, Converter={StaticResource displayModeIconConv}}" />
+                                          Text="{Binding DisplayingAR, Converter={StaticResource displayModeTextConv}}"
+                                          IconUri="{Binding DisplayingAR, Converter={StaticResource displayModeIconConv}}" />
             </bab:BindableAppBar.Buttons>
-            <!--bab:BindableAppBar.MenuItems>
-                <bab:BindableAppBarMenuItem cal:Message.Attach="SetARDisplayMode('VideoPreview')" Text="video preview" />
-                <bab:BindableAppBarMenuItem cal:Message.Attach="SetARDisplayMode('OverheadMap')" Text="overhead map" />
-                <bab:BindableAppBarMenuItem cal:Message.Attach="SetARDisplayMode('WorldView')" Text="world view" />
-            </bab:BindableAppBar.MenuItems-->
         </bab:BindableAppBar>
     </Grid>
  

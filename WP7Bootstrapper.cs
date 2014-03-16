@@ -58,6 +58,11 @@ namespace Bicikelj
             AddCustomConventions();
         }
 
+        protected override PhoneApplicationFrame CreatePhoneApplicationFrame()
+        {
+            return new TransitionFrame();
+        }
+
         public static void AddDetailedStack(Exception e)
         {
             var st = new System.Diagnostics.StackTrace(e);

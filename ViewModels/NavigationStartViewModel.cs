@@ -10,6 +10,7 @@ using System;
 using System.Threading;
 using System.Diagnostics;
 using System.Net;
+using Caliburn.Micro.BindableAppBar;
 
 namespace Bicikelj.ViewModels
 {
@@ -41,7 +42,7 @@ namespace Bicikelj.ViewModels
                 subLocation = LocationHelper.GetCurrentLocation()
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(location => {
-                        isLocationEnabled = location != null && !location.IsEmpty && location.Status != GeoPositionStatus.Disabled;
+                        IsLocationEnabled = location != null && !location.IsEmpty && location.Status != GeoPositionStatus.Disabled;
                         UpdateIsEnabled();
                     });
 
@@ -92,7 +93,14 @@ namespace Bicikelj.ViewModels
         }
 
         private bool isLocationEnabled = false;
-        public bool IsLocationEnabled { get { return isLocationEnabled; } }
+        public bool IsLocationEnabled { 
+            get { return isLocationEnabled; }
+            set { 
+                if (value == isLocationEnabled) return;
+                isLocationEnabled = value;
+                NotifyOfPropertyChange(() => IsLocationEnabled);
+            }
+        }
 
         public bool NavigationDisabled { get { return !IsEnabled; } }
 

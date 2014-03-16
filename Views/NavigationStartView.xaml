@@ -1,65 +1,65 @@
 ﻿<UserControl 
-	x:Class="Bicikelj.Views.NavigationStartView"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
-	xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
-	xmlns:bctl="clr-namespace:Bicikelj.Controls"
-	FontFamily="{StaticResource PhoneFontFamilyNormal}"
-	FontSize="{StaticResource PhoneFontSizeNormal}"
-	Foreground="{StaticResource PhoneForegroundBrush}"
-	mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
+    x:Class="Bicikelj.Views.NavigationStartView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:bctl="clr-namespace:Bicikelj.Controls"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
 
-	<!--LayoutRoot is the root grid where all page content is placed-->
-	<Grid x:Name="LayoutRoot" Background="Transparent" >
-		<StackPanel>
-			<TextBlock x:Name="UsedLocation" Style="{StaticResource PhoneTextSubtleStyle}" />
-			<Grid Margin="12">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				
-				<bctl:HubTileWithContent x:Name="FindNearestAvailableBike" toolkit:TiltEffect.IsTiltEnabled="True" Margin="0,0,12,12" Title="nearest bike" Message="find the nearest available bike" >
-					<bctl:HubTileWithContent.Content>
-						<Path Data="{StaticResource CyclingIconData}" Stretch="Uniform" Fill="White" Margin="12" />
-					</bctl:HubTileWithContent.Content>
-				</bctl:HubTileWithContent>
-				<bctl:HubTileWithContent x:Name="FindNearestFreeStand" Grid.Column="1" Margin="0,0,12,12" toolkit:TiltEffect.IsTiltEnabled="True" Title="nearest stand" Message="find the nearest free bike stand" >
-					<bctl:HubTileWithContent.Content>
-						<Path Data="{StaticResource ParkingIconData}" Stretch="Uniform" Fill="White" Margin="12" />
-					</bctl:HubTileWithContent.Content>
-				</bctl:HubTileWithContent>
-				<bctl:HubTileWithContent x:Name="TakeMeTo" Margin="0,0,12,0" Grid.Row="1" toolkit:TiltEffect.IsTiltEnabled="True" Title="take me to..." Message="show a navigation route using the nearest bike stations" >
-					<bctl:HubTileWithContent.Content>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="0.5*" />
-								<ColumnDefinition Width="0.5*" />
-							</Grid.ColumnDefinitions>
-							<Path Data="{StaticResource SailorCompassIconData}" Grid.ColumnSpan="2" Stretch="Uniform" Fill="White" Margin="48,12,12,12" VerticalAlignment="Bottom" />
-							<Path Data="{StaticResource NavigationIconData}" Stretch="Uniform" Fill="White" Margin="12" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top">
-								<Path.RenderTransform>
-									<RotateTransform Angle="60" />
-								</Path.RenderTransform>
-							</Path>
-						</Grid>
-					</bctl:HubTileWithContent.Content>
-				</bctl:HubTileWithContent>
-				<bctl:HubTileWithContent x:Name="OpenMap" Margin="0,0,12,0" Grid.Column="1" Grid.Row="1" toolkit:TiltEffect.IsTiltEnabled="True" Title="map" Message="open a map with all stations" >
-					<bctl:HubTileWithContent.Content>
-						<Path Data="{StaticResource MapIconData}" Stretch="Uniform" Fill="White" Margin="12" />
-					</bctl:HubTileWithContent.Content>
-				</bctl:HubTileWithContent>
-			</Grid>
-			
-			<HyperlinkButton x:Name="OpenConfig" Content="enable location" HorizontalAlignment="Left" Visibility="{Binding IsLocationEnabled, Converter={StaticResource ValueToVisibilityInvConverter}}" Style="{StaticResource LargeLinkStyle}" />
-		</StackPanel>
-	</Grid>
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="{x:Null}" >
+        <StackPanel Margin="0,-32,0,0">
+            <TextBlock x:Name="UsedLocation" Style="{StaticResource PhoneTextSubtleStyle}" />
+            <Grid Margin="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <bctl:HubTileWithContent x:Name="FindNearestAvailableBike" toolkit:TiltEffect.IsTiltEnabled="True" Margin="0,0,12,12" Title="nearest bike" Message="find the nearest available bike" >
+                    <bctl:HubTileWithContent.Content>
+                        <Path Data="{StaticResource CyclingIconData}" Stretch="Uniform" Fill="White" Margin="12" />
+                    </bctl:HubTileWithContent.Content>
+                </bctl:HubTileWithContent>
+                <bctl:HubTileWithContent x:Name="FindNearestFreeStand" Grid.Column="1" Margin="0,0,12,12" toolkit:TiltEffect.IsTiltEnabled="True" Title="nearest stand" Message="find the nearest free bike stand" >
+                    <bctl:HubTileWithContent.Content>
+                        <Path Data="{StaticResource ParkingIconData}" Stretch="Uniform" Fill="White" Margin="12" />
+                    </bctl:HubTileWithContent.Content>
+                </bctl:HubTileWithContent>
+                <bctl:HubTileWithContent x:Name="TakeMeTo" Margin="0,0,12,0" Grid.Row="1" toolkit:TiltEffect.IsTiltEnabled="True" Title="take me to..." Message="show a navigation route using the nearest bike stations" >
+                    <bctl:HubTileWithContent.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.5*" />
+                                <ColumnDefinition Width="0.5*" />
+                            </Grid.ColumnDefinitions>
+                            <Path Data="{StaticResource SailorCompassIconData}" Grid.ColumnSpan="2" Stretch="Uniform" Fill="White" Margin="48,12,12,12" VerticalAlignment="Bottom" />
+                            <Path Data="{StaticResource NavigationIconData}" Stretch="Uniform" Fill="White" Margin="12" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top">
+                                <Path.RenderTransform>
+                                    <RotateTransform Angle="60" />
+                                </Path.RenderTransform>
+                            </Path>
+                        </Grid>
+                    </bctl:HubTileWithContent.Content>
+                </bctl:HubTileWithContent>
+                <bctl:HubTileWithContent x:Name="OpenMap" Margin="0,0,12,0" Grid.Column="1" Grid.Row="1" toolkit:TiltEffect.IsTiltEnabled="True" Title="map" Message="open a map with all stations" >
+                    <bctl:HubTileWithContent.Content>
+                        <Path Data="{StaticResource MapIconData}" Stretch="Uniform" Fill="White" Margin="12" />
+                    </bctl:HubTileWithContent.Content>
+                </bctl:HubTileWithContent>
+            </Grid>
+            
+            <!--HyperlinkButton x:Name="OpenConfig" Content="enable location" HorizontalAlignment="Left"  Style="{StaticResource LargeLinkStyle}" /-->
+        </StackPanel>
+    </Grid>
 </UserControl>

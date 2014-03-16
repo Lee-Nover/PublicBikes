@@ -12,6 +12,7 @@ using Bicikelj.AzureService;
 using Coding4Fun.Toolkit.Controls;
 using System.Windows.Media.Imaging;
 using System.Net;
+using Caliburn.Micro.BindableAppBar;
 
 namespace Bicikelj.ViewModels
 {
@@ -23,6 +24,11 @@ namespace Bicikelj.ViewModels
         private bool isBusy;
         public bool IsBusy { get { return isBusy; } set { isBusy = value; this.NotifyOfPropertyChange(() => IsBusy); } }
 
+        public NavigationStartViewModel NavigationStartVM { get; set; }
+        public FavoritesViewModel FavoritesVM { get; set; }
+        public StationsViewModel StationsVM { get; set; }
+        public InfoViewModel InfoVM { get; set; }
+
         protected override void OnInitialize()
         {
             base.OnInitialize();
@@ -32,23 +38,33 @@ namespace Bicikelj.ViewModels
             App.CurrentApp.Config = IoC.Get<SystemConfig>();
             config = App.CurrentApp.Config;
 
-            var svm = IoC.Get<NavigationStartViewModel>();
-            svm.DisplayName = "start";
-            Items.Add(svm);
+            NavigationStartVM = IoC.Get<NavigationStartViewModel>();
+            NavigationStartVM.DisplayName = "start";
+            Items.Add(NavigationStartVM);
+            NavigationStartVM.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "IsLocationEnabled")
+                    NotifyOfPropertyChange(args.PropertyName);
+            };
 
-            var uvm = IoC.Get<FavoritesViewModel>();
-            uvm.DisplayName = "favorites";
-            Items.Add(uvm);
+            FavoritesVM = IoC.Get<FavoritesViewModel>();
+            FavoritesVM.DisplayName = "favorites";
+            Items.Add(FavoritesVM);
 
-            var lvm = IoC.Get<StationsViewModel>();
-            lvm.DisplayName = "all stations";
-            Items.Add(lvm);
+            StationsVM = IoC.Get<StationsViewModel>();
+            StationsVM.DisplayName = "all stations";
+            Items.Add(StationsVM);
+            StationsVM.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "CanDownloadStations")
+                    NotifyOfPropertyChange(args.PropertyName);
+            };
 
-            var ivm = IoC.Get<InfoViewModel>();
-            ivm.DisplayName = "info";
-            Items.Add(ivm);
+            InfoVM = IoC.Get<InfoViewModel>();
+            InfoVM.DisplayName = "info";
+            Items.Add(InfoVM);
 
-            lvm.FilterFocused += (isFocused) => { this.IsTitleVisible = !isFocused; };
+            StationsVM.FilterFocused += (isFocused) => { this.IsTitleVisible = !isFocused; };
         }
 
         private bool viewChecked = false;
@@ -61,7 +77,7 @@ namespace Bicikelj.ViewModels
             ReactiveExtensions.SetSyncScheduler();
             viewChecked = true;
 
-            ActivateItem(Items[0]);
+            //ActivateItem(Items[0]);
 
             CheckRedirect();
 
@@ -231,6 +247,18 @@ namespace Bicikelj.ViewModels
             busyCount = 0;
             SystemProgress.HideProgress();
             MessageBox.Show("uh-oh :(\n" + message.ToString());
+        }
+
+        public bool CanDownloadStations { get { return StationsVM != null && StationsVM.CanDownloadStations; } }
+        public void DownloadStations()
+        {
+            StationsVM.DownloadStations();
+        }
+
+        public bool IsLocationEnabled { get { return NavigationStartVM != null && NavigationStartVM.IsLocationEnabled; } }
+        public void OpenConfig()
+        {
+            NavigationStartVM.OpenConfig();
         }
     }
 }

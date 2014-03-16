@@ -11,6 +11,7 @@ using Caliburn.Micro;
 using ServiceStack.Text;
 using System.Net;
 using System.Device.Location;
+using System.Linq;
 
 namespace Bicikelj.ViewModels
 {
@@ -260,7 +261,28 @@ namespace Bicikelj.ViewModels
             var _city = city;
             return _city
                 .DownloadStations()
-                .Do(sl => { if (_city != null) _city.Stations = sl; });
+                .Do(sl => {
+                    if (_city != null)
+                    {
+                        _city.Stations = sl;
+                        if (sl != null && sl.Count > 0)
+                            GetFavorites().Take(1).Subscribe(favs => {
+                                if (favs != null)
+                                    foreach (var fav in favs)
+                                    {
+                                        if (fav.Station != null)
+                                        {
+                                            var newStation = sl.Where(s => s.Number == fav.Station.Number).FirstOrDefault();
+                                            if (newStation != null)
+                                            {
+                                                newStation.IsFavorite = true;
+                                                fav.Station = newStation;
+                                            }
+                                        }
+                                    }
+                            });
+                    }
+                });
         }
 
         public City GetCityForStation(StationLocation station)

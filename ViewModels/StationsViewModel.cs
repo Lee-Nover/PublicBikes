@@ -61,18 +61,8 @@ namespace Bicikelj.ViewModels
         {
             base.OnActivate();
             dueTime = DateTime.Now.AddMilliseconds(700);
-            UpdateStations(false);
-            Observable.Timer(dueTime, ReactiveExtensions.SyncScheduler)
-                .Take(1)
-                .Subscribe(_ => IsAppBarVisible = true);
-        }
-
-        protected override void OnDeactivate(bool close)
-        {
-            Observable.Timer(DateTime.Now.AddMilliseconds(700), ReactiveExtensions.SyncScheduler)
-                .Take(1)
-                .Subscribe(_ => IsAppBarVisible = false);
-            base.OnDeactivate(close);
+            if (cityContext.IsCitySupported)
+                UpdateStations(false);
         }
 
         public override void ActivateItem(StationLocationViewModel item)
@@ -136,6 +126,7 @@ namespace Bicikelj.ViewModels
                     {
                         this.Items.Clear();
                         this.Items.AddRange(s);
+                        NotifyOfPropertyChange(() => CanDownloadStations);
                     },
                     e =>
                     {
@@ -168,21 +159,10 @@ namespace Bicikelj.ViewModels
             ReactiveExtensions.Dispose(ref stationsObs);
         }
 
+        public bool CanDownloadStations { get { return cityContext.IsCitySupported; } }
         public void DownloadStations()
         {
             cityContext.RefreshStations();
         }
-
-        private bool isAppBarVisible;
-        public bool IsAppBarVisible
-        {
-            get { return isAppBarVisible; }
-            set {
-                if (value == isAppBarVisible) return;
-                isAppBarVisible = value;
-                NotifyOfPropertyChange(() => IsAppBarVisible);
-            }
-        }
-        
     }
 }
