@@ -30,19 +30,13 @@ The application uses many different services to provide bike and station availab
                 <TextBlock x:Name="SupportedCountries" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" /-->
                 
                 <TextBlock Margin="12,12,12,0" TextWrapping="Wrap" Text="Maps and routing are provided by Bing Maps." Style="{StaticResource PhoneTextNormalStyle}" />
-                <RichTextBox Margin="0,12,0,0">
-                    <Paragraph>
-                        <Run Text="Please report bugs and leave suggestions at the application's " />
-                        <Hyperlink TargetName="_blank" NavigateUri="https://github.com/Lee-Nover/PublicBikes/issues">project page</Hyperlink>
-                    </Paragraph>
-                </RichTextBox>
                 <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,12,12,0">
-                    <Run FontWeight="Bold">Usage of Location Service APIs</Run>
+                    <Run FontSize="{StaticResource PhoneFontSizeLarge}">Usage of Location Service APIs</Run>
                     <LineBreak/>
                     <Run>Location data is used to improve the application experience and is never stored nor is it disclosed outside of the application. Location services may be turned off in application settings or globally for all applications in system settings. Location data enables searching for the nearest free bike or an available bike stand and for navigating to an address or known location.</Run>
                     <LineBreak/>
                     <LineBreak/>
-                    <Run FontWeight="Bold">Usage of anonymous device information</Run>
+                    <Run FontSize="{StaticResource PhoneFontSizeLarge}">Usage of anonymous device information</Run>
                     <LineBreak/>
                     <Run>When an error occurs in the application, anonymous device information is collected to help correct the error. The user can choose not to send the data. The information included in the reports is related only to the error that occured and includes: the Application version, OS version, device model, display dimensions, country of usage, locale (formatting), operator name, available data connections (wifi / cellular). No user identifiable data is collected such as user ID, phone number*, emails* or location data. * not supported by the system.</Run>
                 </TextBlock>
