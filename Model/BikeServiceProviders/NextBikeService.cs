@@ -135,11 +135,6 @@ namespace Bicikelj.Model
             return result;
         }
 
-        public class NextBikeAvailability
-        {
-            public int Available { get; set; }
-        }
-
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
         {
             var uid = (from city in BikeServiceProvider.GetAllCities() where string.Equals(city.UrlCityName, cityName, StringComparison.InvariantCultureIgnoreCase) select city.UID).FirstOrDefault();
@@ -162,25 +157,8 @@ namespace Bicikelj.Model
             if (availability.Availability != null)
                 return Observable.Return<StationAndAvailability>(availability);
             else
-                return DownloadUrl.GetAsync<NextBikeAvailability>(url, station)
-                    .ObserveOn(ThreadPoolScheduler.Instance)
-                    .Select(s => 
-                    {
-                        var sa = new StationAndAvailability(station, LoadAvailabilityFromNBA(s.Object));
-                        UpdateAvailabilityCacheItem(sa);
-                        return sa;
-                    });
-        }
-
-        private StationAvailability LoadAvailabilityFromNBA(NextBikeAvailability nba)
-        {
-            return new StationAvailability()
-            {
-                Available = nba.Available,
-                Free = 1,
-                Open = true,
-                Connected = true
-            };
+                return DownloadStationsWithAvailability(station.City)
+                    .Select(sl => sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault());
         }
     }
 }
