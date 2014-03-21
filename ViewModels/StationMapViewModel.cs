@@ -202,7 +202,7 @@ namespace Bicikelj.ViewModels
                     error =>
                     {
                         currentGeo = null;
-                        events.Publish(new ErrorState(error, "Could not get the current address"));
+                        events.Publish(new ErrorState(error, "Could not get the current address."));
                     });
             
             if (stationObs == null)

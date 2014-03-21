@@ -194,7 +194,7 @@ namespace Bicikelj.ViewModels
                     error =>
                     {
                         currentGeo = null;
-                        events.Publish(new ErrorState(error, "Could not get the current address"));
+                        events.Publish(new ErrorState(error, "Could not get the current address."));
                     });
             
             if (stationObs == null)
@@ -208,7 +208,7 @@ namespace Bicikelj.ViewModels
                     error =>
                     {
                         stationObs = null;
-                        events.Publish(new ErrorState(error, "stations could not be loaded"));
+                        events.Publish(new ErrorState(error, "Stations could not be loaded."));
                     });
 
             CheckNavigateRequest();
@@ -231,7 +231,7 @@ namespace Bicikelj.ViewModels
         {
             events.Publish(BusyState.NotBusy());
             if (e.Error != null)
-                events.Publish(new ErrorState(e.Error, "could not get station availability"));
+                events.Publish(new ErrorState(e.Error, "Could not get station availability."));
         }
 
         private void FindNearestStations(GeoCoordinate fromLocation, GeoCoordinate toLocation)
@@ -287,7 +287,7 @@ namespace Bicikelj.ViewModels
                             routes.Add(nav);
                         },
                         error => {
-                            events.Publish(new ErrorState(error, "Could not find nearest stations"));
+                            events.Publish(new ErrorState(error, "Could not find nearest stations."));
                         },
                         () =>
                         {
@@ -304,7 +304,7 @@ namespace Bicikelj.ViewModels
                                 foreach (var err in navErrors)
                                     errorStr += err.Object.ErrorString;
                                 
-                                events.Publish(new ErrorState(new Exception(errorStr), "could not calculate route"));
+                                events.Publish(new ErrorState(new Exception(errorStr), "Could not calculate route."));
                             }
                         });
                 });
@@ -429,7 +429,7 @@ namespace Bicikelj.ViewModels
                     string errorStr = "";
                     if (r.HasErrors)
                         errorStr = r.ErrorString;
-                    events.Publish(new ErrorState(new Exception(errorStr), "could not find location"));
+                    events.Publish(new ErrorState(new Exception(errorStr), "Could not find location."));
                     return;
                 }
                 if (r.Location.Address != null)
@@ -447,7 +447,7 @@ namespace Bicikelj.ViewModels
                 }
                 TakeMeTo(coordinate);
             },
-            e => events.Publish(new ErrorState(e, "could not find location")),
+            e => events.Publish(new ErrorState(e, "Could not find location.")),
             () => events.Publish(BusyState.NotBusy()));
         }
 
@@ -463,7 +463,7 @@ namespace Bicikelj.ViewModels
                         CurrentLocation.Coordinate = c.Coordinate;
                         FindBestRoute(c.Coordinate, location);
                 },
-                e => events.Publish(new ErrorState(e, "could not get current location")));
+                e => events.Publish(new ErrorState(e, "Could not get current location.")));
             else if (CurrentLocation.Coordinate != null)
                 FindBestRoute(CurrentLocation.Coordinate, location);
             NotifyOfPropertyChange(() => CanRefreshRoute);

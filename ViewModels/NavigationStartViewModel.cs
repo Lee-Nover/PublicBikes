@@ -148,14 +148,14 @@ namespace Bicikelj.ViewModels
                 })
                 .Catch<IEnumerable<StationLocation>, WebException>(webex =>
                 {
-                    string msgex = "stations could not be loaded. check your internet connection.";
-                    events.Publish(new ErrorState(webex, msgex));
+                    string msgex = "Stations could not be loaded. Check your internet connection.";
+                    events.Publish(new ErrorState(webex, msgex, true));
                     return Observable.Empty<IEnumerable<StationLocation>>();
                 })
                 .Subscribe(sl => {
                     FindNearest(sl, condition); 
                 },
-                e => events.Publish(new ErrorState(e, "stations could not be loaded")));
+                e => events.Publish(new ErrorState(e, "Stations could not be loaded.")));
         }
 
         private void FindNearest(IEnumerable<StationLocation> sortedStations, StationCondition condition)
@@ -174,7 +174,7 @@ namespace Bicikelj.ViewModels
                         Bicikelj.NavigationExtension.NavigateTo(svm, "Detail");
                         events.Publish(BusyState.NotBusy());
                     },
-                    e => events.Publish(new ErrorState(e, "could not check station availability")),
+                    e => events.Publish(new ErrorState(e, "Could not check station availability.")),
                     () => events.Publish(BusyState.NotBusy()));
         }
 

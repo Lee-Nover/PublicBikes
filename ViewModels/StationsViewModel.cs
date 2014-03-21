@@ -130,8 +130,7 @@ namespace Bicikelj.ViewModels
                     },
                     e =>
                     {
-                        BugSense.BugSenseHandler.Instance.SendExceptionMessage("UpdateStations", e.Message, e);
-                        events.Publish(new ErrorState(e, "could not update stations"));
+                        events.Publish(new ErrorState(e, "Could not update stations."));
                     });
             }
         }

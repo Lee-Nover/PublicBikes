@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Globalization;
 using Bicikelj.Model.Analytics;
 using Caliburn.Micro.BindableAppBar;
+using Bicikelj.Model.Logging;
 
 
 namespace Bicikelj
@@ -51,9 +52,11 @@ namespace Bicikelj
             container.Singleton<AppInfoViewModel>();
 #if DEBUG && !ANALYTICS
             container.Singleton<IAnalyticsService, NullAnalyticsService>();
+            container.Singleton<ILoggingService, NullLoggingService>();
             //Caliburn.Micro.LogManager.GetLog = type => new DebugLog(type);
 #else
             container.Singleton<IAnalyticsService, AnalyticsService>();
+            container.Singleton<ILoggingService, LoggingService>();
 #endif
             AddCustomConventions();
         }
@@ -100,20 +103,7 @@ namespace Bicikelj
                 e.Cancel = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
                     "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
                 if (!e.Cancel)
-                {
-                    if (e.ExceptionObject.Data != null && e.ExceptionObject.Data.Contains("DetailedStack"))
-                    {
-                        var extraData = new BugSense.Models.CrashExtraData() { Key = "DetailedStack", Value = (string)e.ExceptionObject.Data["DetailedStack"] };
-                        BugSenseHandler.Instance.ClearCrashExtraData();
-                        BugSenseHandler.Instance.AddCrashExtraData(extraData);
-                    }
-                    var wex = e.ExceptionObject as WebExceptionEx;
-                    if (wex != null)
-                        BugSenseHandler.Instance.SendExceptionMessage("RequestedURL", wex.URL, wex);
-                    else
-                        BugSenseHandler.Instance.SendException(e.ExceptionObject);
-                    FlurryWP8SDK.Api.LogError(e.Comment, e.ExceptionObject);
-                }
+                    SendError(e.ExceptionObject, e.Comment);
             };
 #else
             App.Current.UnhandledException += (s, e) =>
@@ -125,6 +115,13 @@ namespace Bicikelj
                     });
                 };
 #endif
+        }
+
+        public void SendError(Exception e, string comment)
+        {
+            var logService = IoC.Get<ILoggingService>();
+            if (logService != null)
+                logService.LogError(e, comment);
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)

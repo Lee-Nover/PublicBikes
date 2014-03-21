@@ -180,8 +180,8 @@ namespace Bicikelj.ViewModels
                         .Catch<GeoAddress, WebException>(webex =>
                         {
                             dispCurrentAddr = null;
-                            string msg = "could not get the current address. check your internet connection.";
-                            events.Publish(new ErrorState(webex, msg));
+                            string msg = "Could not get the current address. Check your internet connection.";
+                            events.Publish(new ErrorState(webex, msg, true));
                             return Observable.Empty<GeoAddress>();
                         })
                         .ObserveOn(ThreadPoolScheduler.Instance)
@@ -204,7 +204,7 @@ namespace Bicikelj.ViewModels
                 .Finally(() => routeCalculated = true)
                 .Subscribe(
                     nav => MapRoute(nav),
-                    e => events.Publish(new ErrorState(e, "could not calculate route")));
+                    e => events.Publish(new ErrorState(e, "Could not calculate route.")));
         }
 
         public void RefreshRoute()

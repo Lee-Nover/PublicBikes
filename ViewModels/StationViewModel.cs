@@ -80,7 +80,7 @@ namespace Bicikelj.ViewModels
                     .Subscribe(a => {
                         this.Availability = new StationAvailabilityViewModel(a);
                     },
-                    e => events.Publish(new ErrorState(e, "could not get station's availability")),
+                    e => events.Publish(new ErrorState(e, "Could not get station's availability.")),
                     () => events.Publish(BusyState.NotBusy()));
             };
         }

@@ -132,8 +132,8 @@ namespace Bicikelj.ViewModels
                         .Catch<string, WebException>(webex =>
                         {
                             dispCity = null;
-                            string msg = "could not get the current address. check your internet connection.";
-                            events.Publish(new ErrorState(webex, msg));
+                            string msg = "Could not get the current address. Check your internet connection.";
+                            events.Publish(new ErrorState(webex, msg, true));
                             return Observable.Empty<string>();
                         })
                         .SubscribeOn(ThreadPoolScheduler.Instance)

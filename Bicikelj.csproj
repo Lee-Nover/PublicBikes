@@ -187,6 +187,8 @@
     <Compile Include="Model\BikeServiceProviders\PubliBikeService.cs" />
     <Compile Include="Model\BikeServiceProviders\CycloCityService.cs" />
     <Compile Include="Model\CompassProvider.cs" />
+    <Compile Include="Model\Logging\LoggingService.cs" />
+    <Compile Include="Model\Logging\ILoggingService.cs" />
     <Compile Include="Model\NetworkHelper.cs" />
     <Compile Include="Model\Sensors.cs" />
     <Compile Include="Model\ServiceCredentials.cs" />

@@ -13,6 +13,7 @@ using Coding4Fun.Toolkit.Controls;
 using System.Windows.Media.Imaging;
 using System.Net;
 using Caliburn.Micro.BindableAppBar;
+using Bicikelj.Model.Logging;
 
 namespace Bicikelj.ViewModels
 {
@@ -242,11 +243,26 @@ namespace Bicikelj.ViewModels
                 SystemProgress.HideProgress();
         }
 
-        public void Handle(ErrorState message)
+        public void Handle(ErrorState error)
         {
             busyCount = 0;
             SystemProgress.HideProgress();
-            MessageBox.Show("uh-oh :(\n" + message.ToString());
+            
+            var msg = error.Context;
+            if (string.IsNullOrEmpty(msg))
+                msg = "Something unexpected happened.";
+            if (error.DontLog)
+                MessageBox.Show(msg, "uh-oh :(", MessageBoxButton.OK);
+            else
+            {
+                if (MessageBox.Show(msg + " We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
+                        "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                {
+                    var logService = IoC.Get<ILoggingService>();
+                    if (logService != null)
+                        logService.LogError(error.Exception, error.Context);
+                }
+            }
         }
 
         public bool CanDownloadStations { get { return StationsVM != null && StationsVM.CanDownloadStations; } }
