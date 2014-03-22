@@ -4,11 +4,7 @@ var processData = function (data) { };
 exports.serviceName = "";
 exports.serviceData = null;
 
-function logError(error) {
-    console.error(error);
-}
-
-exports.updateCache = function (data, city) {
+exports.updateCache = function (data, city, onError) {
     var serviceData = exports.serviceData;
     var serviceName = exports.serviceName;
     if (serviceData === null)
@@ -24,7 +20,7 @@ exports.updateCache = function (data, city) {
                         serviceData: data
                     }, {
                         //success: function () { console.info('updated cache for ' + serviceName); },
-                        error: logError
+                        error: onError
                     })
                 } else {
                     serviceData.insert({
@@ -34,18 +30,18 @@ exports.updateCache = function (data, city) {
                         serviceData: data
                     }, {
                         //success: function () { console.info('inserted cache data for ' + serviceName); },
-                        error: logError
+                        error: onError
                     })
                 }
             },
-            error: logError
+            error: onError
         })
 }
 
-exports.checkServiceData = function (city, onDownloadData, onProcessData) {
+exports.checkServiceData = function (city, onError, onDownloadData, onProcessData) {
     var serviceData = exports.serviceData;
     var serviceName = exports.serviceName;
-    if (serviceData === null) {
+    if (serviceData == null) {
         onDownloadData();
         return;
     }
@@ -69,6 +65,6 @@ exports.checkServiceData = function (city, onDownloadData, onProcessData) {
                 else
                     onDownloadData();
             },
-            error: logError
+            error: onError
         })
 }

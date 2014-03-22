@@ -113,7 +113,7 @@ function extractFromJsonMilano(data, cityName) {
     return JSON.stringify(stations);
 }
 
-function extractFromHTMLAntwerpMX(data, cityName) {
+function extractFromHTMLAntwerp(data, cityName) {
     var stations = [];
 
     var index = 1;
