@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Net;
 using Caliburn.Micro.BindableAppBar;
 using Bicikelj.Model.Logging;
+using Microsoft.Phone.Shell;
 
 namespace Bicikelj.ViewModels
 {
@@ -58,7 +59,10 @@ namespace Bicikelj.ViewModels
             StationsVM.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "CanDownloadStations")
+                {
                     NotifyOfPropertyChange(args.PropertyName);
+                    NotifyOfPropertyChange(() => ShowDownloadStations);
+                }
             };
 
             InfoVM = IoC.Get<InfoViewModel>();
@@ -271,10 +275,29 @@ namespace Bicikelj.ViewModels
             StationsVM.DownloadStations();
         }
 
+        public bool ShowDownloadStations { get { return CanDownloadStations && ActiveItem == StationsVM; } }
+
         public bool IsLocationEnabled { get { return NavigationStartVM != null && NavigationStartVM.IsLocationEnabled; } }
         public void OpenConfig()
         {
             NavigationStartVM.OpenConfig();
+        }
+
+        public override void ActivateItem(IScreen item)
+        {
+            base.ActivateItem(item);
+            NotifyOfPropertyChange(() => ShowDownloadStations);
+            AppBarMode = (item == StationsVM && StationsVM.CanDownloadStations) ? ApplicationBarMode.Default : ApplicationBarMode.Minimized;
+        }
+
+        private ApplicationBarMode appBarMode = ApplicationBarMode.Minimized;
+        public ApplicationBarMode AppBarMode {
+            get { return appBarMode; }
+            set {
+                if (value == appBarMode) return;
+                appBarMode = value;
+                NotifyOfPropertyChange(() => AppBarMode);
+            }
         }
     }
 }

@@ -19,10 +19,11 @@
                 <ImageBrush ImageSource="/Images/Ljubljana-header2.png" Opacity="0.25" />
             </controls:Panorama.Background>
         </controls:Panorama>
-        <bab:BindableAppBar x:Name="AppBar" Mode="Minimized">
+        <bab:BindableAppBar x:Name="AppBar" Mode="{Binding AppBarMode}">
             <bab:BindableAppBar.Buttons>
                 <bab:BindableAppBarButton x:Name="DownloadStations" 
                                           IsEnabled="{Binding CanDownloadStations}"
+                                          Visibility="{Binding ShowDownloadStations, Converter={StaticResource ValueToVisibilityConverter}}"
                                           Text="refresh"
                                           IconUri="/images/appbar.refresh.png" />
             </bab:BindableAppBar.Buttons>

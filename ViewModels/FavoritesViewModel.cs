@@ -14,6 +14,18 @@ namespace Bicikelj.ViewModels
     {
         readonly IEventAggregator events;
         private CityContextViewModel cityContext;
+
+        private bool hasNoFavorites = false;
+        public bool HasNoFavorites
+        {
+            get { return hasNoFavorites; }
+            set {
+                if (value == hasNoFavorites) return;
+                hasNoFavorites = value;
+                NotifyOfPropertyChange(() => HasNoFavorites);
+            }
+        }
+        
         public FavoritesViewModel(IEventAggregator events, CityContextViewModel cityContext)
         {
             this.events = events;
@@ -36,6 +48,7 @@ namespace Bicikelj.ViewModels
                     .Subscribe(favorites =>
                     {
                         this.Items.Clear();
+                        HasNoFavorites = favorites == null || favorites.Count == 0;
                         if (favorites == null)
                         {
                             events.Publish(BusyState.NotBusy());

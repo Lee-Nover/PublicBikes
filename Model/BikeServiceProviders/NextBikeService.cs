@@ -49,7 +49,7 @@ namespace Bicikelj.Model
                 case "me": return "United Arab Emirates";
                 case "hr": return "Croatia";
                 case "uk": return "United Kingdom";
-                case "bg": return "Bolgaria";
+                case "bg": return "Bulgaria";
                 case "mb": return "Hungary";
                 default:
                     return domain;
@@ -64,7 +64,8 @@ namespace Bicikelj.Model
             var doc = XDocument.Load("Assets/nextbike-cities.xml");
             foreach (var xctry in doc.Descendants("country"))
             {
-                var country = DomainNameToCountry((string)xctry.Attribute("domain"));
+                var countryName = (string)xctry.Attribute("country_name");
+                var country = countryName ?? DomainNameToCountry((string)xctry.Attribute("domain"));
                 var serviceName = (string)xctry.Attribute("name");
                 foreach (var xcity in xctry.Descendants("city")/*.ToList()*/)
                 {

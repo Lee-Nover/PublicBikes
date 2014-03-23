@@ -8,10 +8,16 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480" >
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="456" >
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{x:Null}" >
         <toolkit:LongListSelector x:Name="Items" ItemTemplate="{StaticResource CaliburnListItem}" Background="{x:Null}" IsFlatList="True" />
+        <TextBlock Style="{StaticResource PhoneTextLargeStyle}" x:Name="NoItemsNotice" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Visibility="{Binding HasNoFavorites, Converter={StaticResource ValueToVisibilityConverter}}">
+            <Run>No favorites?</Run><LineBreak />
+            <Run>You can add one from the station's details view. 
+                You can also favorite a destination in navigation view. </Run><LineBreak />
+            <Run Foreground="{StaticResource PhoneSubtleBrush}">(tap and hold to easily navigate to that place)</Run>
+        </TextBlock>
     </Grid>
 </UserControl>
