@@ -1,12 +1,12 @@
 {
   "name": "publicbikes",
   "author": "TwoCans",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A proxy for bike services which provides a simple API",
   "main": "Server.js",
   "dependencies": {
-    "azure": "0.7.17",
-    "cheerio": "0.12.4",
+    "azure": "~0.8.1",
+    "cheerio": "~0.13.1",
     "express": "3.4.4",
     "request": "~2.30.0",
     "iconv-lite": "~0.2.11",

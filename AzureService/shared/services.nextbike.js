@@ -1,15 +1,18 @@
 exports.serviceName = "nextbike";
 exports.cacheByCity = true;
 
-exports.getUrl = function(cityName) {
-    return 'http://nextbike.net/maps/nextbike-official.xml?city=' + cityName;
+exports.getUrl = function(cityName, cityId) {
+    if (cityId != null)
+        return 'http://nextbike.net/maps/nextbike-official.xml?city=' + cityId;
+    else
+        return 'http://nextbike.net/maps/nextbike-official.xml';
 }
 
-exports.extractData = function (data, cityName) {
-    return extractFromXML(data, cityName);
+exports.extractData = function (data, cityName, cityId) {
+    return extractFromXML(data, cityName, cityId);
 }
 
-function extractFromXML(data, cityName) {
+function extractFromXML(data, cityName, cityId) {
     /*
     <markers>
       <country lat="50.7086" lng="10.6348" zoom="5" name="nextbike Germany" hotline="+493069205046" domain="de" country="DE" country_name="Germany">
@@ -22,27 +25,36 @@ function extractFromXML(data, cityName) {
     </markers>
     */
 
-
+    if (cityId == null)
+        cityId = -1;
     var stations = [];
     var idxStation = 0;
     var cheerio = require('cheerio');
-    $ = cheerio.load(data, { ignoreWhitespace: true, xmlMode: true} ); // load the html nodes
-    $('place').each(function(i, item) {
-        var co = $(item);
-        var station = {
-            id: parseInt(co.attr('number')),
-            name: co.attr('name'),
-            //address: address,
-            city: cityName,
-            lat: parseFloat(co.attr('lat')),
-            lng: parseFloat(co.attr('lng')),
-            status: 1,
-            bikes: parseInt(co.attr('bikes')), // parseInt handles '+5'
-            freeDocks: parseInt(co.attr('spot') || '1'),
-            totalDocks: 0
+    var $ = cheerio.load(data, { ignoreWhitespace: true, xmlMode: true} ); // load the html nodes
+    //var places = $('city[name=' + cityName + ']').find('place');
+    var cities = $('city');
+    cities.each(function(idxCity, city) {
+        city = $(city);
+        if (city.attr('uid') == cityId || city.attr('alias') == cityName || city.attr('name') == cityName) {
+            var places = city.find('place');
+            places.each(function(i, item) {
+                var co = $(item);
+                var station = {
+                    id: parseInt(co.attr('number')),
+                    name: co.attr('name'),
+                    //address: address,
+                    city: cityName,
+                    lat: parseFloat(co.attr('lat')),
+                    lng: parseFloat(co.attr('lng')),
+                    status: 1,
+                    bikes: parseInt(co.attr('bikes')), // parseInt handles '+5'
+                    freeDocks: parseInt(co.attr('spot') || '1'),
+                    totalDocks: 0
+                }
+                station.totalDocks = station.freeDocks;
+                stations[idxStation++] = station;
+            });
         }
-        station.totalDocks = station.freeDocks;
-        stations[idxStation++] = station;
     });
 
     return JSON.stringify(stations);

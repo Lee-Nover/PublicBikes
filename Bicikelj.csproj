@@ -141,6 +141,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AzureService\AzureServices.cs" />
     <Compile Include="AzureService\StationInfo.cs" />
     <Compile Include="AzureService\VersionHistory.cs" />
     <Compile Include="CM.Contrib\Dialogs\Answer.cs" />

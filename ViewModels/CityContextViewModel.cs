@@ -165,6 +165,15 @@ namespace Bicikelj.ViewModels
             if (saveCity != null)
                 ThreadPoolScheduler.Instance.Schedule(() => { SaveToDB(saveCity); });
             this.city = newCity;
+            if (city != null)
+            {
+                var dataCenter = AzureService.AzureServices.GetClosestCenter(city.Coordinate);
+                config.AzureDataCenter = dataCenter.Name;
+                var azureProvider = city.Provider as AzureServiceProxy;
+                if (azureProvider != null)
+                    azureProvider.DataCenterName = config.AzureDataCenter;
+                AzureServiceCredentials.Key = dataCenter.ApplicationKey;
+            }
             subCity.OnNext(this.city);
         }
 

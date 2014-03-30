@@ -34,7 +34,9 @@ namespace Bicikelj.Model
         public int SessionCount { get; set; }
         public string UpdateAvailable { get; set; }
         public string LastCheckedVersion { get; set; }
-        
+
+        public string AzureDataCenter { get; set; }
+
         public void UpdateStatistics(DateTime timeActivated)
         {
             var activeTime = DateTime.Now - timeActivated;

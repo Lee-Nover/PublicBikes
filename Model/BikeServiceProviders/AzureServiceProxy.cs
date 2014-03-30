@@ -10,14 +10,22 @@ namespace Bicikelj.Model
     {
         protected string AzureServiceName;
 
-        protected string GetStationDetailsUri(string city, string stationId)
+        public string DataCenterName = "publicbikes";
+
+        protected virtual string GetStationDetailsUri(string city, string stationId, string cityId = null)
         {
-            return string.Format("https://publicbikes.azure-mobile.net/api/stations/{0}/{1}/{2}", AzureServiceName, city, stationId);
+            var result = string.Format("https://{3}.azure-mobile.net/api/stations/{0}/{1}/{2}", AzureServiceName, city, stationId, DataCenterName);
+            if (!string.IsNullOrEmpty(cityId))
+                result += "?cityId=" + cityId;
+            return result;
         }
 
-        protected string GetStationListUri(string city)
+        protected virtual string GetStationListUri(string city, string cityId = null)
         {
-            return string.Format("https://publicbikes.azure-mobile.net/api/stations/{0}/{1}", AzureServiceName, city);
+            var result = string.Format("https://{2}.azure-mobile.net/api/stations/{0}/{1}", AzureServiceName, city, DataCenterName);
+            if (!string.IsNullOrEmpty(cityId))
+                result += "?cityId=" + cityId;
+            return result;
         }
 
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)

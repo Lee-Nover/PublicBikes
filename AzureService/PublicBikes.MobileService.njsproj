@@ -13,8 +13,9 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <NodeExePath />
-    <NodeExeArguments />
-    <ScriptArguments />
+    <NodeExeArguments>
+    </NodeExeArguments>
+    <ScriptArguments>EMULATED=true</ScriptArguments>
     <NodejsPort>5050</NodejsPort>
     <StartWebBrowser>True</StartWebBrowser>
     <LaunchUrl>
@@ -23,7 +24,9 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Content Include="api\versions.json" />
     <Content Include="package.json" />
+    <Compile Include="api\versions.js" />
     <Compile Include="Server.js" />
     <Content Include="api\stations.json" />
     <Content Include="api\readme.md" />
@@ -32,9 +35,9 @@
     <Compile Include="shared\crequest.js" />
     <Compile Include="shared\serviceCache.js" />
     <Compile Include="shared\services.b-cycle.js" />
+    <Compile Include="shared\services.nextbike.js" />
     <Compile Include="shared\services.publibike.js" />
     <Compile Include="shared\services.samba.js" />
-    <Compile Include="shared\services.nextbike.js" />
     <Compile Include="shared\services.smartbike.js" />
   </ItemGroup>
   <ItemGroup>

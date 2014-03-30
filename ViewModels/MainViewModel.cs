@@ -163,7 +163,10 @@ namespace Bicikelj.ViewModels
         {
             var appInfo = new BugSense.Internal.ManifestAppInfo();
             Version appVer = new Version(appInfo.Version);
-            DownloadUrl.GetAsync<VersionHistory[]>("https://publicbikes.azure-mobile.net/api/versions/published")
+            if (string.IsNullOrEmpty(config.AzureDataCenter))
+                config.AzureDataCenter = AzureService.AzureServices.GetClosestCenter(null).Name;
+            var azureCenter = config.AzureDataCenter;
+            DownloadUrl.GetAsync<VersionHistory[]>(string.Format("https://{0}.azure-mobile.net/api/versions/published", azureCenter))
                 .Retry(1)
                 .Take(1)
                 .Subscribe(versions =>

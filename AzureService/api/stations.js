@@ -1,13 +1,17 @@
 function Stations() {
     var self = this;
-    self.serviceData = null; // table
-    self.serviceCache = null; // module
+    self.response = null;
+    self.serviceData = null; // table service
+    self.serviceCache = null; // data cache handler
     self.serviceHandlers = null; // service specific methods
-    self.response; // response object
-    self.serviceName;
-    self.cityName;
-    self.stationId;
-    self.stationIdList;
+    self.serviceName = null;
+    self.cityName = null;
+    self.cityId = null;
+    self.stationId = null;
+    self.stationIdList = null;
+    self.fullServiceName = null;
+    self.loggingLevel = process.env.loggingLevel ? parseInt(process.env.loggingLevel) : 2;
+    self.maxCacheAge = process.env.maxCacheAge ? parseInt(process.env.maxCacheAge) : 60000;
 
     self.respondResult = function(result) {
         if (result !== null)
@@ -70,8 +74,8 @@ function Stations() {
             else
                 cs = cs.substr(8);
         return cs || '';
-    };
-
+    }
+    
     function decodeBody(response, body) {
         if (Buffer.isBuffer(body)) {
             var contentType = response.headers['content-type'] || '';
@@ -92,21 +96,33 @@ function Stations() {
                 return bodyStr;
             }
         } else return body;
-    };
+    }
 
     self.downloadData = function() {
-        console.log('Downloading the ' + self.serviceName + ' service data ...');
+        console.log('Downloading the ' + self.fullServiceName + ' service data ...');
         var request = require('../shared/crequest');
-        var cityListUrl = self.serviceHandlers.getUrl(self.cityName);
-        request(cityListUrl, { encoding: null }, function (error, response, body) {
+        var cityListUrl = self.serviceHandlers.getUrl(self.cityName, self.cityId);
+        var retryCount = 1;
+        var dlStart = Date.now();
+        var handleResponse = function (error, response, body) {
             if (!error && response && response.statusCode == 200) {
+                var dlTime = (Date.now() - dlStart) / 1000;
+                console.log('Data for ' + self.fullServiceName + ' downloaded in ' + dlTime + 's');
                 body = decodeBody(response, body);
-                body = self.serviceHandlers.extractData(body, self.cityName);
+                body = self.serviceHandlers.extractData(body, self.cityName, self.cityId);
                 self.processData(body, self.updateData);
+            } else if (retryCount-- > 0) {
+                request(cityListUrl, { encoding: null }, handleResponse);
             } else {
-                self.respondError('Could not get the ' + self.serviceName + ' service data! Error: ' + error);
+                var msg = '';
+                if (response)
+                    msg += ' Response: ' + response.statusCode;
+                if (error)
+                    msg += ' Error: ' + error;
+                self.respondError('Could not get the ' + self.fullServiceName + ' service data! ' + msg);
             }
-        });
+        }
+        request(cityListUrl, { encoding: null }, handleResponse);
     };
 
     self.get = function (req, res) {
@@ -115,9 +131,11 @@ function Stations() {
         self.response = res;
         self.serviceName = req.params.service;
         self.cityName = req.params.city || req.query.city;
+        self.cityId = req.params.cityId || req.query.cityId;
         self.stationId = req.params.id || req.query.id;
         self.stationIdList = self.stationId != null ? self.stationId.split(',') : null;
-    
+        self.fullServiceName = self.serviceName + ' ' + self.cityName;
+
         if (self.serviceName == null || self.cityName == null) {
             res.send(400, 'ServiceName and City are required');
             return;
@@ -129,13 +147,25 @@ function Stations() {
         }
 
         if (self.serviceHandlers) {
-            var ts = req.service ? req.service.tables : null;
-            self.serviceData = ts ? ts.getTable('serviceData') : null;
-            self.serviceCache = require('../shared/serviceCache');
+            var checkServiceData = function (city, onError, onDownloadData, onProcessData) {};
+            
+            var ServiceCache = require('../shared/serviceCache');
+            self.serviceCache = new ServiceCache(self.loggingLevel, self.maxCacheAge);
             self.serviceCache.serviceName = self.serviceName;
-            self.serviceCache.serviceData = self.serviceData;
+            
             var city = self.serviceHandlers.cacheByCity ? self.cityName : '';
-            self.serviceCache.checkServiceData(city, self.respondError, self.downloadData, self.processData);
+            self.serviceCache.fullServiceName = self.serviceName;
+            if (city != '')
+                self.serviceCache.fullServiceName += ('-' + city);
+            // setup storage
+            var azure = require('azure'); 
+            var retryOperations = new azure.ExponentialRetryPolicyFilter();
+            self.serviceData = azure.createTableService()
+                .withFilter(retryOperations); 
+            checkServiceData = self.serviceCache.checkServiceData;
+
+            self.serviceCache.serviceData = self.serviceData;
+            checkServiceData(city, self.respondError, self.downloadData, self.processData);
         } else {
             var err = 'Handler not found for service "' + self.serviceName + '"';
             self.respondError(err);

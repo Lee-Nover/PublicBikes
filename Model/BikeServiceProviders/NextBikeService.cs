@@ -56,6 +56,28 @@ namespace Bicikelj.Model
             }
         }
 
+        private void GetCityId(string cityName, ref string cityId)
+        {
+            if (string.IsNullOrEmpty(cityId))
+            {
+                var _city = GetCities().Where(c => string.Equals(c.UrlCityName, cityName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                if (_city != null)
+                    cityId = _city.UID;
+            }
+        }
+
+        protected override string GetStationDetailsUri(string city, string stationId, string cityId = null)
+        {
+            GetCityId(city, ref cityId);
+            return base.GetStationDetailsUri(city, stationId, cityId);
+        }
+
+        protected override string GetStationListUri(string city, string cityId = null)
+        {
+            GetCityId(city, ref cityId);
+            return base.GetStationListUri(city, cityId);
+        }
+
         protected override IList<City> GetCities()
         {
             var result = new List<City>();

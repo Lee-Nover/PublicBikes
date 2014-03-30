@@ -14,13 +14,17 @@ namespace Bicikelj.Model
 
     public static class AzureServiceCredentials
     {
-        public static string Key = "your app key";
+        public static string Key
+        {
+            get { return AuthHeaders["x-zumo-application"]; }
+            set { AuthHeaders["x-zumo-application"] = value; }
+        }
         public static Dictionary<string, string> AuthHeaders;
 
         static AzureServiceCredentials()
         {
             AuthHeaders = new Dictionary<string, string>();
-            AuthHeaders.Add("x-zumo-application", Key);
+            AuthHeaders.Add("x-zumo-application", "your app key");
         }
     }
 
@@ -31,12 +35,12 @@ namespace Bicikelj.Model
 
     public static class AdDealsCredentials
     {
-        public static string ID = "id";
+        public static string ID = "your app id";
         public static string Key = "your app key";
     }
 
     public static class AdDuplexCredentials
     {
-        public static string ID = "your app key";
+        public static string ID = "your app id";
     }
 }

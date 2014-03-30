@@ -1,70 +1,89 @@
+// used just as a type signature
 var downloadData = function () { };
 var processData = function (data) { };
+// log level constants
+var llError     = 0;
+var llWarning   = 1;
+var llInfo      = 2;
+var llVerbose   = 3;
+var llDebug     = 4;
 
-exports.serviceName = "";
-exports.serviceData = null;
+function ServiceCache(loggingLevel, maxCacheAge) {
+    var self = this;
+    self.serviceName = "";
+    self.serviceData = null;
+    self.cityName = "";
+    self.fullServiceName = "";
+    
+    self.loggingLevel = loggingLevel;
+    if (self.loggingLevel === null || self.loggingLevel === undefined)
+        self.loggingLevel = 1;
 
-exports.updateCache = function (data, city, onError) {
-    var serviceData = exports.serviceData;
-    var serviceName = exports.serviceName;
-    if (serviceData === null)
-        return;
-    //console.info('updating cache for ' + serviceName);
-    serviceData.where({ serviceName: serviceName, city: city })
-        .read({
-            success: function (results) {
-                if (results.length > 0) {
-                    serviceData.update({
-                        id: results[0].id,
-                        timeStamp: new Date(),
-                        serviceData: data
-                    }, {
-                        //success: function () { console.info('updated cache for ' + serviceName); },
-                        error: onError
-                    })
-                } else {
-                    serviceData.insert({
-                        serviceName: serviceName,
-                        city: city,
-                        timeStamp: new Date(),
-                        serviceData: data
-                    }, {
-                        //success: function () { console.info('inserted cache data for ' + serviceName); },
-                        error: onError
-                    })
-                }
-            },
-            error: onError
-        })
-}
+    self.maxCacheAge = maxCacheAge;
+    if (self.maxCacheAge < 10000)
+        self.maxCacheAge = 60000;
 
-exports.checkServiceData = function (city, onError, onDownloadData, onProcessData) {
-    var serviceData = exports.serviceData;
-    var serviceName = exports.serviceName;
-    if (serviceData == null) {
-        onDownloadData();
-        return;
-    }
-    //console.info('checking cached data for ' + serviceName);
-    serviceData.where({ serviceName: serviceName, city: city })
-        .read({
-            success: function (results) {
+    self.logInfo = function(text, level, info) {
+        if (level <= self.loggingLevel)
+            if (info)
+                console.info(text, info);
+            else
+                console.info(text);
+    };
+
+    self.logSuccess = function(text) {
+        self.logInfo('inserted/updated cache data for ' + self.fullServiceName, llInfo);
+    };
+
+    self.updateCache = function (data, city, onError) {
+        if (self.serviceData == null)
+            return;
+        
+        self.logInfo('updating cache for ' + self.fullServiceName, llVerbose);
+        var entity = {
+            PartitionKey: 'stations', 
+            RowKey: self.fullServiceName,
+            serviceData: data
+        };
+        self.serviceData.insertOrReplaceEntity('serviceData', entity,
+            function (error) {
+                if (!error)
+                    self.logSuccess();
+                else if (onError)
+                    onError(error);
+            }
+        );
+    };
+
+    self.checkServiceData = function (city, onError, onDownloadData, onProcessData) {
+        if (self.serviceData == null) {
+            onDownloadData();
+            return;
+        }
+        var fullServiceName = self.fullServiceName;
+        self.logInfo('checking cached data for ' + fullServiceName, llInfo);
+        self.serviceData.queryEntity('serviceData', 'stations', fullServiceName, function(error, result) {
+            if (!error || error.statusCode == 404) {
                 var isDataUsable = false;
-                if (results.length > 0) {
-                    var dataAge = Math.abs(new Date() - results[0].timeStamp);
-                    isDataUsable = dataAge < 60000;
-                    console.info('last available data for ' + serviceName,
-                        {
-                            dataAge: dataAge / 1000,
-                            isUsable: isDataUsable
-                        });
+                if (result) {
+                    var dataAge = Math.abs(new Date() - result.Timestamp);
+                    isDataUsable = dataAge < self.maxCacheAge;
+                    var details = {
+                        dataAge: dataAge / 1000,
+                        isUsable: isDataUsable
+                    };
+                    self.logInfo('last available data for ' + fullServiceName, llInfo, details);
+                            
                 }
-                //else console.info('data not cached for ' + serviceName);
+                else self.logInfo('data not cached for ' + fullServiceName, llVerbose);
                 if (isDataUsable)
-                    onProcessData(results[0].serviceData)
+                    onProcessData(result.serviceData)
                 else
                     onDownloadData();
-            },
-            error: onError
-        })
+            } else if (onError)
+                onError(error);
+        });
+    };
 }
+
+module.exports = ServiceCache;
