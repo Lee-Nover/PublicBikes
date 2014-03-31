@@ -79,7 +79,7 @@ function ServiceCache(loggingLevel, maxCacheAge) {
                 if (isDataUsable)
                     onProcessData(result.serviceData)
                 else
-                    onDownloadData();
+                    onDownloadData(onProcessData);
             } else if (onError)
                 onError(error);
         });

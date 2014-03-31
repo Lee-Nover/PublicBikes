@@ -1,3 +1,8 @@
+var EventEmitter = require('events').EventEmitter;
+var ServiceCache = require('../shared/serviceCache');
+var azure = require('azure'); 
+var cacheCache = {};
+
 function Stations() {
     var self = this;
     self.response = null;
@@ -32,10 +37,14 @@ function Stations() {
 
     self.processData = function(data, onUpdate) {
         var stations = JSON.parse(data);
-        var result = null;
         if (onUpdate && stations && stations[0])
             onUpdate(data);
-    
+        self.returnData(stations);
+        return stations;
+    };
+
+    self.returnData = function(stations) {
+        var result = null;
         if (self.stationIdList != null && self.stationIdList.length > 1) {
             result = [];
             stations.forEach(function visitStationId(station) {
@@ -98,7 +107,7 @@ function Stations() {
         } else return body;
     }
 
-    self.downloadData = function() {
+    self.downloadData = function(onProcessData) {
         console.log('Downloading the ' + self.fullServiceName + ' service data ...');
         var request = require('../shared/crequest');
         var cityListUrl = self.serviceHandlers.getUrl(self.cityName, self.cityId);
@@ -110,7 +119,7 @@ function Stations() {
                 console.log('Data for ' + self.fullServiceName + ' downloaded in ' + dlTime + 's');
                 body = decodeBody(response, body);
                 body = self.serviceHandlers.extractData(body, self.cityName, self.cityId);
-                self.processData(body, self.updateData);
+                onProcessData(body, self.updateData);
             } else if (retryCount-- > 0) {
                 request(cityListUrl, { encoding: null }, handleResponse);
             } else {
@@ -134,7 +143,7 @@ function Stations() {
         self.cityId = req.params.cityId || req.query.cityId;
         self.stationId = req.params.id || req.query.id;
         self.stationIdList = self.stationId != null ? self.stationId.split(',') : null;
-        self.fullServiceName = self.serviceName + ' ' + self.cityName;
+        self.fullServiceName = self.serviceName + '-' + self.cityName;
 
         if (self.serviceName == null || self.cityName == null) {
             res.send(400, 'ServiceName and City are required');
@@ -148,24 +157,36 @@ function Stations() {
 
         if (self.serviceHandlers) {
             var checkServiceData = function (city, onError, onDownloadData, onProcessData) {};
-            
-            var ServiceCache = require('../shared/serviceCache');
-            self.serviceCache = new ServiceCache(self.loggingLevel, self.maxCacheAge);
-            self.serviceCache.serviceName = self.serviceName;
-            
             var city = self.serviceHandlers.cacheByCity ? self.cityName : '';
-            self.serviceCache.fullServiceName = self.serviceName;
+            var fullServiceName = self.serviceName;
             if (city != '')
-                self.serviceCache.fullServiceName += ('-' + city);
-            // setup storage
-            var azure = require('azure'); 
-            var retryOperations = new azure.ExponentialRetryPolicyFilter();
-            self.serviceData = azure.createTableService()
-                .withFilter(retryOperations); 
-            checkServiceData = self.serviceCache.checkServiceData;
+                fullServiceName += ('-' + city);
 
-            self.serviceCache.serviceData = self.serviceData;
-            checkServiceData(city, self.respondError, self.downloadData, self.processData);
+            var cached = cacheCache[fullServiceName];
+            if (!cached) {
+                var retryOperations = new azure.ExponentialRetryPolicyFilter();
+                self.serviceData = azure.createTableService()
+                    .withFilter(retryOperations); 
+
+                cached = new EventEmitter();
+                cached.service = new ServiceCache(self.loggingLevel, self.maxCacheAge);
+                cached.service.fullServiceName = fullServiceName;
+                cached.service.serviceName = self.serviceName;
+                cached.service.serviceData = self.serviceData;
+                self.serviceCache = cached.service;
+                cacheCache[fullServiceName] = cached;
+
+                checkServiceData = self.serviceCache.checkServiceData;
+                checkServiceData(city, self.respondError, self.downloadData, function(data, onUpdate) {
+                    var stations = self.processData(data, onUpdate);
+                    cached.emit('finished', stations);
+                    cacheCache[fullServiceName] = null;
+                });
+            } else {
+                // subscribe as observer; send response when request is finished
+                console.log('Already getting ' + self.fullServiceName + ' service data ...');
+                cached.once('finished', self.returnData);
+            }
         } else {
             var err = 'Handler not found for service "' + self.serviceName + '"';
             self.respondError(err);
