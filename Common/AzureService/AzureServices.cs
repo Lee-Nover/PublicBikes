@@ -17,13 +17,13 @@ namespace Bicikelj.AzureService
             new DataCenter() {
                 Name = "publicbikes",
                 Description = "EU North (Ireland)",
-                ApplicationKey = "wEIDJCYsKkLxegYpdcOrEQpGYzsYCD62",
+                ApplicationKey = "your app key",
                 Location = new GeoCoordinate(53.3243201, -6.251695)
             },
             new DataCenter() {
                 Name = "publicbikes-us-east",
                 Description = "US East (Virginia)",
-                ApplicationKey = "FsxpzRqdDbiEPAohOVsQUBPnJeAZhi19",
+                ApplicationKey = "your app key",
                 Location = new GeoCoordinate(37.5246609, -77.4932614)
             }
         };
