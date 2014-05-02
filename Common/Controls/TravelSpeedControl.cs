@@ -11,6 +11,7 @@ using Bicikelj.Model;
 
 namespace Bicikelj.Controls
 {
+    [TemplatePart(Name = "PART_Slider", Type = typeof(Slider))]
     public class TravelSpeedControl : ContentControl
     {
         public TravelType TravelType
@@ -59,6 +60,24 @@ namespace Bicikelj.Controls
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof(string), typeof(TravelSpeedControl), new PropertyMetadata(""));
 
-        
+
+        private Slider slider;
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            slider = GetTemplateChild("PART_Slider") as Slider;
+            if (slider != null)
+                slider.ValueChanged += (sender, e) => {
+                    var pos = e.NewValue / slider.Maximum;
+                    var nv = e.NewValue - slider.Minimum;
+                    nv = nv / (slider.Maximum - slider.Minimum);
+                    if (nv <= 0.33)
+                        slider.Value = slider.Minimum;
+                    else if (nv >= 0.66)
+                        slider.Value = slider.Maximum;
+                    else
+                        slider.Value = Math.Round(slider.Minimum + (slider.Maximum - slider.Minimum) / 2);
+                };
+        }
     }
 }

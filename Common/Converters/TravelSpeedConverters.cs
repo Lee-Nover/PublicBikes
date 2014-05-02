@@ -29,9 +29,9 @@ namespace Bicikelj.Converters
 
 		public static TravelSpeed TravelSpeedFromDouble(double speed)
 		{
-			if (speed < 1)
+			if (speed <= 0.66)
 				return TravelSpeed.Slow;
-			else if (speed > 1)
+			else if (speed >= 1.33)
 				return TravelSpeed.Fast;
 			else
 				return TravelSpeed.Normal;

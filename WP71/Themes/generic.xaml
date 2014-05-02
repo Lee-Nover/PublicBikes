@@ -264,7 +264,7 @@
 							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 						<TextBlock Text="{TemplateBinding Title}" VerticalAlignment="Center" Margin="12,0,0,0"/>
-						<Slider Grid.Row="1" Maximum="2" SmallChange="1" Value="{Binding Speed, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TravelSpeedConverter}, Mode=TwoWay}" Grid.ColumnSpan="2"/>
+						<Slider x:Name="PART_Slider" Grid.Row="1" Maximum="2" SmallChange="1" LargeChange="1" Value="{Binding Speed, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TravelSpeedConverter}, Mode=TwoWay}" Grid.ColumnSpan="2"/>
 						<TextBlock Grid.Column="1" Text="{Binding Speed, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TravelSpeedConverter}}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,12,0"/>
 					</Grid>
 				</ControlTemplate>

@@ -195,6 +195,9 @@
     <Compile Include="..\Common\AzureService\VersionHistory.cs">
       <Link>AzureService\VersionHistory.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Controls\TravelSpeedControl.cs">
+      <Link>Controls\TravelSpeedControl.cs</Link>
+    </Compile>
     <Compile Include="..\Common\Converters\BoolToStringConverter.cs">
       <Link>Converters\BoolToStringConverter.cs</Link>
     </Compile>
@@ -435,7 +438,6 @@
     <Compile Include="Controls\LongListSelector.cs" />
     <Compile Include="Controls\ProportionalPanel.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
-    <Compile Include="Controls\TravelSpeedControl.cs" />
     <Compile Include="DebugLog.cs" />
     <Compile Include="NavigationExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
