@@ -5,6 +5,8 @@ using Bicikelj.Model;
 using Bicikelj.Model.Analytics;
 using Bicikelj.Model.Logging;
 using Bicikelj.ViewModels;
+using BugSense;
+using BugSense.Core.Model;
 using Caliburn.Micro;
 using Caliburn.Micro.BindableAppBar;
 using Coding4Fun.Toolkit.Controls;
