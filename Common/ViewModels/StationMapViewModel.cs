@@ -190,7 +190,7 @@ namespace Bicikelj.ViewModels
                     foreach (var s in ordered)
                     {
                         System.Threading.Thread.Sleep(30);
-                        if (!cancelTokenSrc.Token.IsCancellationRequested)
+                        if (cancelTokenSrc != null && !cancelTokenSrc.Token.IsCancellationRequested)
                             observer.OnNext(s);
                         else
                         {

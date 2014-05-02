@@ -16,8 +16,11 @@ namespace PublicBikes.Tools
     {
         public static LocationRectangle GetBoundingRectangle(this Map mapControl)
         {
+            if (mapControl.ActualHeight == 0)
+                Bicikelj.App.CurrentApp.RootVisual.UpdateLayout();
             GeoCoordinate topLeft = mapControl.ConvertViewportPointToGeoCoordinate(new Point(0, 0));
             GeoCoordinate bottomRight = mapControl.ConvertViewportPointToGeoCoordinate(new Point(mapControl.ActualWidth, mapControl.ActualHeight));
+            
             if (topLeft != null && bottomRight != null)
                 return LocationRectangle.CreateBoundingRectangle(new[] { topLeft, bottomRight });
             return null;
