@@ -1,0 +1,653 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{82900F95-6E05-4457-8D4A-B8257F722425}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PublicBikes</RootNamespace>
+    <AssemblyName>Bicikelj</AssemblyName>
+    <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
+    <SilverlightVersion>
+    </SilverlightVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>WindowsPhone</TargetFrameworkIdentifier>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>
+    </SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>PublicBikes.WP8.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>Bicikelj.App</SilverlightAppEntry>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>4.0.30816.0</ExpressionBlendVersion>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <PackageRestoreDir>$(SolutionDir)\Packages</PackageRestoreDir>
+    <RestorePackages>true</RestorePackages>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;WP8;WP80</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE;WP8;WP80</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>Bin\x86\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;WP7;WP71</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>
+    </PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>Bin\x86\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE;WP7;WP71</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>
+    </PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>Bin\ARM\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE;WP7;WP71</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>
+    </PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>Bin\ARM\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE;WP7;WP71</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>
+    </PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AdDealsSDKWP7">
+      <HintPath>.\AdDealsSDKWP7.dll</HintPath>
+    </Reference>
+    <Reference Include="AdDuplex.WindowsPhone">
+      <HintPath>..\packages\AdDuplexWP8.2.8.0.8\lib\wp8\AdDuplex.WindowsPhone.dll</HintPath>
+    </Reference>
+    <Reference Include="BugSense-WP8, Version=3.6.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BugSense.WP8.3.6.5.0\lib\wp8\BugSense-WP8.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\wp8\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.BindableAppBar, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Caliburn.Micro.BindableAppBar.1.0.5.0\lib\wp80\Caliburn.Micro.BindableAppBar.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Extensions, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\wp8\Caliburn.Micro.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Coding4Fun.Toolkit.Controls">
+      <HintPath>..\packages\Coding4Fun.Toolkit.Controls.2.0.7\lib\windowsphone8\Coding4Fun.Toolkit.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="FlurryWP8SDK">
+      <HintPath>..\packages\FlurryForWindowsPhone8.1.2\lib\wp8\FlurryWP8SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="GART.WP8">
+      <HintPath>.\GART.WP8.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Phone.Controls, Version=8.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone.Controls.Maps, Version=8.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.1.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WPtoolkit.4.2013.08.16\lib\wp8\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text.WP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\sl4-windowsphone71\ServiceStack.Text.WP.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGIS.GZipWebClient, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SharpGIS.GZipWebClient.1.4.0.0\lib\wp71\SharpGIS.GZipWebClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.20\lib\sl4-windowsphone71\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.20\lib\sl4-windowsphone71\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.20\lib\sl4-windowsphone71\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rx-Core.2.2.4\lib\windowsphone8\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rx-Interfaces.2.2.4\lib\windowsphone8\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rx-Linq.2.2.4\lib\windowsphone8\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices, Version=2.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Rx-PlatformServices.2.2.4\lib\windowsphone8\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=3.9.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\wp8\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\AzureService\AzureServices.cs">
+      <Link>AzureService\AzureServices.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\AzureService\StationInfo.cs">
+      <Link>AzureService\StationInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\AzureService\VersionHistory.cs">
+      <Link>AzureService\VersionHistory.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\BoolToStringConverter.cs">
+      <Link>Converters\BoolToStringConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\DateTimeToStringConverter.cs">
+      <Link>Converters\DateTimeToStringConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\FavoriteToIconConverter.cs">
+      <Link>Converters\FavoriteToIconConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\FavoriteToTextConverter.cs">
+      <Link>Converters\FavoriteToTextConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\HubTileConverters.cs">
+      <Link>Converters\HubTileConverters.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\PinTypeToIconConverter.cs">
+      <Link>Converters\PinTypeToIconConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\StationStyleConverter.cs">
+      <Link>Converters\StationStyleConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\TravelSpeedConverters.cs">
+      <Link>Converters\TravelSpeedConverters.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\ValueToVisibilityConverter.cs">
+      <Link>Converters\ValueToVisibilityConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Converters\VersionItemStyleConverter.cs">
+      <Link>Converters\VersionItemStyleConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\Analytics\AnalyticsService.cs">
+      <Link>Model\Analytics\AnalyticsService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\Analytics\IAnalyticsService.cs">
+      <Link>Model\Analytics\IAnalyticsService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProvider.cs">
+      <Link>Model\BikeServiceProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\AzureServiceProxy.cs">
+      <Link>Model\BikeServiceProviders\AzureServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\BCycleService.cs">
+      <Link>Model\BikeServiceProviders\BCycleService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\BixiService.cs">
+      <Link>Model\BikeServiceProviders\BixiService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\ClearChannelService.cs">
+      <Link>Model\BikeServiceProviders\ClearChannelService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\CycloCityService.cs">
+      <Link>Model\BikeServiceProviders\CycloCityService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\NextBikeService.cs">
+      <Link>Model\BikeServiceProviders\NextBikeService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\PubliBikeService.cs">
+      <Link>Model\BikeServiceProviders\PubliBikeService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\SambaService.cs">
+      <Link>Model\BikeServiceProviders\SambaService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BingMaps.cs">
+      <Link>Model\BingMaps.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\BusyState.cs">
+      <Link>Model\BusyState.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\City.cs">
+      <Link>Model\City.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\CompassProvider.cs">
+      <Link>Model\CompassProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\DownloadUrl.cs">
+      <Link>Model\DownloadUrl.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\ErrorState.cs">
+      <Link>Model\ErrorState.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\FavoriteLocation.cs">
+      <Link>Model\FavoriteLocation.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\GoogleMaps.cs">
+      <Link>Model\GoogleMaps.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\Group.cs">
+      <Link>Model\Group.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\LocationHelper.cs">
+      <Link>Model\LocationHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\LocationState.cs">
+      <Link>Model\LocationState.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\Logging\ILoggingService.cs">
+      <Link>Model\Logging\ILoggingService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\Logging\LoggingService.cs">
+      <Link>Model\Logging\LoggingService.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\MapsCommon.cs">
+      <Link>Model\MapsCommon.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\NetworkHelper.cs">
+      <Link>Model\NetworkHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\ReactiveExtensions.cs">
+      <Link>Model\ReactiveExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\Sensors.cs">
+      <Link>Model\Sensors.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\ServiceCredentials.cs">
+      <Link>Model\ServiceCredentials.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\StationAvailability.cs">
+      <Link>Model\StationAvailability.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\StationLocation.cs">
+      <Link>Model\StationLocation.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\StationLocationList.cs">
+      <Link>Model\StationLocationList.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Model\SystemConfig.cs">
+      <Link>Model\SystemConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Persistence\MainViewModelStorage.cs">
+      <Link>Persistence\MainViewModelStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Persistence\StationsViewModelStorage.cs">
+      <Link>Persistence\StationsViewModelStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Persistence\SystemConfigStorage.cs">
+      <Link>Persistence\SystemConfigStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Tools\SharpGIS.UnZipper.cs">
+      <Link>Tools\SharpGIS.UnZipper.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Tools\UIHelpers.cs">
+      <Link>Tools\UIHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\AboutViewModel.cs">
+      <Link>ViewModels\AboutViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\AdsViewModel.cs">
+      <Link>ViewModels\AdsViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\AppInfoViewModel.cs">
+      <Link>ViewModels\AppInfoViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\CityContextViewModel.cs">
+      <Link>ViewModels\CityContextViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\ClusteredStationViewModel.cs">
+      <Link>ViewModels\ClusteredStationViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\FavoritesViewModel.cs">
+      <Link>ViewModels\FavoritesViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\FavoriteViewModel.cs">
+      <Link>ViewModels\FavoriteViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\HostPageViewModel.cs">
+      <Link>ViewModels\HostPageViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\InfoViewModel.cs">
+      <Link>ViewModels\InfoViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\LocationViewModel.cs">
+      <Link>ViewModels\LocationViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\MainViewModel.cs">
+      <Link>ViewModels\MainViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\MapBaseViewModel.cs">
+      <Link>ViewModels\MapBaseViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\NavigationRouteLegViewModel.cs">
+      <Link>ViewModels\NavigationRouteLegViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\NavigationStartViewModel.cs">
+      <Link>ViewModels\NavigationStartViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\NavigationViewModel.cs">
+      <Link>ViewModels\NavigationViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\RentTimerViewModel.cs">
+      <Link>ViewModels\RentTimerViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\SelectorViewModel.cs">
+      <Link>ViewModels\SelectorViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\StationAvailabilityViewModel.cs">
+      <Link>ViewModels\StationAvailabilityViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\StationLocationViewModel.cs">
+      <Link>ViewModels\StationLocationViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\StationMapViewModel.cs">
+      <Link>ViewModels\StationMapViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\StationsViewModel.cs">
+      <Link>ViewModels\StationsViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\StationViewModel.cs">
+      <Link>ViewModels\StationViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\SystemConfigViewModel.cs">
+      <Link>ViewModels\SystemConfigViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ViewModels\VersionHistoryViewModel.cs">
+      <Link>ViewModels\VersionHistoryViewModel.cs</Link>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CM.Contrib\Dialogs\Answer.cs" />
+    <Compile Include="CM.Contrib\Dialogs\BindableResponse.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Dialog.cs" />
+    <Compile Include="CM.Contrib\Dialogs\DialogResult.cs" />
+    <Compile Include="CM.Contrib\Dialogs\DialogType.cs" />
+    <Compile Include="CM.Contrib\Dialogs\DialogViewModel.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Error.cs" />
+    <Compile Include="CM.Contrib\Dialogs\IDialogViewModel.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Information.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Question.cs" />
+    <Compile Include="CM.Contrib\Dialogs\Warning.cs" />
+    <Compile Include="Controls\Compass.xaml.cs">
+      <DependentUpon>Compass.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HubTileWithContent.cs" />
+    <Compile Include="Controls\LocationAccuracy.xaml.cs">
+      <DependentUpon>LocationAccuracy.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LongListSelector.cs" />
+    <Compile Include="Controls\ProportionalPanel.cs" />
+    <Compile Include="Controls\SystemProgress.cs" />
+    <Compile Include="Controls\TravelSpeedControl.cs" />
+    <Compile Include="DebugLog.cs" />
+    <Compile Include="NavigationExtension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\MapExtensions.cs" />
+    <Compile Include="WP8Bootstrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+    <Page Include="..\Common\Views\AboutView.xaml">
+      <Link>Views\AboutView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\AdsView.xaml">
+      <Link>Views\AdsView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\AppInfoView.xaml">
+      <Link>Views\AppInfoView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\ClusteredStation\Pushpin.xaml">
+      <Link>Views\ClusteredStation\Pushpin.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\Favorite\List.xaml">
+      <Link>Views\Favorite\List.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\HostPageView.xaml">
+      <Link>Views\HostPageView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\InfoView.xaml">
+      <Link>Views\InfoView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\Location\Dialog.xaml">
+      <Link>Views\Location\Dialog.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\NavigationStartView.xaml">
+      <Link>Views\NavigationStartView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\RentTimerView.xaml">
+      <Link>Views\RentTimerView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\StationAvailabilityView.xaml">
+      <Link>Views\StationAvailabilityView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\StationLocation\List.xaml">
+      <Link>Views\StationLocation\List.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\Station\Detail.xaml">
+      <Link>Views\Station\Detail.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\Station\InfoBar.xaml">
+      <Link>Views\Station\InfoBar.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\Station\Pushpin.xaml">
+      <Link>Views\Station\Pushpin.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="..\Common\Views\SystemConfigView.xaml">
+      <Link>Views\SystemConfigView.xaml</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CM.Contrib\Dialogs\DialogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Compass.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\LocationAccuracy.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Templates\StationTemplates.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\ServiceCredentials.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FavoritesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Favorite\Detail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MainView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NavigationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SelectorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\StationLocation\Detail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\StationMapView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\StationsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\VersionHistoryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\city-coordinates.xml" />
+    <Content Include="Assets\PubliBike-services.zip" />
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\AppManifest.xml" />
+    <None Include="Properties\WMAppManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="BugSense\BugSense - SDK License Agreement.txt" />
+    <Content Include="Images\appbar.download.png" />
+    <Content Include="Images\appbar.mail.png" />
+    <Content Include="Images\appbar.map-centerme.png" />
+    <Content Include="Images\appbar.map-location.png" />
+    <Content Include="Images\appbar.map.png" />
+    <Content Include="Images\appbar.refresh.png" />
+    <Content Include="Images\appbar.reroute.png" />
+    <Content Include="Images\appbar.view.png" />
+    <Content Include="Images\calibrate_compass.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
+    <Resource Include="Images\PublicBikeLogo200.png" />
+    <Resource Include="Images\PublicBikeLogo173.png" />
+    <Resource Include="Images\PublicBikeLogo62.png" />
+    <Content Include="Assets\nextbike-cities.xml" />
+    <Content Include="Images\PublicBikeLogo99.png" />
+    <Content Include="Images\appbar.edit.png" />
+    <Content Include="Images\appbar.star.add.png" />
+    <Content Include="Images\appbar.star.delete.png" />
+    <Content Include="Images\appbar.star.png" />
+    <Content Include="Images\Ljubljana-header2.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+</Project>

@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="Bicikelj.Controls.LocationAccuracy"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="480" d:DesignWidth="480">
+
+    <Canvas>
+        <Ellipse Height="40" Width="40" Name="AccuracyCircle" Fill="{StaticResource PhoneAccentBrush}" Opacity="0.2" Stroke="Black" StrokeThickness="2"/>
+    </Canvas>
+</UserControl>

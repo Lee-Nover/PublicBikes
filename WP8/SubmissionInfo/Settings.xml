@@ -1,0 +1,6 @@
+<MarketplaceDetails>
+  <SmallAppTile>PublicBikeLogo99.png</SmallAppTile>
+  <LargeAppTile>PublicBikeLogo173.png</LargeAppTile>
+  <PCAppTile>PublicBikeLogo200.png</PCAppTile>
+  <ScreenShots>start screen.png;favorites.png;all stations.png;configuration.png;station info.png;routing.png;map view.png;;</ScreenShots>
+</MarketplaceDetails>

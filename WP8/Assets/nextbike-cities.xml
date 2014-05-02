@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<markers>
+  <country lat="50.7086" lng="10.6348" zoom="5" name="nextbike Germany" hotline="+493069205046" domain="de" country="DE" country_name="Germany">
+    <city uid="1" lat="51.3403" lng="12.3759" zoom="14" maps_icon="" alias="leipzig" break="0" name="Leipzig" />
+    <city uid="8" lat="50.1072" lng="8.66375" zoom="12" maps_icon="" alias="frankfurt" break="1" name="Frankfurt" />
+    <city uid="16" lat="52.0257" lng="8.53286" zoom="15" maps_icon="" alias="bielefeld" break="0" name="Bielefeld" />
+    <city uid="20" lat="52.5087" lng="13.3563" zoom="12" maps_icon="" alias="berlin" break="0" name="Berlin" />
+    <city uid="32" lat="50.1093" lng="8.73825" zoom="12" maps_icon="" alias="" break="0" name="Offenbach am Main" />
+    <city uid="42" lat="52.1268" lng="11.6342" zoom="14" maps_icon="" alias="magdeburg" break="0" name="Magdeburg" />
+    <city uid="43" lat="53.5506" lng="9.99052" zoom="13" maps_icon="" alias="hamburg" break="0" name="Hamburg" />
+    <city uid="50" lat="51.2243" lng="6.77204" zoom="12" maps_icon="" alias="duesseldorf" break="0" name="Düsseldorf" />
+    <city uid="87" lat="52.3721" lng="9.73569" zoom="14" maps_icon="" alias="hannover" break="1" name="Hannover" />
+    <city uid="101" lat="48.5203" lng="9.05591" zoom="14" maps_icon="" alias="tuebingen" break="0" name="Tübingen" />
+    <city uid="139" lat="48.1392" lng="11.5791" zoom="13" maps_icon="" alias="muenchen" break="0" name="München" />
+    <city uid="147" lat="54.7804" lng="9.43571" zoom="14" maps_icon="" alias="flensburg" break="1" name="Flensburg" />
+    <city uid="155" lat="48.4721" lng="7.94243" zoom="14" maps_icon="" alias="offenburg" break="0" name="Offenburg" />
+    <city uid="158" lat="52.3997" lng="13.0676" zoom="13" maps_icon="" alias="potsdam" break="0" name="Potsdam" />
+    <city uid="160" lat="51.9049" lng="8.39275" zoom="14" maps_icon="" alias="guetersloh" break="0" name="Gütersloh" />
+    <city uid="177" lat="53.6969" lng="10.002" zoom="12" maps_icon="" alias="norderstedt" break="0" name="Norderstedt" />
+    <city uid="178" lat="48.3647" lng="10.8916" zoom="13" maps_icon="" alias="augsburg" break="0" name="Augsburg" />
+    <city uid="182" lat="52.5024" lng="13.3027" zoom="12" maps_icon="" alias="halensee" break="0" name="Halensee KuDamm" />
+    <city uid="201" lat="48.1726" lng="12.8311" zoom="14" maps_icon="" alias="burghausen" break="0" name="Burghausen" />
+  </country>
+  <country lat="47.3835" lng="13.1396" zoom="6" name="nextbike Austria" hotline="+432742229901" domain="at" country="AT" country_name="Austria">
+    <city uid="213" lat="48.1917" lng="16.1197" zoom="11" maps_icon="" alias="" break="0" name="WienerWald" />
+  </country>
+  <country lat="-39.0789" lng="175.649" zoom="6" name="nextbike New Zealand" hotline="+6499099090" domain="nz" country="NZ" country_name="New Zealand">
+    <city uid="34" lat="-36.8603" lng="174.763" zoom="13" maps_icon="" alias="auckland" break="0" name="Auckland" />
+    <city uid="193" lat="-43.5341" lng="172.621" zoom="11" maps_icon="" alias="" break="0" name="Christchurch" />
+  </country>
+  <country lat="47.621" lng="13.3813" zoom="6" name="LEIHRADL nextbike Austria" hotline="+432742229901" domain="la" country="AT" country_name="Austria">
+    <city uid="23" lat="47.839" lng="16.761" zoom="10" maps_icon="" alias="burgenland" break="0" name="NeusiedlerSee" />
+    <city uid="57" lat="48.2058" lng="15.6232" zoom="14" maps_icon="" alias="" break="0" name="St.Pölten" />
+    <city uid="64" lat="48.1047" lng="16.3202" zoom="12" maps_icon="" alias="moedling" break="0" name="Mödling" />
+    <city uid="142" lat="48.3188" lng="15.4166" zoom="10" maps_icon="" alias="" break="0" name="Wachau" />
+    <city uid="143" lat="48.3269" lng="16.0569" zoom="13" maps_icon="" alias="" break="0" name="Tulln" />
+    <city uid="144" lat="47.9835" lng="16.0812" zoom="10" maps_icon="" alias="" break="0" name="Triestingtal" />
+    <city uid="146" lat="47.9892" lng="16.2646" zoom="12" maps_icon="" alias="" break="0" name="Thermenregion" />
+    <city uid="149" lat="48.0909" lng="16.853" zoom="10" maps_icon="" alias="" break="0" name="Römerland" />
+    <city uid="150" lat="48.0193" lng="16.3092" zoom="8" maps_icon="" alias="oebb" break="0" name="ÖBB-Bahnhöfe" />
+    <city uid="151" lat="48.1739" lng="15.1556" zoom="11" maps_icon="" alias="" break="0" name="Wieselburg" />
+    <city uid="156" lat="47.8221" lng="16.2498" zoom="12" maps_icon="" alias="" break="0" name="Wr.Neustadt" />
+    <city uid="163" lat="47.7227" lng="16.0804" zoom="13" maps_icon="" alias="" break="0" name="Neunkirchen" />
+    <city uid="164" lat="48.4183" lng="15.6909" zoom="12" maps_icon="" alias="" break="0" name="Krems Ost" />
+    <city uid="165" lat="48.3343" lng="15.6878" zoom="11" maps_icon="" alias="" break="0" name="Unteres Traisental" />
+    <city uid="167" lat="48.0643" lng="14.7368" zoom="10" maps_icon="" alias="" break="0" name="Haag" />
+    <city uid="168" lat="47.8841" lng="15.9467" zoom="10" maps_icon="" alias="" break="0" name="Piestingtal" />
+    <city uid="169" lat="48.5674" lng="16.5722" zoom="14" maps_icon="" alias="" break="0" name="Mistelbach" />
+    <city uid="170" lat="48.2741" lng="16.7116" zoom="10" maps_icon="" alias="" break="0" name="Marchfeld" />
+    <city uid="174" lat="48.3462" lng="16.2735" zoom="11" maps_icon="" alias="" break="0" name="10vorWien" />
+    <city uid="180" lat="47.9504" lng="15.6129" zoom="10" maps_icon="" alias="" break="0" name="Traisen-Gölsental" />
+    <city uid="181" lat="47.8205" lng="15.0073" zoom="9" maps_icon="" alias="" break="0" name="Oberes Ybbstal" />
+    <city uid="184" lat="48.7196" lng="16.3878" zoom="13" maps_icon="" alias="" break="0" name="Laa an der Thaya" />
+    <city uid="185" lat="48.1077" lng="16.3937" zoom="12" maps_icon="" alias="" break="0" name="Südheide" />
+    <city uid="196" lat="48.2994" lng="15.9065" zoom="12" maps_icon="" alias="" break="0" name="Tullnerfeld West" />
+    <city uid="212" lat="48.562" lng="16.0785" zoom="13" maps_icon="" alias="" break="0" name="Hollabrunn" />
+  </country>
+  <country lat="47.2569" lng="8.62976" zoom="8" name="nextbike Switzerland" hotline="+41415080800" domain="ch" country="CH" country_name="Switzerland">
+    <city uid="126" lat="47.0472" lng="8.30446" zoom="13" maps_icon="" alias="luzern" break="0" name="Luzern" />
+  </country>
+  <country lat="56.9704" lng="23.9749" zoom="9" name="SiXT Latvia" hotline="+37167676780" domain="lv" country="LV" country_name="Latvia">
+    <city uid="128" lat="56.9453" lng="24.1033" zoom="12" maps_icon="" alias="riga" break="0" name="Riga" />
+  </country>
+  <country lat="52.2413" lng="18.479" zoom="6" name="WRM nextbike Poland" hotline="+48223821312" domain="pl" country="PL" country_name="Poland">
+    <city uid="148" lat="51.1097" lng="17.0485" zoom="13" maps_icon="" alias="wroclaw" break="0" name="Wrocław" />
+    <city uid="187" lat="51.1128" lng="17.0247" zoom="12" maps_icon="" alias="wroclaw2" break="0" name="WROCŁAW 61" />
+  </country>
+  <country lat="49.4469" lng="11.0777" zoom="12" name="NorisBike Germany" hotline="+493069205046" domain="nb" country="DE" country_name="Germany">
+    <city uid="6" lat="49.4479" lng="11.0814" zoom="12" maps_icon="" alias="nuernberg" break="0" name="Nürnberg" />
+  </country>
+  <country lat="39.0277" lng="33.6621" zoom="5" name="KARBIS Turkey" hotline="+902323994270" domain="tr" country="TR" country_name="Turkey">
+    <city uid="214" lat="38.4418" lng="27.1081" zoom="12" maps_icon="" alias="izmir" break="0" name="İzmir" />
+  </country>
+  <country lat="51.5019" lng="7.2757" zoom="9" name="metropolradruhr Germany" hotline="+493069205046" domain="mr" country="DE" country_name="Germany">
+    <city uid="129" lat="51.5141" lng="7.46255" zoom="14" maps_icon="metroradruhr" alias="dortmund" break="0" name="Dortmund" />
+    <city uid="130" lat="51.4813" lng="7.2133" zoom="14" maps_icon="metroradruhr" alias="bochum" break="0" name="Bochum" />
+    <city uid="131" lat="51.5263" lng="6.94611" zoom="12" maps_icon="metroradruhr" alias="bottrop" break="0" name="Bottrop" />
+    <city uid="132" lat="51.4487" lng="6.77513" zoom="12" maps_icon="metroradruhr" alias="duisburg" break="0" name="Duisburg" />
+    <city uid="133" lat="51.4425" lng="7.02301" zoom="12" maps_icon="metroradruhr" alias="essen" break="0" name="Essen" />
+    <city uid="134" lat="51.5404" lng="7.07039" zoom="12" maps_icon="metroradruhr" alias="gelsenkirchen" break="0" name="Gelsenkirchen" />
+    <city uid="135" lat="51.6775" lng="7.84836" zoom="13" maps_icon="metroradruhr" alias="hamm" break="0" name="Hamm" />
+    <city uid="136" lat="51.5363" lng="7.21493" zoom="12" maps_icon="metroradruhr" alias="herne" break="0" name="Herne" />
+    <city uid="137" lat="51.4308" lng="6.87401" zoom="13" maps_icon="metroradruhr" alias="muelheim" break="0" name="Mülheim a.d.R." />
+    <city uid="138" lat="51.4936" lng="6.85169" zoom="12" maps_icon="metroradruhr" alias="oberhausen" break="0" name="Oberhausen" />
+  </country>
+  <country lat="35.066" lng="33.3984" zoom="8" name="nextbike Cyprus" hotline="+35777788323" domain="cy" country="CY" country_name="Cyprus">
+    <city uid="190" lat="34.6823" lng="33.0464" zoom="13" maps_icon="" alias="" break="0" name="Limassol" />
+  </country>
+  <country lat="52.2606" lng="20.929" zoom="12" name="Bemowo Bike Poland" hotline="+48223821312" domain="bb" country="PL" country_name="Poland">
+    <city uid="197" lat="52.2425" lng="20.9149" zoom="12" maps_icon="" alias="" break="0" name="Bemowo" />
+  </country>
+  <country lat="52.4116" lng="16.9258" zoom="10" name="PRM Poland" hotline="+48223821312" domain="pb" country="PL" country_name="Poland">
+    <city uid="192" lat="52.4077" lng="16.9323" zoom="13" maps_icon="" alias="" break="0" name="Poznan" />
+  </country>
+  <country lat="50.6645" lng="17.9276" zoom="12" name="Opole Bike Poland" hotline="+48223821312" domain="ob" country="PL" country_name="Poland">
+    <city uid="202" lat="50.6633" lng="17.9239" zoom="13" maps_icon="" alias="" break="0" name="Opole" />
+  </country>
+  <country lat="40.4323" lng="49.9548" zoom="9" name="nextbike Azerbaijan" hotline="+994124048424" domain="az" country="AZ" country_name="Azerbaijan">
+    <city uid="205" lat="40.3605" lng="49.8426" zoom="13" maps_icon="" alias="baku" break="0" name="Baku" />
+  </country>
+  <country lat="52.2345" lng="21.0024" zoom="11" name="VETURILO Poland" hotline="+48223821312" domain="vp" country="PL" country_name="Poland">
+    <city uid="210" lat="52.2324" lng="21.0127" zoom="11" maps_icon="veturilo" alias="" break="0" name="Warszawa" />
+  </country>
+  <country lat="37.8814" lng="32.4893" zoom="10" name="nextbike Konya" hotline="+903323423523" domain="nk" country="TR" country_name="Turkey">
+    <city uid="183" lat="37.8715" lng="32.4957" zoom="13" maps_icon="" alias="" break="0" name="Konya" />
+  </country>
+  <country lat="42.6178" lng="25.3784" zoom="6" name="nextbike Bulgaria" hotline="+35924372473" domain="bg" country="BG" country_name="Bulgaria">
+    <city uid="215" lat="43.567" lng="27.8285" zoom="14" maps_icon="" alias="" break="0" name="Dobrich" />
+  </country>
+  <country lat="30.297" lng="42.1875" zoom="4" name="BYKYstations UAE" hotline="+442081669851" domain="me" country="AE" country_name="United Arab Emirates">
+    <city uid="219" lat="25.2435" lng="55.2722" zoom="10" maps_icon="" alias="" break="0" name="Dubai" />
+    <city uid="233" lat="25.2199" lng="55.2255" zoom="9" maps_icon="" alias="" break="0" name="Al Sharjah" />
+  </country>
+  <country lat="45.213" lng="16.1499" zoom="6" name="nextbike Croatia" hotline="+38517776534" domain="hr" country="HR" country_name="Croatia">
+    <city uid="220" lat="45.7988" lng="15.9643" zoom="13" maps_icon="" alias="" break="0" name="Zagreb" />
+  </country>
+  <country lat="51.0474" lng="13.7343" zoom="10" name="SZ-bike Germany" hotline="+493069205046" domain="sz" country="DE" country_name="Germany">
+    <city uid="2" lat="51.0525" lng="13.7444" zoom="13" maps_icon="" alias="dresden" break="1" name="Dresden" />
+  </country>
+  <country lat="48.796" lng="9.18182" zoom="9" name="ebikestation Stuttgart Germany" hotline="+493069205046" domain="eg" country="DE" country_name="Germany">
+    <city uid="226" lat="48.9495" lng="9.12518" zoom="13" maps_icon="" alias="bietigheim-bissingen" break="0" name="Bietigheim-Bissingen" />
+  </country>
+  <country lat="54.4349" lng="18.6026" zoom="10" name="Rower Trójmiejski Poland" hotline="+48223821312" domain="tp" country="PL" country_name="Poland">
+    <city uid="227" lat="54.442" lng="18.5652" zoom="13" maps_icon="" alias="" break="0" name="Sopot" />
+  </country>
+</markers>
+<!-- 23.03.2014 20:25 -->

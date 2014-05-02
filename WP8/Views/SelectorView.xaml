@@ -1,0 +1,35 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone" 
+    xmlns:bctl="clr-namespace:Bicikelj.Controls" 
+    x:Class="Bicikelj.Views.SelectorView"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
+    <UserControl.Resources>
+        <DataTemplate x:Name="groupItemTmpl">
+            <Border Background="{StaticResource PhoneAccentBrush}" HorizontalAlignment="Stretch">
+                <TextBlock Text="{Binding Title}" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+            </Border>
+        </DataTemplate>
+        <Style x:Key="jumpListStyle" TargetType="phone:LongListSelector">
+            <Setter Property="LayoutMode" Value="List" />
+            <Setter Property="ItemTemplate" Value="{StaticResource groupItemTmpl}" />
+        </Style>
+        
+    </UserControl.Resources>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent" >
+        <phone:LongListSelector x:Name="Selector"
+                                LayoutMode="List"
+                                JumpListStyle="{StaticResource jumpListStyle}"
+                                GroupHeaderTemplate="{StaticResource groupItemTmpl}">
+        </phone:LongListSelector>
+    </Grid>
+</UserControl>
