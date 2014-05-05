@@ -180,8 +180,8 @@ namespace Bicikelj.ViewModels
             reminder.RecurrenceType = RecurrenceInterval.None;
             var configName = this.GetType().FullName;
             var urlString = "/Views/MainView.xaml?redirect=" + configName;
-            App.CurrentApp.Settings[configName] = urlString + string.Format(@"&RentStarted={0:s}&RentTime={1:s}&ReminderTimeMinutes={2}",
-                RentStarted, RentTime, ReminderTimeMinutes);
+            App.CurrentApp.Settings[configName] = urlString + string.Format(@"&RentStarted={0}&RentTime={1}&ReminderTimeMinutes={2}",
+               HttpUtility.UrlEncode(RentStarted.ToString("s")), HttpUtility.UrlEncode(RentTime.ToString()), ReminderTimeMinutes);
             var vmUri = new Uri(urlString, UriKind.Relative);
             reminder.NavigationUri = vmUri;
             ScheduledActionService.Add(reminder);
