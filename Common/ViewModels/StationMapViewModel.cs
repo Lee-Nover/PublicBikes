@@ -149,8 +149,10 @@ namespace Bicikelj.ViewModels
             // interrupt adding stations
             ReactiveExtensions.Dispose(ref addingItemsDisp);
             if (cancelTokenSrc != null)
+            {
+                cancelTokenSrc.Cancel();
                 cancelTokenSrc.Token.WaitHandle.WaitOne();
-            cancelTokenSrc = null;
+            }
             
             if (stations == null)
             {
@@ -164,7 +166,7 @@ namespace Bicikelj.ViewModels
                 GeoLocation = st.Coordinate
             }));
 
-            var map = this.view.Map;
+            var map = this.map;
             var clusters = StationClusterer.ClusterStations(stations, map, Math.Min(map.ActualWidth, map.ActualHeight) / 6);
             var newCenter = map.Center;
 #if WP7
@@ -183,6 +185,7 @@ namespace Bicikelj.ViewModels
 
             cancelTokenSrc = new CancellationTokenSource();
             addingItemsDisp = Observable.Create<StationViewModel>(observer => {
+                var cancelToken = cancelTokenSrc.Token;
                 // doesn't seem to be available on WP7
                 //var cancel = new CancellationDisposable(cancelTokenSrc);
                 NewThreadScheduler.Default.Schedule(() => {
@@ -190,17 +193,15 @@ namespace Bicikelj.ViewModels
                     foreach (var s in ordered)
                     {
                         System.Threading.Thread.Sleep(30);
-                        if (cancelTokenSrc != null && !cancelTokenSrc.Token.IsCancellationRequested)
+                        if (!cancelToken.IsCancellationRequested)
                             observer.OnNext(s);
                         else
-                        {
-                            observer.OnCompleted();
-                            return;
-                        }
+                            break;
                     }
                     observer.OnCompleted();
+                    cancelTokenSrc = null;
                 });
-                return Disposable.Create(() => cancelTokenSrc.Cancel());
+                return Disposable.Create(() => cancelTokenSrc = null);
             })
             .ObserveOn(ReactiveExtensions.SyncScheduler)
             .Subscribe(s => this.Items.Add(s) );

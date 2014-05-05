@@ -93,7 +93,7 @@ namespace Bicikelj.ViewModels
                 if (!double.IsNaN(travelDistance) && IsNearStartLocation())
                     return travelDistance;
                 double result = double.NaN;
-                if (GeoLocation != null && CurrentCoordinate != null)
+                if (GeoLocation != null && CurrentCoordinate != null && !GeoLocation.IsUnknown && !CurrentCoordinate.IsUnknown)
                     result = GeoLocation.GetDistanceTo(CurrentCoordinate);
                 return result;
             }

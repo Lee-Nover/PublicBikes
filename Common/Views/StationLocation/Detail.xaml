@@ -29,12 +29,12 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" x:Name="StationName" TextWrapping="Wrap" Style="{StaticResource PhoneTextLargeStyle}" />
             <TextBlock Grid.Row="1" x:Name="Address" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" />
-            <maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache"
+            <maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache" ZoomLevel="15"
                       Mode="Road" Center="{Binding GeoLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
                 <maps:MapLayer x:Name="Route" CacheMode="BitmapCache" />
                 <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
-                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding }" CacheMode="BitmapCache" />
-                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding }" Visibility="{Binding ., Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
+                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding CurrentCoordinate}" CacheMode="BitmapCache" />
+                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding CurrentCoordinate}" Visibility="{Binding CurrentCoordinate, Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
                         <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
                     </maps:Pushpin>
                 </maps:MapLayer>
