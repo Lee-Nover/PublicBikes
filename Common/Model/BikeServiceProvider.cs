@@ -51,19 +51,25 @@ namespace Bicikelj.Model
         protected void UpdateAvailabilityCache(IEnumerable<StationAndAvailability> list)
         {
             if (list == null) return;
-            foreach (var item in list)
-                UpdateAvailabilityCacheItem(item);
+            lock (AvailabilityCache)
+            {
+                foreach (var item in list)
+                    UpdateAvailabilityCacheItem(item);
+            }
         }
 
         protected void UpdateAvailabilityCacheItem(StationAndAvailability item)
         {
             CachedAvailability availability = null;
-            if (AvailabilityCache.TryGetValue(item.Station.City + item.Station.Number.ToString(), out availability))
-                availability.Update(item.Availability);
-            else
+            lock (AvailabilityCache)
             {
-                availability = new CachedAvailability() { Availability = item.Availability, LastUpdate = DateTime.Now };
-                AvailabilityCache[item.Station.City + item.Station.Number.ToString()] = availability;
+                if (AvailabilityCache.TryGetValue(item.Station.City + item.Station.Number.ToString(), out availability))
+                    availability.Update(item.Availability);
+                else
+                {
+                    availability = new CachedAvailability() { Availability = item.Availability, LastUpdate = DateTime.Now };
+                    AvailabilityCache[item.Station.City + item.Station.Number.ToString()] = availability;
+                }
             }    
         }
 
@@ -71,15 +77,21 @@ namespace Bicikelj.Model
         {
             StationAndAvailability result = new StationAndAvailability(station, null);
             CachedAvailability availability = null;
-            if (AvailabilityCache.TryGetValue(station.City + station.Number.ToString(), out availability) && !availability.IsOutdated(MaxCacheAge))
-                result.Availability = availability.Availability;
+            lock (AvailabilityCache)
+            {
+                if (AvailabilityCache.TryGetValue(station.City + station.Number.ToString(), out availability) && !availability.IsOutdated(MaxCacheAge))
+                    result.Availability = availability.Availability;
+            }
             return result;
         }
 
         public bool IsAvailabilityValid(StationLocation station)
         {
             CachedAvailability availability;
-            return (AvailabilityCache.TryGetValue(station.City + station.Number.ToString(), out availability) && !availability.IsOutdated(MaxCacheAge));
+            lock (AvailabilityCache)
+            {
+                return (AvailabilityCache.TryGetValue(station.City + station.Number.ToString(), out availability) && !availability.IsOutdated(MaxCacheAge));
+            }
         }
 
         #region Static members

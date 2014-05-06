@@ -175,7 +175,11 @@ namespace Bicikelj.ViewModels
             var mapRect = map.GetBoundingRectangle();
 #endif
 
-            var visibleStations = clusters.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct().ToList();
+            List<StationViewModel> visibleStations;
+            if (mapRect != null)
+                visibleStations = clusters.Where(s => mapRect.ContainsPoint(s.Coordinate)).Distinct().ToList();
+            else
+                visibleStations = clusters;
             var cc = new ClusterComparer();
             var toKeep = visibleStations.Intersect(this.Items, cc).ToList();
             var toAdd = visibleStations.Except(toKeep, cc).ToList();
@@ -199,7 +203,6 @@ namespace Bicikelj.ViewModels
                             break;
                     }
                     observer.OnCompleted();
-                    cancelTokenSrc = null;
                 });
                 return Disposable.Create(() => cancelTokenSrc = null);
             })
