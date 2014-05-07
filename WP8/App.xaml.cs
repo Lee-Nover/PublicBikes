@@ -56,8 +56,7 @@ namespace Bicikelj
             //WebRequest.RegisterPrefix("http://", SharpGIS.WebRequestCreator.GZip);
 
             Settings = IsolatedStorageSettings.ApplicationSettings;
-            var xApp = XDocument.Load("WMAppManifest.xml")
-                .Root.Element("App");
+            var xApp = XDocument.Load("WMAppManifest.xml").Root.Element("App");
             this.Version = new Version(xApp.Attribute("Version").Value);
             this.Title = xApp.Attribute("Title").Value;
         }

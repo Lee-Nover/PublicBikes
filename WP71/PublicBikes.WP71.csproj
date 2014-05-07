@@ -405,6 +405,9 @@
     <Compile Include="..\Common\ViewModels\VersionHistoryViewModel.cs">
       <Link>ViewModels\VersionHistoryViewModel.cs</Link>
     </Compile>
+    <Compile Include="..\Common\WPBootstrapper.cs">
+      <Link>WPBootstrapper.cs</Link>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

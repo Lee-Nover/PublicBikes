@@ -92,10 +92,8 @@ namespace Bicikelj.ViewModels
             base.OnActivate();
             if (viewChecked)
                 return;
-
-            ReactiveExtensions.SetSyncScheduler();
             viewChecked = true;
-
+            ReactiveExtensions.SetSyncScheduler();
             //ActivateItem(Items[0]);
 
             CheckRedirect();
