@@ -1,0 +1,44 @@
+﻿<UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Class="Bicikelj.Controls.PositionIndicator"
+    Background="{x:Null}"
+    d:DesignWidth="200" d:DesignHeight="200">
+    <UserControl.Resources>
+        <Storyboard x:Name="AnimateHeadingStoryboard">
+            <DoubleAnimation
+                x:Name="AnimateHeadingAnimation"
+                Duration="0:0:0.3"
+                FillBehavior="HoldEnd"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)"
+                Storyboard.TargetName="HeadingIndicator" />
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid x:Name="LayoutRoot" Background="{x:Null}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="Accuracy">
+                <VisualState x:Name="IsAccurate"/>
+                <VisualState x:Name="IsInaccurate">
+                    <Storyboard>
+                        <DoubleAnimation Duration="0" To="0.4" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HeadingIndicator" d:IsOptimized="True"/>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Ellipse x:Name="AccuracyCircle" Fill="#19000000" HorizontalAlignment="Center" Height="{Binding InternalAccuracyRadius}" Stroke="#CC000000" VerticalAlignment="Center" Width="{Binding InternalAccuracyRadius}" Visibility="{Binding IsAccuracyVisible, Converter={StaticResource ValueToVisibilityConverter}}"/>
+
+        <Path x:Name="HeadingIndicator" CacheMode="BitmapCache" Height="54" Width="36" RenderTransformOrigin="0.5,0.33333" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,18,0,0" Visibility="{Binding IsHeadingVisible, Converter={StaticResource ValueToVisibilityConverter}}"
+            Data="M 18,0 C 28,0 36,8 36,18 C 36,21.5606 35,25 33,28 L 18,54 L 2.43224,27 C 0.885769,24.3847 0,21 0,18 C 0,8 8,0 18,0 Z" Fill="Black" Stroke="White" UseLayoutRounding="False" Tap="ShowCalibration" Stretch="Uniform">
+            <Path.RenderTransform>
+                <CompositeTransform ScaleY="-1"/>
+            </Path.RenderTransform>
+        </Path>
+
+        <Ellipse x:Name="CenterPoint" CacheMode="BitmapCache" Stretch="Uniform" Fill="{StaticResource PhoneAccentBrush}" VerticalAlignment="Center" Height="24" HorizontalAlignment="Center" Width="24" Stroke="White" StrokeThickness="4" />
+        
+    </Grid>
+</UserControl>

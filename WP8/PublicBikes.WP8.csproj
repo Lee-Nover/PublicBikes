@@ -28,7 +28,7 @@
     <ValidateXaml>true</ValidateXaml>
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
     <Utf8Output>true</Utf8Output>
-    <ExpressionBlendVersion>4.0.30816.0</ExpressionBlendVersion>
+    <ExpressionBlendVersion>5.0.40218.0</ExpressionBlendVersion>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
     <PackageRestoreDir>$(SolutionDir)\Packages</PackageRestoreDir>
     <RestorePackages>true</RestorePackages>
@@ -135,6 +135,7 @@
     <Reference Include="GART.WP8">
       <HintPath>.\GART.WP8.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="Microsoft.Phone.Controls, Version=8.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Maps, Version=8.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=7.0.1.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL">
@@ -431,6 +432,9 @@
     <Compile Include="Controls\Compass.xaml.cs">
       <DependentUpon>Compass.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PositionIndicator.xaml.cs">
+      <DependentUpon>PositionIndicator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\HubTileWithContent.cs" />
     <Compile Include="Controls\LocationAccuracy.xaml.cs">
       <DependentUpon>LocationAccuracy.xaml</DependentUpon>
@@ -542,6 +546,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Compass.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PositionIndicator.xaml">
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
     </Page>
