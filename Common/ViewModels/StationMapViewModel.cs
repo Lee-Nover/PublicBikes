@@ -24,7 +24,6 @@ namespace Bicikelj.ViewModels
 {
     public class StationMapViewModel : MapBaseViewModel
     {
-        private IDisposable addingItemsDisp;
         private StationMapView view;
         
         private List<StationViewModel> stations = null;
@@ -143,15 +142,17 @@ namespace Bicikelj.ViewModels
         }
 
         private CancellationTokenSource cancelTokenSrc = null;
+        private System.Threading.Tasks.Task trickleItemsTask = null;
         private void UpdateVisiblePins()
         {
             if (!tilesLoaded || !zoomDone) return;
             // interrupt adding stations
-            ReactiveExtensions.Dispose(ref addingItemsDisp);
-            if (cancelTokenSrc != null)
+            if (trickleItemsTask != null)
             {
                 cancelTokenSrc.Cancel();
-                cancelTokenSrc.Token.WaitHandle.WaitOne();
+                trickleItemsTask.Wait();
+                trickleItemsTask = null;
+                cancelTokenSrc = null;
             }
             
             if (stations == null)
@@ -188,26 +189,19 @@ namespace Bicikelj.ViewModels
                 this.Items.Remove(item);
 
             cancelTokenSrc = new CancellationTokenSource();
-            addingItemsDisp = Observable.Create<StationViewModel>(observer => {
-                var cancelToken = cancelTokenSrc.Token;
-                // doesn't seem to be available on WP7
-                //var cancel = new CancellationDisposable(cancelTokenSrc);
-                NewThreadScheduler.Default.Schedule(() => {
-                    var ordered = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter));
-                    foreach (var s in ordered)
-                    {
-                        System.Threading.Thread.Sleep(30);
-                        if (!cancelToken.IsCancellationRequested)
-                            observer.OnNext(s);
-                        else
-                            break;
-                    }
-                    observer.OnCompleted();
-                });
-                return Disposable.Create(() => cancelTokenSrc = null);
-            })
-            .ObserveOn(ReactiveExtensions.SyncScheduler)
-            .Subscribe(s => this.Items.Add(s) );
+            System.Action trickleItems = () => {
+                var ordered = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter));
+                foreach (var s in ordered)
+                {
+                    System.Threading.Thread.Sleep(30);
+                    if (cancelTokenSrc.IsCancellationRequested)
+                        break;
+                    this.Items.Add(s);
+                }
+            };
+            trickleItemsTask = new System.Threading.Tasks.Task(() => { }, cancelTokenSrc.Token);
+            trickleItemsTask.Start();
+            
             NotifyOfPropertyChange(() => Items);
         }
 
