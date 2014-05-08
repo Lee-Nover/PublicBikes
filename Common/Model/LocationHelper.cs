@@ -202,6 +202,8 @@ namespace Bicikelj.Model
 #if WP7
         public static Microsoft.Phone.Controls.Maps.LocationRect GetLocationRect(IEnumerable<StationLocation> stations)
         {
+            if (stations == null || stations.Count() == 0)
+                return new Microsoft.Phone.Controls.Maps.LocationRect();
             var locations = from station in stations
                             select new GeoCoordinate
                             {
@@ -215,6 +217,9 @@ namespace Bicikelj.Model
 
         public static Microsoft.Phone.Maps.Controls.LocationRectangle GetLocationRect(IEnumerable<StationLocation> stations)
         {
+            if (stations == null || stations.Count() == 0)
+                return new Microsoft.Phone.Maps.Controls.LocationRectangle();
+
             var locations = from station in stations
                             select new GeoCoordinate
                             {
