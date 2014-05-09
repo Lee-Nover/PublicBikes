@@ -13,6 +13,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Windows;
+using System.Threading.Tasks;
 #if !WP7
 using PublicBikes.Tools;
 using MapControls = Microsoft.Phone.Maps.Controls;
@@ -141,23 +142,20 @@ namespace Bicikelj.ViewModels
                 NotifyOfPropertyChange(() => ActiveItem);
         }
 
-        private CancellationTokenSource cancelTokenSrc = null;
-        private System.Threading.Tasks.Task trickleItemsTask = null;
+        private IDisposable trickleItemsDisp;
+        private ManualResetEvent trickleEvent = new ManualResetEvent(true);
         private void UpdateVisiblePins()
         {
             if (!tilesLoaded || !zoomDone) return;
             // interrupt adding stations
-            if (trickleItemsTask != null)
-            {
-                cancelTokenSrc.Cancel();
-                trickleItemsTask.Wait();
-                trickleItemsTask = null;
-                cancelTokenSrc = null;
-            }
+            ReactiveExtensions.Dispose(ref trickleItemsDisp);
+            trickleEvent.WaitOne();
+            trickleEvent.Reset();
             
             if (stations == null)
             {
                 this.Items.Clear();
+                trickleEvent.Set();
                 return;
             }
 
@@ -188,19 +186,23 @@ namespace Bicikelj.ViewModels
             foreach (var item in toRemove)
                 this.Items.Remove(item);
 
-            cancelTokenSrc = new CancellationTokenSource();
-            System.Action trickleItems = () => {
-                var ordered = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter));
-                foreach (var s in ordered)
+            var ordered = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter));
+
+            trickleItemsDisp = ordered.ToObservable(TaskScheduler.Default as IScheduler)
+                .ObserveOn(ReactiveExtensions.SyncScheduler)
+                .Finally(() =>
                 {
-                    System.Threading.Thread.Sleep(30);
-                    if (cancelTokenSrc.IsCancellationRequested)
-                        break;
+                    trickleEvent.Set();
+                })
+                .Subscribe(s => 
+                { 
                     this.Items.Add(s);
-                }
-            };
-            trickleItemsTask = new System.Threading.Tasks.Task(() => { }, cancelTokenSrc.Token);
-            trickleItemsTask.Start();
+                    System.Threading.Thread.Sleep(30);
+                },
+                () =>
+                {
+                    trickleEvent.Set();
+                });
             
             NotifyOfPropertyChange(() => Items);
         }
