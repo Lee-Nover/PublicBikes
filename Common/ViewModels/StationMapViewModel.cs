@@ -188,7 +188,7 @@ namespace Bicikelj.ViewModels
 
             var ordered = toAdd.OrderBy(s => s.Coordinate.GetDistanceTo(newCenter));
 
-            trickleItemsDisp = ordered.ToObservable(TaskScheduler.Default as IScheduler)
+            trickleItemsDisp = ordered.ToObservable(NewThreadScheduler.Default)
                 .ObserveOn(ReactiveExtensions.SyncScheduler)
                 .Finally(() =>
                 {
@@ -198,10 +198,6 @@ namespace Bicikelj.ViewModels
                 { 
                     this.Items.Add(s);
                     System.Threading.Thread.Sleep(30);
-                },
-                () =>
-                {
-                    trickleEvent.Set();
                 });
             
             NotifyOfPropertyChange(() => Items);
