@@ -3,6 +3,7 @@ var express = require('express');
 var app = module.exports = express();
 app.use(express.compress());
 app.use(express.bodyParser());
+process.env.EMULATED = true;
 
 app.get('/', function (req, resp) {
     resp.type('text/plain'); // set content-type
