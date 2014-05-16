@@ -1,13 +1,20 @@
-exports.serviceName = "B-cycle";
+exports.serviceName = 'B-cycle';
 exports.cacheByCity = true;
 
 exports.getUrl = function(cityName) {
-    return "http://" + cityName + ".bcycle.com/home.aspx";
+    switch (cityName) {
+        case 'austin':
+            return 'https://austin.bcycle.com/station-locations/';
+        case 'indianapolis':
+            return 'https://www.pacersbikeshare.org/header-nav/station-map/';
+    }
+
+    return 'http://' + cityName + '.bcycle.com/home.aspx';
 }
 
 exports.extractData = function (data, cityName) {
-    var startMarker = "function LoadKiosks()";
-    var endMarker = "</script>";
+    var startMarker = 'function LoadKiosks()';
+    var endMarker = '</script>';
     var start = data.indexOf(startMarker) + startMarker.length - 1;
     var end = data.indexOf(endMarker, start) + 1;
     data = data.substr(start, end - start);
@@ -28,19 +35,37 @@ function parseData(data, cityName) {
 
     */
 
+    /* austin
+        var icon = '/Controls/StationLocationsMap/Images/marker-active.png';
+    var back = 'infowin-available';
+    var point = new google.maps.LatLng(30.26634, -97.74378);
+    kioskpoints.push(point);
+    var marker = new createMarker(point, "<div class='location'><strong>4th & Congress</strong><br />120 W. 4th St.<br />Austin<br />TX 78701</div><div class='avail'>Bikes available: <strong>7</strong><br />Docks available: <strong>2</strong></div><div></div>", icon, back, false);
+    markers.push(marker);
+
+    */
+
+
+    var CInfowin = 'infowin-';
     var CCoordStr = 'point = new google.maps.LatLng(';
     var CDataStr = 'createMarker(point, "';
-    var CDataEndStr = '", icon, back);';
+    var CDataEndStr = '", icon, back';
     var cheerio = require('cheerio');
     
     var stations = [];
     var index = 1;
     var idxStation = 0;
     
-    var coordPos = data.indexOf(CCoordStr);
+    var coordPos = data.indexOf(CInfowin);
     
     while (coordPos > -1)
     {
+        coordPos += CInfowin.length;
+        var coordEndPos = data.indexOf("';", coordPos);
+        var info = data.substring(coordPos, coordEndPos);
+        var status = info == 'available' ? 1 : 0;
+
+        coordPos = data.indexOf(CCoordStr, coordEndPos);
         coordPos += CCoordStr.length;
         var coordEndPos = data.indexOf(');', coordPos);
         var coordStr = data.substring(coordPos, coordEndPos);
@@ -75,14 +100,14 @@ function parseData(data, cityName) {
             city: cityName,
             lat: parseFloat(coords[0].trim()),
             lng: parseFloat(coords[1].trim()),
-            status: 1,
+            status: status,
             bikes: available,
             freeDocks: free,
             totalDocks: available + free
         }
         stations[idxStation++] = station;
 
-        coordPos = data.indexOf(CCoordStr, dataPos);
+        coordPos = data.indexOf(CInfowin, dataEndPos);
     }
 
     return stations;

@@ -3,6 +3,8 @@ var ServiceCache = require('../shared/serviceCache');
 var azure = require('azure'); 
 var cacheCache = {};
 
+process.env.EMULATED = true;
+
 function Stations() {
     var self = this;
     self.response = null;

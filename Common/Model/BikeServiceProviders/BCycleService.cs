@@ -14,16 +14,20 @@ namespace Bicikelj.Model
         protected override IList<City> GetCities()
         {
             var result = new List<City>() {
+                new City(){ CityName = "Austin", Country = "United States", ServiceName = "B-cycle", UrlCityName = "austin", Provider = Instance },
                 //new City(){ CityName = "Battle Creek", Country = "United States", ServiceName = "B-cycle", UrlCityName = "battlecreek", Provider = Instance },
                 new City(){ CityName = "Boulder", Country = "United States", ServiceName = "B-cycle", UrlCityName = "boulder", Provider = Instance },
                 new City(){ CityName = "Broward", Country = "United States", ServiceName = "B-cycle", UrlCityName = "broward", Provider = Instance },
                 new City(){ CityName = "Charlotte", Country = "United States", ServiceName = "B-cycle", UrlCityName = "charlotte", Provider = Instance },
+                //new City(){ CityName = "Columbia County", Country = "United States", ServiceName = "B-cycle", UrlCityName = "columbiacounty", Provider = Instance },
                 new City(){ CityName = "Denver", Country = "United States", ServiceName = "B-cycle", UrlCityName = "denver", Provider = Instance },
                 new City(){ CityName = "Des Moines", Country = "United States", ServiceName = "B-cycle", UrlCityName = "desmoines", Provider = Instance },
                 new City(){ CityName = "Fort Worth", Country = "United States", ServiceName = "B-cycle", UrlCityName = "fortworth", Provider = Instance },
                 new City(){ CityName = "Greenville", Country = "United States", ServiceName = "B-cycle", UrlCityName = "greenville", Provider = Instance },
+                // Greenbike (SaltLake City) https://www.greenbikeslc.org
                 new City(){ CityName = "Hawaii", Country = "United States", ServiceName = "B-cycle", UrlCityName = "hawaii", AlternateCityName = "Kailua", Provider = Instance },
                 new City(){ CityName = "Houston", Country = "United States", ServiceName = "B-cycle", UrlCityName = "houston", Provider = Instance },
+                // Indianapolis https://www.pacersbikeshare.org/home/
                 new City(){ CityName = "Kansas City", Country = "United States", ServiceName = "B-cycle", UrlCityName = "kansascity", Provider = Instance },
                 new City(){ CityName = "Madison", Country = "United States", ServiceName = "B-cycle", UrlCityName = "madison", Provider = Instance },
                 //new City(){ CityName = "Milwaukee", Country = "United States", ServiceName = "B-cycle", UrlCityName = "milwaukee", Provider = Instance },
@@ -32,6 +36,7 @@ namespace Bicikelj.Model
                 //new City(){ CityName = "Savannah", Country = "United States", ServiceName = "B-cycle", UrlCityName = "catbike", Provider = Instance },
                 new City(){ CityName = "San Antonio", Country = "United States", ServiceName = "B-cycle", UrlCityName = "sanantonio", Provider = Instance },
                 new City(){ CityName = "Spartanburg", Country = "United States", ServiceName = "B-cycle", UrlCityName = "spartanburg", Provider = Instance }
+                //Santiago http://www.bikesantiago.cl/
             };
             return result;
         }

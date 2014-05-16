@@ -62,24 +62,33 @@ function ServiceCache(loggingLevel, maxCacheAge) {
         }
         var fullServiceName = self.fullServiceName;
         self.logInfo('checking cached data for ' + fullServiceName, llInfo);
-        self.serviceData.queryEntity('serviceData', 'stations', fullServiceName, function(error, result) {
-            if (!error || error.statusCode == 404) {
-                var isDataUsable = false;
-                if (result) {
-                    var dataAge = Math.abs(new Date() - result.Timestamp);
-                    isDataUsable = dataAge < self.maxCacheAge;
-                    var details = {
-                        dataAge: dataAge / 1000,
-                        isUsable: isDataUsable
-                    };
-                    self.logInfo('last available data for ' + fullServiceName, llInfo, details);
+        var query = function() {
+            self.serviceData.queryEntity('serviceData', 'stations', fullServiceName, function(error, result) {
+                if (!error || error.statusCode == 404) {
+                    var isDataUsable = false;
+                    if (result) {
+                        var dataAge = Math.abs(new Date() - result.Timestamp);
+                        isDataUsable = dataAge < self.maxCacheAge;
+                        var details = {
+                            dataAge: dataAge / 1000,
+                            isUsable: isDataUsable
+                        };
+                        self.logInfo('last available data for ' + fullServiceName, llInfo, details);
                             
-                }
-                else self.logInfo('data not cached for ' + fullServiceName, llVerbose);
-                if (isDataUsable)
-                    onProcessData(result.serviceData)
-                else
-                    onDownloadData(onProcessData);
+                    }
+                    else self.logInfo('data not cached for ' + fullServiceName, llVerbose);
+                    if (isDataUsable)
+                        onProcessData(result.serviceData)
+                    else
+                        onDownloadData(onProcessData);
+                } else if (onError)
+                    onError(error);
+            });
+        }
+
+        self.serviceData.createTableIfNotExists('serviceData', function(error){
+            if(!error) {
+                query();
             } else if (onError)
                 onError(error);
         });
