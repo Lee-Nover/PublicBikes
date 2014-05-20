@@ -19,26 +19,46 @@
     </UserControl.Resources>
     <Grid x:Name="LayoutRoot" Background="{x:Null}">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="Accuracy">
+            <VisualStateGroup x:Name="HeadingStates">
                 <VisualState x:Name="IsAccurate"/>
                 <VisualState x:Name="IsInaccurate">
                     <Storyboard>
-                        <DoubleAnimation Duration="0" To="0.4" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HeadingIndicator" d:IsOptimized="True"/>
-                    </Storyboard>
+                		<DoubleAnimation AutoReverse="True" RepeatBehavior="Forever" Duration="0:0:1" To="0.2" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HeadingIndicator"/>
+                	</Storyboard>
+                </VisualState>
+                <VisualState x:Name="IsUnavailable" >
+                	<Storyboard>
+                		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="HeadingIndicator">
+                			<DiscreteObjectKeyFrame KeyTime="0">
+                				<DiscreteObjectKeyFrame.Value>
+                					<Visibility>Collapsed</Visibility>
+                				</DiscreteObjectKeyFrame.Value>
+                			</DiscreteObjectKeyFrame>
+                		</ObjectAnimationUsingKeyFrames>
+                		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="OuterCenterPoint">
+                			<DiscreteObjectKeyFrame KeyTime="0">
+                				<DiscreteObjectKeyFrame.Value>
+                					<Visibility>Visible</Visibility>
+                				</DiscreteObjectKeyFrame.Value>
+                			</DiscreteObjectKeyFrame>
+                		</ObjectAnimationUsingKeyFrames>
+                	</Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Ellipse x:Name="AccuracyCircle" Fill="#19000000" HorizontalAlignment="Center" Height="{Binding InternalAccuracyRadius}" Stroke="#CC000000" VerticalAlignment="Center" Width="{Binding InternalAccuracyRadius}" Visibility="{Binding IsAccuracyVisible, Converter={StaticResource ValueToVisibilityConverter}}"/>
+        <Ellipse x:Name="AccuracyCircle" Fill="#19000000" Stroke="#CC000000" HorizontalAlignment="Center" VerticalAlignment="Center"
+			Width="{Binding InternalAccuracyRadius}" Height="{Binding InternalAccuracyRadius}"/>
 
-        <Path x:Name="HeadingIndicator" CacheMode="BitmapCache" Height="54" Width="36" RenderTransformOrigin="0.5,0.33333" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,18,0,0" Visibility="{Binding IsHeadingVisible, Converter={StaticResource ValueToVisibilityConverter}}"
+        <Path x:Name="HeadingIndicator" CacheMode="BitmapCache" Height="54" Width="36" RenderTransformOrigin="0.5,0.33333" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,18,0,0" 
             Data="M 18,0 C 28,0 36,8 36,18 C 36,21.5606 35,25 33,28 L 18,54 L 2.43224,27 C 0.885769,24.3847 0,21 0,18 C 0,8 8,0 18,0 Z" Fill="Black" Stroke="White" UseLayoutRounding="False" Tap="ShowCalibration" Stretch="Uniform">
             <Path.RenderTransform>
                 <CompositeTransform ScaleY="-1"/>
             </Path.RenderTransform>
         </Path>
 
-        <Ellipse x:Name="CenterPoint" CacheMode="BitmapCache" Stretch="Uniform" Fill="{StaticResource PhoneAccentBrush}" VerticalAlignment="Center" Height="24" HorizontalAlignment="Center" Width="24" Stroke="White" StrokeThickness="4" />
+		<Ellipse x:Name="OuterCenterPoint" CacheMode="BitmapCache" Stretch="Uniform" Fill="Black" VerticalAlignment="Center" Height="34" HorizontalAlignment="Center" Width="34" Stroke="White" Visibility="Collapsed" />
+        <Ellipse x:Name="CenterPoint" CacheMode="BitmapCache" Stretch="Uniform" Fill="{StaticResource PhoneAccentBrush}" VerticalAlignment="Center" Height="26" HorizontalAlignment="Center" Width="26" Stroke="White" StrokeThickness="4" />
         
     </Grid>
 </UserControl>

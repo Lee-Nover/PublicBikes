@@ -36,7 +36,7 @@ namespace Bicikelj.Model
         {
             vibrateController = IoC.Get<IVibrateController>();
             if (compassObs == null)
-                compassObs = Sensors.GetCurrentCompassSmooth()
+                compassObs = Sensors.GetCurrentCompassSmooth(0.2)
                 //compassObs = Sensors.GetCurrentMotionAsCompass()
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
@@ -107,12 +107,19 @@ namespace Bicikelj.Model
             }
         }
 
-        public bool IsSupported { get { 
+        public bool IsSupported { get {
+            try
+            {
 #if WINDOWS_PHONE_8 // Windows Phone 8
-            return Compass.GetDefault() != null;
+                return Compass.GetDefault() != null;
 #else
-            return Compass.IsSupported;
+                return Compass.IsSupported;
 #endif
+            }
+            catch
+            {
+                return false;
+            }
         } }
 
         #endregion

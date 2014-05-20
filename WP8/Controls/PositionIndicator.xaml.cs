@@ -15,6 +15,7 @@ namespace Bicikelj.Controls
         {
             // Required to initialize variables
             InitializeComponent();
+            this.AccuracyCircle.DataContext = this;
         }
 
 
@@ -24,12 +25,12 @@ namespace Bicikelj.Controls
             set { SetValue(HeadingProperty, value); }
         }
         public static readonly DependencyProperty HeadingProperty =
-            DependencyProperty.Register("Heading", typeof(double), typeof(Compass), new PropertyMetadata(0d, HeadingChanged));
+            DependencyProperty.Register("Heading", typeof(double), typeof(PositionIndicator), new PropertyMetadata(0d, HeadingChanged));
 
         private static void HeadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var indicator = d as PositionIndicator;
-            if (d == null)
+            if (indicator == null)
                 return;
             
             var oldHeading = (double)e.OldValue;
@@ -37,7 +38,7 @@ namespace Bicikelj.Controls
             var delta = newHeading - oldHeading;
             if (Math.Abs(delta) > 180)
                 oldHeading += delta < 0 ? -360 : 360;
-
+             
             indicator.AnimateHeadingAnimation.From = oldHeading;
             indicator.AnimateHeadingAnimation.To = newHeading;
             if (indicator.AnimateHeadingStoryboard.GetCurrentState() == ClockState.Stopped)
@@ -51,40 +52,32 @@ namespace Bicikelj.Controls
             set { SetValue(HeadingAccuracyProperty, value); }
         }
         public static readonly DependencyProperty HeadingAccuracyProperty =
-            DependencyProperty.Register("HeadingAccuracy", typeof(double), typeof(Compass), new PropertyMetadata(0d, HeadingAccuracyChanged));
+            DependencyProperty.Register("HeadingAccuracy", typeof(double), typeof(PositionIndicator), new PropertyMetadata(0d, HeadingAccuracyChanged));
 
         private static void HeadingAccuracyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var compass = d as Compass;
-            if (d == null)
+            var indicator = d as PositionIndicator;
+            if (indicator == null)
                 return;
-
-            compass.HeadingAccuracyText.Text = ((int)compass.HeadingAccuracy).ToString() + "°";
-            compass.NotifyOfPropertyChange("IsHeadingAccurate");
-            if (compass.IsHeadingAccurate)
-                VisualStateManager.GoToState(compass, "IsAccurate", true);
-            else
-                VisualStateManager.GoToState(compass, "IsInaccurate", true);
+            indicator.CheckHeadingVisibility();
         }
 
 
         public ICompassProvider CompassProvider
         {
             get { return (ICompassProvider)GetValue(CompassProviderProperty); }
-            set {
+            set
+            {
                 if (CompassProvider != null)
                     CompassProvider.HeadingChanged -= HandleCompass;
                 SetValue(CompassProviderProperty, value);
                 if (CompassProvider != null)
                     CompassProvider.HeadingChanged += HandleCompass;
-                if (CompassProvider.IsSupported)
-                    this.Visibility = Visibility.Visible;
-                else
-                    this.Visibility = Visibility.Collapsed;
+                CheckHeadingVisibility();
             }
         }
         public static readonly DependencyProperty CompassProviderProperty =
-            DependencyProperty.Register("CompassProvider", typeof(ICompassProvider), typeof(Compass), new PropertyMetadata(null));
+            DependencyProperty.Register("CompassProvider", typeof(ICompassProvider), typeof(PositionIndicator), new PropertyMetadata(null));
 
         
         private void HandleCompass(object sender, HeadingAndAccuracy haa)
@@ -92,7 +85,6 @@ namespace Bicikelj.Controls
             Heading = haa.Heading;
             HeadingAccuracy = haa.Accuracy;
         }
-
 
 
         public bool IsHeadingVisible
@@ -106,8 +98,21 @@ namespace Bicikelj.Controls
         private static void IsHeadingVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var indicator = d as PositionIndicator;
-            if (d == null)
+            if (indicator == null)
                 return;
+
+            indicator.CheckHeadingVisibility();
+        }
+
+
+        public void CheckHeadingVisibility()
+        {
+            if (!CompassProvider.IsSupported || !IsHeadingVisible)
+                VisualStateManager.GoToState(this, "IsUnavailable", true);
+            else if (IsHeadingAccurate)
+                VisualStateManager.GoToState(this, "IsAccurate", true);
+            else
+                VisualStateManager.GoToState(this, "IsInaccurate", true);
         }
 
         public bool IsAccuracyVisible
@@ -121,7 +126,7 @@ namespace Bicikelj.Controls
         private static void IsAccuracyVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var indicator = d as PositionIndicator;
-            if (d == null)
+            if (indicator == null)
                 return;
         }
 
@@ -162,13 +167,13 @@ namespace Bicikelj.Controls
 
 
 
-        protected double InternalAccuracyRadius
+        public double InternalAccuracyRadius
         {
             get { return (double)GetValue(InternalAccuracyRadiusProperty); }
             set { SetValue(InternalAccuracyRadiusProperty, value); }
         }
         public static readonly DependencyProperty InternalAccuracyRadiusProperty =
-            DependencyProperty.Register("InternalAccuracyRadius", typeof(double), typeof(PositionIndicator), new PropertyMetadata(0));
+            DependencyProperty.Register("InternalAccuracyRadius", typeof(double), typeof(PositionIndicator), new PropertyMetadata(0d));
 
         
 

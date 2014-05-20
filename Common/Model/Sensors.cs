@@ -179,6 +179,7 @@ namespace Bicikelj.Model
                         compass.Calibrate += compassCalibration;
                         compass.TimeBetweenUpdates = TimeSpan.FromMilliseconds(120);
                         compass.Start();
+                            
                         return Disposable.Create(() =>
                         {
                             compass.CurrentValueChanged -= compassChanged;
@@ -201,21 +202,21 @@ namespace Bicikelj.Model
             return observableCompass;
         }
 
-        public static IObservable<double> GetCurrentHeading()
+        public static IObservable<double> GetCurrentHeading(double bufferTime = 1d)
         {
             return GetCurrentCompass()
                 .Where(data => data.IsValid && data.IsAccurate && data.Reading.HasValue)
                 .Select(data => data.Reading.Value.TrueHeading)
-                .Buffer(TimeSpan.FromSeconds(1))
+                .Buffer(TimeSpan.FromSeconds(bufferTime))
                 .Where(headings => headings.Count > 0)
                 .Select(headings => headings.Average())
                 .Where(heading => !double.IsNaN(heading));
         }
 
-        public static IObservable<CompassData> GetCurrentCompassSmooth()
+        public static IObservable<CompassData> GetCurrentCompassSmooth(double bufferTime = 1d)
         {
             return GetCurrentCompass()
-                .Buffer(TimeSpan.FromSeconds(1))
+                .Buffer(TimeSpan.FromSeconds(bufferTime))
                 .Where(records => records.Count > 0)
                 .Select(records =>
                 {
@@ -232,10 +233,10 @@ namespace Bicikelj.Model
                 .Where(cd => !cd.IsSupported || !cd.Reading.HasValue || !double.IsNaN(cd.Reading.Value.TrueHeading));
         }
 
-        public static IObservable<CompassData> GetCurrentMotionAsCompass()
+        public static IObservable<CompassData> GetCurrentMotionAsCompass(double bufferTime = 1d)
         {
             return GetCurrentMotion()
-                .Buffer(TimeSpan.FromSeconds(1))
+                .Buffer(TimeSpan.FromSeconds(bufferTime))
                 .Where(records => records.Count > 0)
                 .Select(records =>
                 {

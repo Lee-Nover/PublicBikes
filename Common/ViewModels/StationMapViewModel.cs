@@ -159,11 +159,11 @@ namespace Bicikelj.ViewModels
                 return;
             }
 
-            this.view.ARDisplay.ARItems = new ObservableCollection<ARItem>(stations.Select(st => new ARItem()
+            /*this.view.ARDisplay.ARItems = new ObservableCollection<ARItem>(stations.Select(st => new ARItem()
             {
                 Content = st,
                 GeoLocation = st.Coordinate
-            }));
+            }));*/
 
             var map = this.map;
             var clusters = StationClusterer.ClusterStations(stations, map, Math.Min(map.ActualWidth, map.ActualHeight) / 6);
@@ -241,11 +241,11 @@ namespace Bicikelj.ViewModels
             {
                 if (value == displayingAR) return;
                 displayingAR = value;
-                if (this.view != null)
+                /*if (this.view != null)
                     if (displayingAR)
                         this.view.ARDisplay.StartServices();
                     else
-                        this.view.ARDisplay.StopServices();
+                        this.view.ARDisplay.StopServices();*/
                 NotifyOfPropertyChange(() => DisplayingAR);
             }
         }

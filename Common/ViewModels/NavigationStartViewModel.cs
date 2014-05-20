@@ -214,7 +214,7 @@ namespace Bicikelj.ViewModels
 #else
                 .Select(station => cityContext.GetAvailability2(station).Take(1).Wait())
 #endif
-                    .Where(sa => condition(sa.Station, sa.Availability))
+                    .Where(sa => sa != null && condition(sa.Station, sa.Availability))
                     .Take(1)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(sa =>
