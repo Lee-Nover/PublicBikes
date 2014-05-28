@@ -11,6 +11,8 @@ namespace Bicikelj.Controls
 {
     public partial class PositionIndicator : UserControl, INotifyPropertyChanged
     {
+        private const double EARTH_RADIUS_METERS = 6378137;
+
         public PositionIndicator()
         {
             // Required to initialize variables
@@ -60,6 +62,23 @@ namespace Bicikelj.Controls
             if (indicator == null)
                 return;
             indicator.CheckHeadingVisibility();
+        }
+
+
+        public double ZoomLevel
+        {
+            get { return (double)GetValue(ZoomLevelProperty); }
+            set { SetValue(ZoomLevelProperty, value); }
+        }
+        public static readonly DependencyProperty ZoomLevelProperty =
+            DependencyProperty.Register("ZoomLevel", typeof(double), typeof(PositionIndicator), new PropertyMetadata(14d, ZoomLevelChanged));
+
+        private static void ZoomLevelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var indicator = d as PositionIndicator;
+            if (indicator == null)
+                return;
+            indicator.UpdateAccuracyCircle();
         }
 
 
@@ -163,6 +182,7 @@ namespace Bicikelj.Controls
             var indicator = d as PositionIndicator;
             if (d == null)
                 return;
+            indicator.UpdateAccuracyCircle();
         }
 
 
@@ -175,7 +195,23 @@ namespace Bicikelj.Controls
         public static readonly DependencyProperty InternalAccuracyRadiusProperty =
             DependencyProperty.Register("InternalAccuracyRadius", typeof(double), typeof(PositionIndicator), new PropertyMetadata(0d));
 
-        
+        private void UpdateAccuracyCircle()
+        {
+            if (Coordinate != null)
+            {
+                GeoCoordinate center = Coordinate;
+                double zoomLevel = ZoomLevel;
+                
+                //Calculate the ground resolution in meters/pixel
+                //Math based on http://msdn.microsoft.com/en-us/library/bb259689.aspx
+                double groundResolution = Math.Cos(center.Latitude * Math.PI / 180) *
+                    2 * Math.PI * EARTH_RADIUS_METERS / (256 * Math.Pow(2, zoomLevel));
+
+                //Update the accuracy circle dimensions
+                var hAcc = double.IsNaN(Coordinate.HorizontalAccuracy) ? 500 : Coordinate.HorizontalAccuracy;
+                InternalAccuracyRadius = hAcc / groundResolution;
+            }
+        }
 
         #region INotifyPropertyChanged Members
 
