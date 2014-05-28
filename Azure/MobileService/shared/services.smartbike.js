@@ -48,7 +48,7 @@ function extractFromXML(data, cityName) {
     var stations = [];
     var idxStation = 0;
     var cheerio = require('cheerio');
-    var filterName = /^(\[\d+\]\s+)/;
+    var filterName = /^(\[?\]?\s?\d+\]?\[?(\s?)+)/;
     $ = cheerio.load(data, { ignoreWhitespace: true, xmlMode: true} ); // load the html nodes
     $('station').each(function(i, item) {
         var co = $(item);

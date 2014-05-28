@@ -33,12 +33,15 @@
 
         <bab:BindableAppBar x:Name="AppBar" IsVisible="True" >
             <bab:BindableAppBar.Buttons>
-                    <bab:BindableAppBarButton x:Name="ToggleFavorite" 
-                                         Text="{Binding IsFavorite, Converter={StaticResource FavoriteToTextVerbConverter}}"
-                                         IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
-                    <bab:BindableAppBarButton x:Name="RefreshRoute" 
-                                         Text="reroute"
-                                         IconUri="Images/appbar.reroute.png" />
+                <bab:BindableAppBarButton x:Name="RefreshAvailability" 
+                                        Text="update"
+                                        IconUri="Images/appbar.refresh.png" />
+                <bab:BindableAppBarButton x:Name="ToggleFavorite" 
+                                        Text="{Binding IsFavorite, Converter={StaticResource FavoriteToTextVerbConverter}}"
+                                        IconUri="{Binding IsFavorite, Converter={StaticResource FavoriteToIconUriConverter}, ConverterParameter=true}" />
+                <bab:BindableAppBarButton x:Name="RefreshRoute" 
+                                        Text="reroute"
+                                        IconUri="Images/appbar.reroute.png" />
             </bab:BindableAppBar.Buttons>
         </bab:BindableAppBar>
     </Grid>

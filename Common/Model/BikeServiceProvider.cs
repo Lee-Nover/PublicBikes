@@ -33,7 +33,7 @@ namespace Bicikelj.Model
         public string ServiceUrl { get; set; }
         protected virtual IList<City> GetCities() { return null; }
         public virtual IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName) { return null; }
-        public virtual IObservable<StationAndAvailability> GetAvailability2(StationLocation station) { return null; }
+        public virtual IObservable<StationAndAvailability> GetAvailability2(StationLocation station, bool forceUpdate = false) { return null; }
         public TimeSpan MaxCacheAge = TimeSpan.FromSeconds(60);
 
         public virtual IObservable<List<StationLocation>> DownloadStations(string cityName)
@@ -42,8 +42,9 @@ namespace Bicikelj.Model
                 .Select(sl => sl.Select(sa => sa.Station).ToList());
         }
 
-        public virtual IObservable<StationAvailability> GetAvailability(StationLocation station) {
-            return GetAvailability2(station)
+        public virtual IObservable<StationAvailability> GetAvailability(StationLocation station, bool forceUpdate = false)
+        {
+            return GetAvailability2(station, forceUpdate)
                 .Select(a => a.Availability);
         }
 

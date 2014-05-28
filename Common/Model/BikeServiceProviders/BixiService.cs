@@ -107,19 +107,22 @@ namespace Bicikelj.Model
             return result;
         }
 
-        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
+        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station, bool forceUpdate = false)
         {
-            var availability = GetAvailabilityFromCache(station);
-            if (availability.Availability != null)
-                return Observable.Return<StationAndAvailability>(availability);
-            else
-                return DownloadStationsWithAvailability(station.City)
-                    .Select(sl =>
-                    {
-                        // TODO: log this!
-                        if (sl == null) return null;
-                        return sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault();
-                    });
+            if (!forceUpdate)
+            {
+                var availability = GetAvailabilityFromCache(station);
+                if (availability.Availability != null)
+                    return Observable.Return<StationAndAvailability>(availability);
+            }
+            
+            return DownloadStationsWithAvailability(station.City)
+                .Select(sl =>
+                {
+                    // TODO: log this!
+                    if (sl == null) return null;
+                    return sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault();
+                });
         }
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)

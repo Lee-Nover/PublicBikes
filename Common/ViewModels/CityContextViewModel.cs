@@ -311,7 +311,7 @@ namespace Bicikelj.ViewModels
             return scity != null;
         }
 
-        public IObservable<StationAvailability> GetAvailability(StationLocation station)
+        public IObservable<StationAvailability> GetAvailability(StationLocation station, bool forceUpdate = false)
         {
             City scity = null;
             if (!GetCityForStation(station, out scity))
@@ -321,7 +321,7 @@ namespace Bicikelj.ViewModels
             }
             else
                 return scity.Provider
-                    .GetAvailability(station)
+                    .GetAvailability(station, forceUpdate)
                     .Do(a =>
                     {
                         if (a != null) station.Open = a.Open;

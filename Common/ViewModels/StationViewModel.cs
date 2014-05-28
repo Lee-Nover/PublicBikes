@@ -74,7 +74,7 @@ namespace Bicikelj.ViewModels
                 // link stationLocation with city and let it continue to work
                 events.Publish(BusyState.Busy("checking availability..."));
 
-                var availObs = cityContext.GetAvailability(Location.Location);
+                var availObs = cityContext.GetAvailability(Location.Location, forceUpdate);
                 availObs
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(a => {

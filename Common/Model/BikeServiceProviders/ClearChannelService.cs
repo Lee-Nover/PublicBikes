@@ -45,13 +45,14 @@ namespace Bicikelj.Model
             }
         }
 
-        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
+        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station, bool forceUpdate = false)
         {
             StationAndAvailability csa = null;
             switch (station.City)
             {
                 case "antwerpen":
-                    csa = GetAvailabilityFromCache(station);
+                    if (!forceUpdate)
+                        csa = GetAvailabilityFromCache(station);
                     if (csa.Availability != null)
                         return Observable.Return<StationAndAvailability>(csa);
                     var urlData = string.Format("idStation={0}&s_id_idioma=en", station.Number);
@@ -69,7 +70,8 @@ namespace Bicikelj.Model
                         });
 
                 case "stockholm":
-                    csa = GetAvailabilityFromCache(station);
+                    if (!forceUpdate)
+                        csa = GetAvailabilityFromCache(station);
                     if (csa.Availability != null)
                         return Observable.Return<StationAndAvailability>(csa);
                     return DownloadUrl.GetAsync(string.Format(StationInfoUrl(station.City), station.Number))
@@ -86,7 +88,7 @@ namespace Bicikelj.Model
                         });
 
                 default:
-                    return base.GetAvailability2(station);
+                    return base.GetAvailability2(station, forceUpdate);
             }
         }
 
@@ -107,8 +109,8 @@ namespace Bicikelj.Model
         private StationAvailability LoadAvailabilityFromHTML2(string statusStr)
         {
             XDocument doc = XDocument.Load(new System.IO.StringReader(statusStr));
-            var bikes = doc.Descendants("station").Where(el => (string)el.Attribute("class") == "rackInfo_infoReady").FirstOrDefault();
-            var docks = doc.Descendants("station").Where(el => (string)el.Attribute("class") == "rackInfo_infoEmpty").FirstOrDefault();
+            var bikes = doc.Descendants("div").Where(el => (string)el.Attribute("class") == "rackInfo_infoReady").FirstOrDefault();
+            var docks = doc.Descendants("div").Where(el => (string)el.Attribute("class") == "rackInfo_infoEmpty").FirstOrDefault();
             
             var sa = new StationAvailability();
             sa.Available = bikes != null ? (int)bikes : 0;
@@ -166,14 +168,17 @@ namespace Bicikelj.Model
             return result;
         }
 
-        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
+        public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station, bool forceUpdate = false)
         {
-            var availability = GetAvailabilityFromCache(station);
-            if (availability.Availability != null)
-                return Observable.Return<StationAndAvailability>(availability);
-            else
-                return DownloadStationsWithAvailability(station.City)
-                    .Select(sl => sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault());
+            if (!forceUpdate)
+            {
+                var availability = GetAvailabilityFromCache(station);
+                if (availability.Availability != null)
+                    return Observable.Return<StationAndAvailability>(availability);
+            }
+            
+            return DownloadStationsWithAvailability(station.City)
+                .Select(sl => sl.Where(sa => sa.Station.Number == station.Number).FirstOrDefault());
         }
 
         public override IObservable<List<StationAndAvailability>> DownloadStationsWithAvailability(string cityName)
