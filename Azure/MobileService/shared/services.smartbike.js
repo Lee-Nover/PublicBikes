@@ -59,10 +59,10 @@ function extractFromXML(data, cityName) {
             city: cityName,
             lat: parseFloat($('latitude', co).text()),
             lng: parseFloat($('longitude', co).text()),
-            status: parseInt($('online', co).text()),
-            bikes: 0,
-            freeDocks: 0,
-            totalDocks: 0
+            status: parseInt($('online', co).text())/*,
+            bikes: null,
+            freeDocks: null,
+            totalDocks: null*/
         }
         stations[idxStation++] = station;
     });
