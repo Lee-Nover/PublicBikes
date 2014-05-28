@@ -36,7 +36,8 @@ function parseData(data, cityName) {
     */
 
     /* austin
-        var icon = '/Controls/StationLocationsMap/Images/marker-active.png';
+    
+    var icon = '/Controls/StationLocationsMap/Images/marker-active.png';
     var back = 'infowin-available';
     var point = new google.maps.LatLng(30.26634, -97.74378);
     kioskpoints.push(point);

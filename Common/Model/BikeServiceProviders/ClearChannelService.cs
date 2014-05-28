@@ -26,7 +26,8 @@ namespace Bicikelj.Model
             var result = new List<City>() {
                 new City(){ CityName = "Milano", Country = "Italy", ServiceName = "bikeMi", UrlCityName = "milano", AlternateCityName = "Milan", Provider = Instance },
                 new City(){ CityName = "Antwerpen", Country = "Belgium", ServiceName = "velo", UrlCityName = "antwerpen", AlternateCityName = "antwerp", Provider = Instance },
-                new City(){ CityName = "Mexico City", Country = "Mexico", ServiceName = "ecobici", UrlCityName = "mexicocity", Provider = Instance }
+                new City(){ CityName = "Mexico City", Country = "Mexico", ServiceName = "ecobici", UrlCityName = "mexicocity", Provider = Instance },
+                new City(){ CityName = "Stockholm", Country = "Sweden", ServiceName = "City Bikes", UrlCityName = "stockholm", Provider = Instance }
             };
             return result;
         }
@@ -37,6 +38,8 @@ namespace Bicikelj.Model
             {
                 case "antwerpen":
                     return "https://www.velo-antwerpen.be/CallWebService/StationBussinesStatus.php";
+                case "stockholm":
+                    return "https://secure.citybikes.se/maps/a/gr/{0}";
                 default:
                     return "";
             }
@@ -44,10 +47,11 @@ namespace Bicikelj.Model
 
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station)
         {
+            StationAndAvailability csa = null;
             switch (station.City)
             {
                 case "antwerpen":
-                    var csa = GetAvailabilityFromCache(station);
+                    csa = GetAvailabilityFromCache(station);
                     if (csa.Availability != null)
                         return Observable.Return<StationAndAvailability>(csa);
                     var urlData = string.Format("idStation={0}&s_id_idioma=en", station.Number);
@@ -63,6 +67,24 @@ namespace Bicikelj.Model
                             UpdateAvailabilityCacheItem(sa);
                             return sa;
                         });
+
+                case "stockholm":
+                    csa = GetAvailabilityFromCache(station);
+                    if (csa.Availability != null)
+                        return Observable.Return<StationAndAvailability>(csa);
+                    return DownloadUrl.GetAsync(string.Format(StationInfoUrl(station.City), station.Number))
+                        .Retry(1)
+                        .ObserveOn(ThreadPoolScheduler.Instance)
+                        .Select(s =>
+                        {
+                            var availability = LoadAvailabilityFromHTML2(s);
+                            availability.Open = station.Open;
+                            availability.Connected = true;
+                            var sa = new StationAndAvailability(station, availability);
+                            UpdateAvailabilityCacheItem(sa);
+                            return sa;
+                        });
+
                 default:
                     return base.GetAvailability2(station);
             }
@@ -78,6 +100,19 @@ namespace Bicikelj.Model
             var sa = new StationAvailability();
             sa.Available = int.Parse(matches[0].Value);
             sa.Free = int.Parse(matches[1].Value);
+            sa.Total = sa.Free + sa.Available;
+            return sa;
+        }
+
+        private StationAvailability LoadAvailabilityFromHTML2(string statusStr)
+        {
+            XDocument doc = XDocument.Load(new System.IO.StringReader(statusStr));
+            var bikes = doc.Descendants("station").Where(el => (string)el.Attribute("class") == "rackInfo_infoReady").FirstOrDefault();
+            var docks = doc.Descendants("station").Where(el => (string)el.Attribute("class") == "rackInfo_infoEmpty").FirstOrDefault();
+            
+            var sa = new StationAvailability();
+            sa.Available = bikes != null ? (int)bikes : 0;
+            sa.Free = docks != null ? (int)docks : 0;
             sa.Total = sa.Free + sa.Available;
             return sa;
         }

@@ -48,20 +48,21 @@ function extractFromXML(data, cityName) {
     var stations = [];
     var idxStation = 0;
     var cheerio = require('cheerio');
+    var filterName = /^(\[\d+\]\s+)/;
     $ = cheerio.load(data, { ignoreWhitespace: true, xmlMode: true} ); // load the html nodes
     $('station').each(function(i, item) {
         var co = $(item);
         var station = {
-            id: parseInt(co('rack_id').text()),
-            name: co('description').text(),
+            id: parseInt($('rack_id', co).text()),
+            name: $('description', co).text().replace(filterName, ''),
             //address: address,
             city: cityName,
-            lat: parseFloat(co('latitude').text()),
-            lng: parseFloat(co('longitute').text()),
-            status: parseInt(co('online').text()),
+            lat: parseFloat($('latitude', co).text()),
+            lng: parseFloat($('longitude', co).text()),
+            status: parseInt($('online', co).text()),
             bikes: 0,
             freeDocks: 0,
-            totalDocks: available + free
+            totalDocks: 0
         }
         stations[idxStation++] = station;
     });
