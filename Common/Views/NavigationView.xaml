@@ -15,7 +15,7 @@
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent" >
-       
+
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentGrid" Margin="12,0,12,12" >
             <Grid.RowDefinitions>
@@ -46,10 +46,13 @@
             <maps:Map Grid.Row="3" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache"
                       Mode="Road" ZoomLevel="14" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
                 <maps:MapLayer x:Name="Route" CacheMode="BitmapCache" />
-                <maps:MapLayer x:Name="CurrentLocation">
-                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding Coordinate}" CacheMode="BitmapCache" />
-                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding Coordinate}" Visibility="{Binding Coordinate, Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
-                        <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
+                <maps:MapLayer x:Name="CurrentPosLayer">
+                    <maps:Pushpin Location="{Binding CurrentCoordinate}" Style="{StaticResource CurrentPosPushpinStyle}">
+                        <bctl:PositionIndicator x:Name="CurrentPosition" CacheMode="BitmapCache" 
+                                                Coordinate="{Binding CurrentCoordinate}"
+                                                Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
+                                                CompassProvider="{StaticResource CompassProvider}" 
+											    ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
                     </maps:Pushpin>
                 </maps:MapLayer>
                 <maps:MapLayer x:Name="DestinationLocation">
@@ -66,14 +69,13 @@
                         </DataTemplate>
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
-                
+
                 <toolkit:ContextMenuService.ContextMenu>
                     <toolkit:ContextMenu>
                         <toolkit:MenuItem Header="navigate to here" cal:Message.Attach="NavigateToLastCoordinate" />
                     </toolkit:ContextMenu>
                 </toolkit:ContextMenuService.ContextMenu>
             </maps:Map>
-            <bctl:Compass Grid.Row="3" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" />
             <TextBlock Grid.Row="4" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
             <TextBlock Grid.Row="5" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
         </Grid>
@@ -88,5 +90,5 @@
             </bab:BindableAppBar.Buttons>
         </bab:BindableAppBar>
     </Grid>
- 
+
 </UserControl>

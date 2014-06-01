@@ -58,14 +58,11 @@
                     <maps:MapLayer x:Name="CurrentLocationLayer">
                         <!-- bindings must be done in code (BindMapItems) because Layers don't have a DataContext -->
                         <maps:MapOverlay PositionOrigin="0.5,0.5">
-                            <bctl:LocationAccuracy CacheMode="BitmapCache" Coordinate="{Binding CurrentCoordinate}"
-                                                   Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
-                        </maps:MapOverlay>
-                        <maps:MapOverlay PositionOrigin="0.5,1">
-                            <ContentControl Style="{StaticResource PushpinTemplateNormal8}" CacheMode="BitmapCache"
-                                            Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
-                                <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
-                            </ContentControl>
+                            <bctl:PositionIndicator CacheMode="BitmapCache" 
+                                                    Coordinate="{Binding CurrentCoordinate}"
+                                                    Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
+                                                    CompassProvider="{StaticResource CompassProvider}" 
+													ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
                         </maps:MapOverlay>
                     </maps:MapLayer>
                     
@@ -84,7 +81,6 @@
                     </toolkit:ContextMenu>
                 </toolkit:ContextMenuService.ContextMenu>
             </maps:Map>
-            <bctl:Compass Grid.Row="3" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" />
             <TextBlock Grid.Row="4" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
             <TextBlock Grid.Row="5" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
         </Grid>

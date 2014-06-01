@@ -284,4 +284,12 @@
         <Setter Property="CacheMode" Value="BitmapCache" />
     </Style>
 
+    <ControlTemplate x:Key="CurrentPosPushpinTemplate" TargetType="maps:Pushpin">
+        <ContentPresenter x:Name="Content" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </ControlTemplate>
+
+    <Style x:Key="CurrentPosPushpinStyle" TargetType="maps:Pushpin">
+        <Setter Property="Template" Value="{StaticResource CurrentPosPushpinTemplate}" />
+    </Style>
+
 </ResourceDictionary>

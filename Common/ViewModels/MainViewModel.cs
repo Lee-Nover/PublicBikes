@@ -15,6 +15,7 @@ using System.Net;
 using Caliburn.Micro.BindableAppBar;
 using Bicikelj.Model.Logging;
 using Microsoft.Phone.Shell;
+using ServiceStack.Text;
 
 namespace Bicikelj.ViewModels
 {
@@ -177,15 +178,21 @@ namespace Bicikelj.ViewModels
             if (string.IsNullOrEmpty(config.AzureDataCenter))
                 config.AzureDataCenter = AzureService.AzureServices.GetClosestCenter(null).Name;
             var azureCenter = config.AzureDataCenter;
-            DownloadUrl.GetAsync<VersionHistory[]>(string.Format("https://{0}.azure-mobile.net/api/versions/published", azureCenter))
-                .Retry(1)
+            DownloadUrl.GetAsyncTuple<VersionHistory[]>(string.Format("https://{0}.azure-mobile.net/api/versions/published", azureCenter))
+                .Retry(2)
                 .Take(1)
                 .Subscribe(versions =>
                 {
-                    if (versions != null && versions.Length > 0)
+                    if (versions != null && versions.Item1.Length > 0)
                     {
-                        App.CurrentApp.VersionHistory = versions;
-                        var latestVerStr = versions[0].Version;
+                        App.CurrentApp.VersionHistory = versions.Item1;
+                        var latestVerStr = versions.Item1[0].Version;
+                        if (String.IsNullOrEmpty(latestVerStr))
+                        {
+                            config.UpdateAvailable = "";
+                            IoC.Get<ILoggingService>().LogError(new Exception("Got empty versions."), versions.Item2);
+                            return;
+                        }
                         var latestVer = new Version(latestVerStr);
                         if (latestVer > appVer)
                         {

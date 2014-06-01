@@ -429,6 +429,9 @@
     <Compile Include="Controls\LocationAccuracy.xaml.cs">
       <DependentUpon>LocationAccuracy.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PositionIndicator.xaml.cs">
+      <DependentUpon>PositionIndicator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ProportionalPanel.cs" />
     <Compile Include="Controls\SystemProgress.cs" />
     <Compile Include="DebugLog.cs" />
@@ -585,6 +588,10 @@
     <Page Include="Controls\LocationAccuracy.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PositionIndicator.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\generic.xaml">
       <Generator>MSBuild:Compile</Generator>

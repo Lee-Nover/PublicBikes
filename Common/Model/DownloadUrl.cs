@@ -172,6 +172,11 @@ namespace Bicikelj.Model
             return DownloadUrl.GetAsync(url).Select(s => s.FromJson<T>());
         }
 
+        public static IObservable<Tuple<T, string>> GetAsyncTuple<T>(string url)
+        {
+            return DownloadUrl.GetAsync(url).Select(s => new Tuple<T, string>(s.FromJson<T>(), s));
+        }
+
         public static IObservable<T> GetAsync<T>(string url, Dictionary<string, string> headers)
         {
             return DownloadUrl.GetAsync(url, headers).Select(s => s.FromJson<T>());

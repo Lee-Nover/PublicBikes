@@ -33,10 +33,13 @@
                       LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" ZoomBarVisibility="Visible" ScaleVisibility="Visible"
                       CredentialsProvider="{StaticResource BingCredentials}" cal:Message.Attach="TapPin(null, $eventArgs)" Visibility="{Binding DisplayingAR, Converter={StaticResource ValueToVisibilityInvConverter}}">
                 <maps:MapLayer x:Name="Route" />
-                <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
-                    <bctl:LocationAccuracy x:Name="Accuracy" CacheMode="BitmapCache" Coordinate="{Binding Coordinate}" Visibility="{Binding IsAvailable, Converter={StaticResource ValueToVisibilityConverter}}" />
-                    <maps:Pushpin PositionOrigin="BottomCenter" x:Name="CurrentLocationPin" CacheMode="BitmapCache" Location="{Binding Coordinate}" Style="{StaticResource PushpinTemplateNormal}" >
-                        <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
+                <maps:MapLayer x:Name="CurrentPosLayer">
+                    <maps:Pushpin Location="{Binding CurrentCoordinate}" Style="{StaticResource CurrentPosPushpinStyle}">
+                        <bctl:PositionIndicator x:Name="CurrentPosition" CacheMode="BitmapCache" 
+                                                Coordinate="{Binding CurrentCoordinate}"
+                                                Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
+                                                CompassProvider="{StaticResource CompassProvider}" 
+											    ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
                     </maps:Pushpin>
                 </maps:MapLayer>
                 <!--maps:MapLayer x:Name="DestinationLocation" Visibility="Collapsed">
@@ -81,8 +84,6 @@
                     </gart:WorldView.ItemTemplate>
                 </gart:WorldView>
             </gart:ARDisplay>
-
-            <bctl:Compass Grid.Row="1" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" Visibility="{Binding DisplayingAR, Converter={StaticResource ValueToVisibilityInvConverter}}" />
 
             <!-- down here so it's on top of the Map -->
             <!--Border x:Name="ActiveItemContainer" Grid.Row="1" Background="{StaticResource PhoneBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">

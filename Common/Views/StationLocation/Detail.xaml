@@ -32,10 +32,13 @@
             <maps:Map Grid.Row="2" x:Name="Map" Margin="12,12,12,0" CacheMode="BitmapCache" ZoomLevel="15"
                       Mode="Road" Center="{Binding GeoLocation}" LogoVisibility="Collapsed" CopyrightVisibility="Collapsed" CredentialsProvider="{StaticResource BingCredentials}" >
                 <maps:MapLayer x:Name="Route" CacheMode="BitmapCache" />
-                <maps:MapLayer x:Name="CurrentLocation" Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}">
-                    <bctl:LocationAccuracy x:Name="Accuracy" Coordinate="{Binding CurrentCoordinate}" CacheMode="BitmapCache" />
-                    <maps:Pushpin x:Name="CurrentLocationPin" Location="{Binding CurrentCoordinate}" Visibility="{Binding CurrentCoordinate, Converter={StaticResource ValueToVisibilityConverter}}" PositionOrigin="BottomCenter" Style="{StaticResource PushpinTemplateNormal}">
-                        <Path Width="28" Height="28" Data="{StaticResource CurrentPositionIconData}" Fill="White" Stretch="Uniform" />
+                <maps:MapLayer x:Name="CurrentPosLayer">
+                    <maps:Pushpin Location="{Binding CurrentCoordinate}" Style="{StaticResource CurrentPosPushpinStyle}">
+                        <bctl:PositionIndicator x:Name="CurrentPosition" CacheMode="BitmapCache" 
+                                                Coordinate="{Binding CurrentCoordinate}"
+                                                Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
+                                                CompassProvider="{StaticResource CompassProvider}" 
+											    ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
                     </maps:Pushpin>
                 </maps:MapLayer>
                 <maps:MapLayer x:Name="GeoLocation">
@@ -53,7 +56,6 @@
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
             </maps:Map>
-            <bctl:Compass Grid.Row="2" x:Name="Compass" CompassProvider="{StaticResource CompassProvider}" />
             <TextBlock Grid.Row="3" x:Name="DistanceString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
             <TextBlock Grid.Row="4" x:Name="DurationString" TextWrapping="Wrap" Style="{StaticResource PhoneTextSubtleStyle}" Margin="12,0,12,0" />
         </Grid>
