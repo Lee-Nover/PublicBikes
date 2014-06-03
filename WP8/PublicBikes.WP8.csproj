@@ -104,12 +104,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdDealsSDKWP7">
-      <HintPath>.\AdDealsSDKWP7.dll</HintPath>
-    </Reference>
-    <Reference Include="AdDuplex.WindowsPhone">
-      <HintPath>..\packages\AdDuplexWP8.2.8.0.8\lib\wp8\AdDuplex.WindowsPhone.dll</HintPath>
-    </Reference>
     <Reference Include="BugSense-WP8, Version=3.6.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BugSense.WP8.3.6.5.0\lib\wp8\BugSense-WP8.dll</HintPath>
@@ -458,11 +452,6 @@
     </ApplicationDefinition>
     <Page Include="..\Common\Views\AboutView.xaml">
       <Link>Views\AboutView.xaml</Link>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="..\Common\Views\AdsView.xaml">
-      <Link>Views\AdsView.xaml</Link>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

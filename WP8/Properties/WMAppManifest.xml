@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en" />
-  <App xmlns="" ProductID="{0f16df20-c006-4c24-a226-90ded90abd4e}" RuntimeType="Silverlight" Version="1.1.1.15" Genre="apps.normal" Title="Public Bikes" Author="Twocans" Description="Public Bikes stations availability and navigation" Publisher="Twocans" PublisherID="{f4edbb0b-b721-4c24-98ee-1e72c43c0833}">
+  <App xmlns="" ProductID="{0f16df20-c006-4c24-a226-90ded90abd4e}" RuntimeType="Silverlight" Version="1.2.1.17" Genre="apps.normal" Title="Public Bikes" Author="Twocans" Description="Public Bikes stations availability and navigation" Publisher="Twocans" PublisherID="{f4edbb0b-b721-4c24-98ee-1e72c43c0833}">
     <IconPath IsRelative="true" IsResource="false">Images\PublicBikeLogo62.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_LOCATION" />
       <Capability Name="ID_CAP_NETWORKING" />
       <Capability Name="ID_CAP_SENSORS" />
       <Capability Name="ID_CAP_IDENTITY_DEVICE" />
-      <Capability Name="ID_CAP_WEBBROWSERCOMPONENT" />
       <Capability Name="ID_CAP_ISV_CAMERA" />
       <Capability Name="ID_CAP_MAP" />
     </Capabilities>

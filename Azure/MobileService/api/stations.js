@@ -3,7 +3,7 @@ var ServiceCache = require('../shared/serviceCache');
 var azure = require('azure'); 
 var cacheCache = {};
 
-function Stations() {
+function Stations(settings) {
     var self = this;
     self.response = null;
     self.serviceData = null; // table service
@@ -15,8 +15,8 @@ function Stations() {
     self.stationId = null;
     self.stationIdList = null;
     self.fullServiceName = null;
-    self.loggingLevel = process.env.loggingLevel ? parseInt(process.env.loggingLevel) : 2;
-    self.maxCacheAge = process.env.maxCacheAge ? parseInt(process.env.maxCacheAge) : 60000;
+    self.loggingLevel = (settings != null && settings.loggingLevel != null) ? parseInt(settings.loggingLevel) : 2;
+    self.maxCacheAge = (settings != null && settings.maxCacheAge != null) ? parseInt(settings.maxCacheAge) : 60000;
 
     self.respondResult = function(result) {
         if (result !== null)
@@ -201,6 +201,7 @@ exports.register = function (api) {
 exports.get = function (req, res) {
     /// <param name="req" type="ApiRequest"></param>
     /// <param name="res" type="ApiResponse"></param>
-    var stations = new Stations();
+    var config = req.service == null ? null : req.service.config == null ? null : req.service.config.appSettings;
+    var stations = new Stations(config);
     stations.get(req, res);
 };

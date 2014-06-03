@@ -131,7 +131,7 @@ namespace Bicikelj.ViewModels
                     .Select(addr => addr.Coordinate)
                     .DistinctUntilChanged()
                     .Do(coord => lastPos = coord)
-                    .Where(coord => !coord.IsUnknown)
+                    .Where(coord => coord != null && !coord.IsUnknown)
                     .SelectMany(coord => Observable.Return<City>(BikeServiceProvider.FindNearestCity(coord, 3)))
                     .SelectMany(_city =>
                         {

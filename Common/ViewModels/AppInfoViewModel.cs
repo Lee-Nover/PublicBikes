@@ -15,10 +15,6 @@ namespace Bicikelj.ViewModels
             var historyVM = IoC.Get<VersionHistoryViewModel>();
             historyVM.DisplayName = "history";
             Items.Add(historyVM);
-
-            var adsVM = IoC.Get<AdsViewModel>();
-            adsVM.DisplayName = "ads";
-            Items.Add(adsVM);
         }
     }
 }

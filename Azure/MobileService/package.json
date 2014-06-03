@@ -5,11 +5,11 @@
   "description": "A proxy for bike services which provides a simple API",
   "main": "Server.js",
   "dependencies": {
-    "azure": "~0.8.1",
-    "cheerio": "~0.13.1",
-    "express": "3.4.4",
-    "request": "~2.30.0",
+    "azure": "^0.8.1",
+    "cheerio": "^0.13.1",
+    "express": "^3.4.4",
     "iconv-lite": "~0.2.11",
-    "string": "1.8.0"
+    "request": "^2.30.0",
+    "string": "^1.8.0"
   }
 }

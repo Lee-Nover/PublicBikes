@@ -45,7 +45,6 @@ namespace Bicikelj
             container.Singleton<AboutViewModel>();
             container.Singleton<RentTimerViewModel>();
             container.Singleton<CityContextViewModel>();
-            container.Singleton<AdsViewModel>();
             container.Singleton<VersionHistoryViewModel>();
             container.Singleton<AppInfoViewModel>();
 #if DEBUG && !ANALYTICS
@@ -86,11 +85,6 @@ namespace Bicikelj
 
         protected virtual void InitServices()
         {
-            // controls and resources must be initialized
-            AdDealsSDKWP7.AdManager.Init(AdDealsCredentials.ID, AdDealsCredentials.Key);
-            if (!App.Current.Resources.Contains("AdDuplexCredentials"))
-                App.Current.Resources.Add("AdDuplexCredentials", AdDuplexCredentials.ID);
-            
 #if !DEBUG || ANALYTICS
             FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
             var exceptionManager = new ExceptionManager(Application);
