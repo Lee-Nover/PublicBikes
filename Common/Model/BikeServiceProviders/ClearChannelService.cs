@@ -47,14 +47,16 @@ namespace Bicikelj.Model
 
         public override IObservable<StationAndAvailability> GetAvailability2(StationLocation station, bool forceUpdate = false)
         {
-            StationAndAvailability csa = null;
+            if (!forceUpdate)
+            {
+                var availability = GetAvailabilityFromCache(station);
+                if (availability.Availability != null)
+                    return Observable.Return<StationAndAvailability>(availability);
+            }
+
             switch (station.City)
             {
                 case "antwerpen":
-                    if (!forceUpdate)
-                        csa = GetAvailabilityFromCache(station);
-                    if (csa.Availability != null)
-                        return Observable.Return<StationAndAvailability>(csa);
                     var urlData = string.Format("idStation={0}&s_id_idioma=en", station.Number);
                     return DownloadUrl.PostAsync(StationInfoUrl(station.City), urlData, station)
                         .Retry(1)
@@ -70,10 +72,6 @@ namespace Bicikelj.Model
                         });
 
                 case "stockholm":
-                    if (!forceUpdate)
-                        csa = GetAvailabilityFromCache(station);
-                    if (csa.Availability != null)
-                        return Observable.Return<StationAndAvailability>(csa);
                     return DownloadUrl.GetAsync(string.Format(StationInfoUrl(station.City), station.Number))
                         .Retry(1)
                         .ObserveOn(ThreadPoolScheduler.Instance)

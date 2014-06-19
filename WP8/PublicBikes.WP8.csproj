@@ -618,6 +618,7 @@
     <Content Include="Images\appbar.refresh.png" />
     <Content Include="Images\appbar.reroute.png" />
     <Content Include="Images\appbar.view.png" />
+    <Content Include="Images\Background.jpg" />
     <Content Include="Images\calibrate_compass.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
     <Resource Include="Images\PublicBikeLogo200.png" />

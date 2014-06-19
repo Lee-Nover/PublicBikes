@@ -16,7 +16,7 @@
     <Grid x:Name="LayoutRoot" Background="{x:Null}">
         <controls:Panorama x:Name="Items" Title="public bikes">
             <controls:Panorama.Background>
-                <ImageBrush ImageSource="/Images/Ljubljana-header2.png" Opacity="0.25" />
+                <ImageBrush ImageSource="/Images/Background.jpg" Opacity="0.25" />
             </controls:Panorama.Background>
         </controls:Panorama>
         <bab:BindableAppBar x:Name="AppBar" Mode="Minimized">
