@@ -1,8 +1,8 @@
 var port = process.env.port || 1337;
 var express = require('express');
 var app = module.exports = express();
-app.use(express.compress());
-app.use(express.bodyParser());
+//app.use(express.compress());
+//app.use(express.bodyParser());
 process.env.EMULATED = true;
 
 app.get('/', function (req, resp) {
