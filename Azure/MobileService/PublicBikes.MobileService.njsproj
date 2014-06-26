@@ -35,6 +35,7 @@
     <Compile Include="shared\crequest.js" />
     <Compile Include="shared\serviceCache.js" />
     <Compile Include="shared\services.b-cycle.js" />
+    <Compile Include="shared\services.bixi.js" />
     <Compile Include="shared\services.nextbike.js" />
     <Compile Include="shared\services.publibike.js" />
     <Compile Include="shared\services.samba.js" />
