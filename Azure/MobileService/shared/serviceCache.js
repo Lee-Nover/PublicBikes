@@ -57,7 +57,7 @@ function ServiceCache(loggingLevel, maxCacheAge) {
 
     self.checkServiceData = function (city, onError, onDownloadData, onProcessData) {
         if (self.serviceData == null) {
-            onDownloadData();
+            onDownloadData(onProcessData);
             return;
         }
         var fullServiceName = self.fullServiceName;

@@ -31,7 +31,6 @@ function extractFromXML(data, cityName, cityId) {
     var idxStation = 0;
     var cheerio = require('cheerio');
     var $ = cheerio.load(data, { ignoreWhitespace: true, xmlMode: true} ); // load the html nodes
-    //var places = $('city[name=' + cityName + ']').find('place');
     var cities = $('city');
     cities.each(function(idxCity, city) {
         city = $(city);
