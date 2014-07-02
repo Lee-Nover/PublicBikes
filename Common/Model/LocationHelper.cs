@@ -79,12 +79,16 @@ namespace Bicikelj.Model
 
         public static IObservable<IAddress> FindAddress(GeoCoordinate coordinate)
         {
-            //string query = string.Format(CultureInfo.InvariantCulture, Bing.FindLocationResponse.ApiUrl, coordinate.Latitude, coordinate.Longitude, BingMapsCredentials.Key);
-            string query = string.Format(CultureInfo.InvariantCulture, Google.FindLocationResponse.ApiUrl, coordinate.Latitude, coordinate.Longitude);
-
-            return DownloadUrl.GetAsync<Google.FindLocationResponse>(query)
-                .Retry(1)
-                .Select(addr => addr == null ? null : addr.FirstAddress() as IAddress);
+            string bingQuery = string.Format(CultureInfo.InvariantCulture, Bing.FindLocationResponse.ApiUrl, coordinate.Latitude, coordinate.Longitude, BingMapsCredentials.Key);
+            string googleQuery = string.Format(CultureInfo.InvariantCulture, Google.FindLocationResponse.ApiUrl, coordinate.Latitude, coordinate.Longitude);
+            // first try google then bing, WP8 should also try the integrated maps service
+            return DownloadUrl.GetAsync<Google.FindLocationResponse>(googleQuery)
+                    .Retry(1)
+                    .Select(addr => addr == null ? null : addr.FirstAddress() as IAddress)
+                .Catch(
+                    DownloadUrl.GetAsync<Bing.FindLocationResponse>(bingQuery)
+                    .Retry(1)
+                    .Select(addr => addr == null ? null : addr.FirstAddress() as IAddress));
         }
 
         public static IObservable<GeoAddress> GetCurrentGeoAddress(bool distinctOnly = true)

@@ -14,6 +14,7 @@ namespace Bicikelj.Model
     {
         public T Object;
         public object State;
+        public WebResponse Response;
 
         public ObjectWithState(T obj, object state)
         {
@@ -152,8 +153,8 @@ namespace Bicikelj.Model
                     using (Stream responseStream = response.GetResponseStream())
                     {
                         var content = GetContent(response, responseStream);
-                        
-                        observer.OnNext(new ObjectWithState<string>(content, user));
+
+                        observer.OnNext(new ObjectWithState<string>(content, user) { Response = response } );
                         observer.OnCompleted();
                     }
                 }, user);
@@ -167,24 +168,35 @@ namespace Bicikelj.Model
             .ObserveOn(ThreadPoolScheduler.Instance);
         }
 
+        public static T Deserialize<T>(string content, string contentType)
+        {
+            contentType = contentType.ToLower();
+            if (contentType.Contains("json"))
+                return content.FromJson<T>();
+            else if (contentType.Contains("xml"))
+                return XmlSerializer.DeserializeFromString<T>(content);
+            else 
+                return default(T);
+        }
+
         public static IObservable<T> GetAsync<T>(string url)
         {
-            return DownloadUrl.GetAsync(url).Select(s => s.FromJson<T>());
+            return DownloadUrl.GetAsync(url, null, null).Select(s => Deserialize<T>(s.Object, s.Response.ContentType));
         }
 
         public static IObservable<Tuple<T, string>> GetAsyncTuple<T>(string url)
         {
-            return DownloadUrl.GetAsync(url).Select(s => new Tuple<T, string>(s.FromJson<T>(), s));
+            return DownloadUrl.GetAsync(url, null, null).Select(s => new Tuple<T, string>(Deserialize<T>(s.Object, s.Response.ContentType), s.Object));
         }
 
         public static IObservable<T> GetAsync<T>(string url, Dictionary<string, string> headers)
         {
-            return DownloadUrl.GetAsync(url, headers).Select(s => s.FromJson<T>());
+            return DownloadUrl.GetAsync(url, null, headers).Select(s => Deserialize<T>(s.Object, s.Response.ContentType));
         }
 
         public static IObservable<ObjectWithState<T>> GetAsync<T>(string url, object state)
         {
-            return DownloadUrl.GetAsync(url, state, null).Select(s => new ObjectWithState<T>(s.Object.FromJson<T>(), s.State));
+            return DownloadUrl.GetAsync(url, state, null).Select(s => new ObjectWithState<T>(Deserialize<T>(s.Object, s.Response.ContentType), s.State));
         }
 
         public static IObservable<ObjectWithState<string>> PostAsync(string url, string postData, object user)
@@ -228,7 +240,7 @@ namespace Bicikelj.Model
                         using (Stream responseStream = response.GetResponseStream())
                         {
                             var content = GetContent(response, responseStream);
-                            observer.OnNext(new ObjectWithState<string>(content, user));
+                            observer.OnNext(new ObjectWithState<string>(content, user) { Response = response } );
                             observer.OnCompleted();
                         }
                     }, user);

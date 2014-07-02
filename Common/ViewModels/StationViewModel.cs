@@ -78,7 +78,10 @@ namespace Bicikelj.ViewModels
                 availObs
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
                     .Subscribe(a => {
-                        this.Availability = new StationAvailabilityViewModel(a);
+                        if (a != null)
+                            this.Availability = new StationAvailabilityViewModel(a);
+                        else
+                            events.Publish(new ErrorState(null, "Could not get station's availability."));
                     },
                     e => events.Publish(new ErrorState(e, "Could not get station's availability.")),
                     () => events.Publish(BusyState.NotBusy()));
