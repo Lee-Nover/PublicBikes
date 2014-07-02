@@ -324,7 +324,8 @@ namespace Bicikelj.ViewModels
                     .GetAvailability(station, forceUpdate)
                     .Do(a =>
                     {
-                        if (a != null) station.Open = a.Open;
+                        if (a != null)
+                            station.Open = a.Open;
                     });
         }
 
@@ -341,7 +342,8 @@ namespace Bicikelj.ViewModels
                     .GetAvailability2(station)
                     .Do(a =>
                     {
-                        if (a != null) station.Open = a.Availability.Open;
+                        if (a != null && a.Availability != null)
+                            station.Open = a.Availability.Open;
                     });
         }
 

@@ -161,5 +161,13 @@ namespace Bicikelj.Model.Bing
                 return location;
             }
         }
+
+        public Address FirstAddress()
+        {
+            if (Location == null)
+                return null;
+            else
+                return Location.Address;
+        }
     }
 }
