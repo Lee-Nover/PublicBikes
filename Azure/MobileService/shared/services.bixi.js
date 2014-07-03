@@ -56,7 +56,7 @@ exports.extractData = function (data, cityName) {
         case "melbourne":
             return extractFromJson2(data, cityName);
         default:
-            break;
+            return data;
     }
 }
 
@@ -111,66 +111,50 @@ function extractFromXML(data, cityName) {
 }
 
 function extractFromJson(data, cityName) {
-    var startMarker = 'markerOptions":[';
-    var endMarker = '}],';
-    var start = data.indexOf(startMarker) + startMarker.length - 1;
-    var end = data.indexOf(endMarker, start) + 2;
-    data = data.substr(start, end - start);
-    data = JSON.parse(data);
-
+    var stationList = JSON.parse(data);
     var stations = [];
-
-    var index = 1;
     var idxStation = 0;
-    var cheerio = require('cheerio');
-    var rxGetNum = /\d+/;
-    
-    data.forEach(function visitMarker(marker) {
-        var info = marker.info;
-        $ = cheerio.load(info); // load the html nodes
-        var avail = $('li');
-        var available = parseInt(rxGetNum.exec($($(avail)[0]).text()));
-        var free = parseInt(rxGetNum.exec($($(avail)[1]).text()));
-        var title = marker.title;
-        var idxTitle = title.indexOf('-');
-        if (idxTitle > 0) {
-            index = parseInt(title.substr(0, idxTitle-1).trim());
-            title = title.substr(idxTitle+1).trim();
-        }
+    var useLandmark = cityName == "chattanooga";
+    stationList.stationBeanList.forEach(function visitStation(s) {
         var station = {
-            id: index++,
-            name: title,
-            address: '',
+            id: s.id,
+            name: useLandmark ? s.landMark : s.stationName,
+            address: s.stAddress1,
             city: cityName,
-            lat: marker.position.lat,
-            lng: marker.position.lng,
-            status: 1,
-            bikes: available,
-            freeDocks: free,
-            totalDocks: available + free
+            lat: s.latitude,
+            lng: s.longitude,
+            status: (!s.testStation && s.statusKey == 1) ? 1 : 0,
+            bikes: parseInt(s.availableBikes),
+            freeDocks: parseInt(s.availableDocks),
+            totalDocks: parseInt(s.totalDocks)
         }
-        stations[idxStation++] = station;
+        stations[idxStation++] = station;    
     });
     return JSON.stringify(stations);
 }
 
+function replaceAll(source, from, to) {
+    return source.split(from).join(to);
+}
+
 function extractFromJson2(data, cityName) {
+    data = replaceAll(data, '\\x', '\\u00');
+    data = replaceAll(data, "\\'", "'");
     var stationList = JSON.parse(data);
     var stations = [];
     var idxStation = 0;
-    var filterName = /^([\d\s-])*/;
     stationList.forEach(function visitStation(s) {
         var station = {
             id: s.id,
-            name: s.name.replace(filterName, ''),
-            address: s.address.replace(filterName, ''),
+            name: s.name,
+            //address: '',
             city: cityName,
             lat: s.lat,
-            lng: s.lon,
-            status: s.status == "OPN" ? 1 : 0,
-            bikes: parseInt(s.bikes),
-            freeDocks: parseInt(s.slots),
-            totalDocks: parseInt(s.bikes) + parseInt(s.slots)
+            lng: s.long,
+            status: s.installed && !s.locked ? 1 : 0,
+            bikes: parseInt(s.nbBikes),
+            freeDocks: parseInt(s.nbEmptyDocks),
+            totalDocks: parseInt(s.nbBikes) + parseInt(s.nbEmptyDocks)
         }
         stations[idxStation++] = station;    
     });
