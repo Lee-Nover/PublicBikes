@@ -7,6 +7,7 @@ function Stations(settings) {
     var self = this;
     self.response = null;
     self.serviceData = null; // table service
+    self.serviceBlobs = null;
     self.serviceCache = null; // data cache handler
     self.serviceHandlers = null; // service specific methods
     self.serviceName = null;
@@ -167,21 +168,33 @@ function Stations(settings) {
                 var retryOperations = new azure.ExponentialRetryPolicyFilter();
                 self.serviceData = azure.createTableService()
                     .withFilter(retryOperations); 
+                self.serviceBlobs = azure.createBlobService()
+                    .withFilter(retryOperations);
 
                 cached = new EventEmitter();
                 cached.service = new ServiceCache(self.loggingLevel, self.maxCacheAge);
                 cached.service.fullServiceName = fullServiceName;
                 cached.service.serviceName = self.serviceName;
                 cached.service.serviceData = self.serviceData;
+                cached.service.serviceBlobs = self.serviceBlobs;
                 self.serviceCache = cached.service;
                 cacheCache[fullServiceName] = cached;
 
                 checkServiceData = self.serviceCache.checkServiceData;
-                checkServiceData(city, self.respondError, self.downloadData, function(data, onUpdate) {
-                    var stations = self.processData(data, onUpdate);
-                    cached.emit('finished', stations);
+                try {
+                    checkServiceData(city, self.respondError, self.downloadData, function(data, onUpdate) {
+                        try {
+                            var stations = self.processData(data, onUpdate);
+                        } catch (e) {
+                            self.respondError(e);
+                        }
+                        cached.emit('finished', stations);
+                        cacheCache[fullServiceName] = null;
+                    });
+                } catch (e) {
                     cacheCache[fullServiceName] = null;
-                });
+                    self.respondError(e);
+                }
             } else {
                 // subscribe as observer; send response when request is finished
                 console.log('Already getting ' + self.fullServiceName + ' service data ...');
@@ -202,6 +215,8 @@ exports.get = function (req, res) {
     /// <param name="req" type="ApiRequest"></param>
     /// <param name="res" type="ApiResponse"></param>
     var config = req.service == null ? null : req.service.config == null ? null : req.service.config.appSettings;
+    if (config == null && !process.env.EMULATED)
+        config = require('mobileservice-config').appSettings;
     var stations = new Stations(config);
     stations.get(req, res);
 };
