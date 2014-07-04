@@ -7,6 +7,7 @@ function Stations(settings) {
     var self = this;
     self.response = null;
     self.serviceData = null; // table service
+    self.serviceBlobs = null;
     self.serviceCache = null; // data cache handler
     self.serviceHandlers = null; // service specific methods
     self.serviceName = null;
@@ -167,12 +168,15 @@ function Stations(settings) {
                 var retryOperations = new azure.ExponentialRetryPolicyFilter();
                 self.serviceData = azure.createTableService()
                     .withFilter(retryOperations); 
+                self.serviceBlobs = azure.createBlobService()
+                    .withFilter(retryOperations);
 
                 cached = new EventEmitter();
                 cached.service = new ServiceCache(self.loggingLevel, self.maxCacheAge);
                 cached.service.fullServiceName = fullServiceName;
                 cached.service.serviceName = self.serviceName;
                 cached.service.serviceData = self.serviceData;
+                cached.service.serviceBlobs = self.serviceBlobs;
                 self.serviceCache = cached.service;
                 cacheCache[fullServiceName] = cached;
 

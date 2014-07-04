@@ -138,7 +138,9 @@ function replaceAll(source, from, to) {
 }
 
 function extractFromJson2(data, cityName) {
+    // special characters encoded as hex values are not allowed in json, instead we convert them to unicode values
     data = replaceAll(data, '\\x', '\\u00');
+    // apostrophes are unnecessarily escaped
     data = replaceAll(data, "\\'", "'");
     var stationList = JSON.parse(data);
     var stations = [];

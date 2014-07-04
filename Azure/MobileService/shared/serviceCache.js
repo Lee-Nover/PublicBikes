@@ -12,6 +12,7 @@ function ServiceCache(loggingLevel, maxCacheAge) {
     var self = this;
     self.serviceName = "";
     self.serviceData = null;
+    self.serviceBlobs = null;
     self.cityName = "";
     self.fullServiceName = "";
     
@@ -40,19 +41,38 @@ function ServiceCache(loggingLevel, maxCacheAge) {
             return;
         
         self.logInfo('updating cache for ' + self.fullServiceName, llVerbose);
+        var blobData = null;
+        var isDebug = process.env.EMULATED;
+        if (isDebug && data != null && data.length > 32000) {
+            blobData = data;
+            data = 'blob';
+        };
+
         var entity = {
             PartitionKey: 'stations', 
             RowKey: self.fullServiceName,
             serviceData: data
         };
-        self.serviceData.insertOrReplaceEntity('serviceData', entity,
-            function (error) {
-                if (!error)
-                    self.logSuccess();
-                else if (onError)
-                    onError(error);
-            }
-        );
+        
+        if (blobData != null) {
+            self.serviceBlobs.createBlockBlobFromText('serviceData', self.fullServiceName + '.json', blobData,
+                function (error) {
+                    if (!error)
+                        self.logSuccess();
+                    else if (onError)
+                        onError(error);
+                }
+            );
+        } else {
+            self.serviceData.insertOrReplaceEntity('serviceData', entity,
+                function (error) {
+                    if (!error)
+                        self.logSuccess();
+                    else if (onError)
+                        onError(error);
+                }
+            );
+        }
     };
 
     self.checkServiceData = function (city, onError, onDownloadData, onProcessData) {
@@ -78,7 +98,10 @@ function ServiceCache(loggingLevel, maxCacheAge) {
                     }
                     else self.logInfo('data not cached for ' + fullServiceName, llVerbose);
                     if (isDataUsable)
-                        onProcessData(result.serviceData)
+                        if (result.serviceData === 'blob')
+                            self.readFromBlob(fullServiceName, onError, onProcessData);
+                        else
+                            onProcessData(result.serviceData);
                     else
                         onDownloadData(onProcessData);
                 } else if (onError)
@@ -87,9 +110,27 @@ function ServiceCache(loggingLevel, maxCacheAge) {
         }
 
         self.serviceData.createTableIfNotExists('serviceData', function(error){
-            if(!error) {
+            if (!error)
                 query();
-            } else if (onError)
+            else if (onError)
+                onError(error);
+        });
+    };
+
+    self.readFromBlob = function (fullServiceName, onError, onProcessData) {
+        var readData = function() {
+            self.serviceBlobs.getBlobToText('serviceData', fullServiceName + '.json', 
+                function(error, text) {
+                    if (!error)
+                        onProcessData(text);
+                    else if (onError)
+                        onError(error);
+                });
+        };
+        self.serviceBlobs.createContainerIfNotExists('serviceData', function(error){
+            if (!error)
+                readData();
+            else if (onError)
                 onError(error);
         });
     };
