@@ -42,8 +42,7 @@ function ServiceCache(loggingLevel, maxCacheAge) {
         
         self.logInfo('updating cache for ' + self.fullServiceName, llVerbose);
         var blobData = null;
-        var isDebug = process.env.EMULATED;
-        if (isDebug && data != null && data.length > 4096 * 4) {
+        if (data != null && data.length > 4096 * 4) {
             blobData = data;
             data = 'blob';
         };
