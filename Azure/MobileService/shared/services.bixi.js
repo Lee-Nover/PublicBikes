@@ -100,10 +100,11 @@ function extractFromXML(data, cityName) {
             lng: parseFloat($('long', co).text()),
             status: ((installed == 'true' && locked == 'false')) ? 1 : 0,
             bikes: parseInt($('nbBikes', co).text()),
-            emptyDocks: parseInt($('nbEmptyDocks', co).text()),
-            totalDocks: parseInt($('nbDocks', co).text())
+            freeDocks: parseInt($('nbEmptyDocks', co).text()),
+            totalDocks: parseInt('0' + $('nbDocks', co).text())
         }
-        station.totalDocks = station.bikes + station.emptyDocks;
+        if (!station.totalDocks)
+            station.totalDocks = station.bikes + station.freeDocks;
         stations[idxStation++] = station;
     });
 
@@ -128,6 +129,8 @@ function extractFromJson(data, cityName) {
             freeDocks: parseInt(s.availableDocks),
             totalDocks: parseInt(s.totalDocks)
         }
+        if (!station.totalDocks)
+            station.totalDocks = station.bikes + station.freeDocks;
         stations[idxStation++] = station;    
     });
     return JSON.stringify(stations);
@@ -158,6 +161,8 @@ function extractFromJson2(data, cityName) {
             freeDocks: parseInt(s.nbEmptyDocks),
             totalDocks: parseInt(s.nbBikes) + parseInt(s.nbEmptyDocks)
         }
+        if (!station.totalDocks)
+            station.totalDocks = station.bikes + station.freeDocks;
         stations[idxStation++] = station;    
     });
     return JSON.stringify(stations);
