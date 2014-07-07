@@ -23,6 +23,7 @@ namespace Bicikelj.Model
                 new City(){ CityName = "Chattanooga", Country = "United States", ServiceName = "Bike Chattanooga", UrlCityName = "chattanooga", Provider = Instance },
                 new City(){ CityName = "Chicago", Country = "United States", ServiceName = "Divvy", UrlCityName = "chicago", Provider = Instance },
                 new City(){ CityName = "New York", Country = "United States", ServiceName = "Citi Bike", UrlCityName = "newyork", Provider = Instance },
+                new City(){ CityName = "Aspen", Country = "United States", ServiceName = "we cycle", UrlCityName = "aspen", Provider = Instance },
                 new City(){ CityName = "San Francisco", Country = "United States", ServiceName = "Bay Area Bike Share", UrlCityName = "sanfrancisco", AlternateCityName = "bay area", Provider = Instance },
                 new City(){ CityName = "London", Country = "United Kingdom", ServiceName = "Barclays Cycle Hire", UrlCityName = "london", Provider = Instance },
                 new City(){ CityName = "Melbourne", Country = "Australia", ServiceName = "Melbourne bike share", UrlCityName = "melbourne", Provider = Instance }

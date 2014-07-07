@@ -29,6 +29,8 @@ exports.getUrl = function(cityName) {
             return "https://divvybikes.com/stations/json";
         case "sanfrancisco":
             return "http://bayareabikeshare.com/stations/json";
+        case "aspen":
+            return "https://www.we-cycle.org/pbsc/stations.php";
         // unknown
         default:
             return "http://bixi.com";
@@ -51,6 +53,7 @@ exports.extractData = function (data, cityName) {
         case "newyork":
         case "chicago":
         case "sanfrancisco":
+        case "aspen":
             return extractFromJson(data, cityName);
         // special json
         case "melbourne":
@@ -115,7 +118,7 @@ function extractFromJson(data, cityName) {
     var stationList = JSON.parse(data);
     var stations = [];
     var idxStation = 0;
-    var useLandmark = cityName == "chattanooga";
+    var useLandmark = cityName == 'chattanooga';
     stationList.stationBeanList.forEach(function visitStation(s) {
         var station = {
             id: s.id,
@@ -131,6 +134,11 @@ function extractFromJson(data, cityName) {
         }
         if (!station.totalDocks)
             station.totalDocks = station.bikes + station.freeDocks;
+        if (s.stAddress2 != '')
+            if (s.stAddress1 != s.stationName)
+                station.address += ', ' + s.stAddress2;
+            else
+                station.address = s.stAddress2;
         stations[idxStation++] = station;    
     });
     return JSON.stringify(stations);
