@@ -104,9 +104,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BugSense-WP8, Version=3.6.5.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BugSense-WP8, Version=3.6.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\BugSense.WP8.3.6.5.0\lib\wp8\BugSense-WP8.dll</HintPath>
+      <HintPath>..\packages\BugSense.WP8.3.6.7.0\lib\wp8\BugSense-WP8.dll</HintPath>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=1.5.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

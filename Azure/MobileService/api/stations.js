@@ -172,6 +172,7 @@ function Stations(settings) {
                     .withFilter(retryOperations);
 
                 cached = new EventEmitter();
+                cached.setMaxListeners(100);
                 cached.service = new ServiceCache(self.loggingLevel, self.maxCacheAge);
                 cached.service.fullServiceName = fullServiceName;
                 cached.service.serviceName = self.serviceName;
