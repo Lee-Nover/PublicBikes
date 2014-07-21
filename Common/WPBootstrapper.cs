@@ -96,7 +96,7 @@ namespace Bicikelj
                     e.Handled = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
                         "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
                     if (!e.Handled)
-                        SendError(e.ExceptionObject, "");
+                        LogError(e.ExceptionObject, "");
                 });
             };
 #else
@@ -111,11 +111,11 @@ namespace Bicikelj
 #endif
         }
 
-        public void SendError(Exception e, string comment)
+        public void LogError(Exception e, string comment, string commentKey = null)
         {
             var logService = IoC.Get<ILoggingService>();
             if (logService != null)
-                logService.LogError(e, comment);
+                logService.LogError(e, comment, commentKey);
         }
 
         protected override void OnStartup(object sender, StartupEventArgs e)

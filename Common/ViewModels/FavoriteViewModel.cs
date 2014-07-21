@@ -10,6 +10,7 @@ namespace Bicikelj.ViewModels
     {
         private FavoriteLocation location;
         public FavoriteLocation Location { get { return location; } set { SetLocation(value); } }
+        public StationAvailability Availability { get; set; }
         private IEventAggregator events;
         public string LocationName { get { return location.Name; } }
         public string Address { get { return location.Address; } }

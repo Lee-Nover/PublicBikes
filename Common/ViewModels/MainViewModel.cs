@@ -235,7 +235,7 @@ namespace Bicikelj.ViewModels
                             config.UpdateAvailable = "";
                     }
                 },
-                error => { BugSense.BugSenseHandler.Instance.SendExceptionAsync(error, "CheckUpdate", "failed to get the latest version info"); });
+                error => { App.CurrentApp.LogError(error, "failed to get the latest version info", "CheckUpdate"); });
         }
 
         private bool isTitleVisible = true;

@@ -4,6 +4,6 @@ namespace Bicikelj.Model.Logging
 {
     public interface ILoggingService
     {
-        void LogError(Exception e, string comment);
+        void LogError(Exception e, string comment, string commentKey = null);
     }
 }

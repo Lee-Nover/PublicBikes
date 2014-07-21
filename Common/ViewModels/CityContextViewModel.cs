@@ -172,6 +172,9 @@ namespace Bicikelj.ViewModels
                 if (azureProvider != null)
                     azureProvider.DataCenterName = config.AzureDataCenter;
                 AzureServiceCredentials.Key = dataCenter.ApplicationKey;
+
+                if (city.Coordinate != null && !city.Coordinate.IsUnknown)
+                    IoC.Get<Bicikelj.Model.Analytics.IAnalyticsService>().SetLocation(city.Coordinate);
             }
             subCity.OnNext(this.city);
         }
