@@ -13,6 +13,7 @@ namespace Bicikelj.Model.Logging
     {
         public void LogError(Exception e, string comment, string commentKey = null)
         {
+            if (e == null) return;
             BugSenseHandler.Instance.ClearCrashExtraData();
             if (e.Data != null && e.Data.Contains("DetailedStack"))
             {

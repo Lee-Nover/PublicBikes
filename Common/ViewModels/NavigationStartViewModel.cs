@@ -166,7 +166,7 @@ namespace Bicikelj.ViewModels
         {
             if (!CheckNetworkConnection()) return;
             App.CurrentApp.LogAnalyticEvent("Finding nearest bike");
-            FindNearestStationWithCondition(null, "finding nearest bike...", (s, a) => { return a.Open && a.Available > 0; });
+            FindNearestStationWithCondition(null, "finding nearest bike...", (s, a) => { return a != null && a.Open && a.Available > 0; });
         }
 
         public bool CanFindNearestFreeStand { get { return IsEnabled; } }
@@ -174,7 +174,7 @@ namespace Bicikelj.ViewModels
         {
             if (!CheckNetworkConnection()) return;
             App.CurrentApp.LogAnalyticEvent("Finding nearest stand");
-            FindNearestStationWithCondition(null, "finding nearest stand...", (s, a) => { return a.Open && a.Free > 0; });
+            FindNearestStationWithCondition(null, "finding nearest stand...", (s, a) => { return a != null && a.Open && a.Free > 0; });
         }
 
         private void FindNearestStationWithCondition(GeoCoordinate location, string msg, StationCondition condition)
