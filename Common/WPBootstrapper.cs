@@ -83,21 +83,37 @@ namespace Bicikelj
             e.Data.Add("DetailedStack", detailedStack);
         }
 
+        private bool firstNavDone = false;
         protected virtual void InitServices()
         {
 #if !DEBUG || ANALYTICS
             FlurryWP8SDK.Api.StartSession(FlurryCredentials.Key);
             var exceptionManager = new ExceptionManager(Application);
             BugSenseHandler.Instance.InitAndStartSession(exceptionManager, App.CurrentApp.RootVisual as PhoneApplicationFrame, BugSenseCredentials.Key);
+
+            var navService = IoC.Get<INavigationService>();
+            System.Windows.Navigation.NavigatedEventHandler navigated = null;
+            navigated = (sender, e) =>
+            {
+                firstNavDone = true;
+                if (navService != null)
+                    navService.Navigated -= navigated;
+            };
+            if (navService != null)
+                navService.Navigated += navigated;
+            
             exceptionManager.UnhandledException += (s, e) =>
             {
-                Execute.OnUIThread(() =>
-                {
-                    e.Handled = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
-                        "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
-                    if (!e.Handled)
-                        LogError(e.ExceptionObject, "");
-                });
+                if (firstNavDone)
+                    Execute.OnUIThread(() =>
+                    {
+                        e.Handled = MessageBox.Show("Something unexpected happened. We will log this problem and fix it as soon as possible. \nIs it ok to send the report?",
+                            "uh-oh :(", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel;
+                        if (!e.Handled)
+                            LogError(e.ExceptionObject, "");
+                    });
+                else
+                    LogError(e.ExceptionObject, "Before first navigation");
             };
 #else
             App.Current.UnhandledException += (s, e) =>
