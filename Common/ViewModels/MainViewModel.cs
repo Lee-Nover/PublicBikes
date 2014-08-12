@@ -105,7 +105,16 @@ namespace Bicikelj.ViewModels
                     CheckLocationServices();
                     CheckRating();
                     CheckUpdate();
+                    UpdateStations();
                 });
+        }
+
+        private void UpdateStations()
+        {
+            var stationsAgeDays = (DateTime.Now - config.LastUpdatedStations).Days;
+            // update every 8 days
+            if (stationsAgeDays > 7)
+                DownloadStations();
         }
 
         private void CheckRedirect()

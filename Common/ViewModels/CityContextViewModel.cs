@@ -276,6 +276,7 @@ namespace Bicikelj.ViewModels
                     if (_city != null)
                     {
                         _city.Stations = sl;
+                        config.LastUpdatedStations = DateTime.Now;
                         if (sl != null && sl.Count > 0)
                             GetFavorites().Take(1).Subscribe(favs => {
                                 if (favs != null)
