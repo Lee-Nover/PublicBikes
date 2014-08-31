@@ -39,6 +39,7 @@
     <Compile Include="shared\services.nextbike.js" />
     <Compile Include="shared\services.publibike.js" />
     <Compile Include="shared\services.samba.js" />
+    <Compile Include="shared\services.hourbike.js" />
     <Compile Include="shared\services.smartbike.js" />
   </ItemGroup>
   <ItemGroup>
