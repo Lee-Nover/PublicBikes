@@ -241,7 +241,7 @@ namespace Bicikelj.Model
         private static BikeServiceProvider[] providers = new BikeServiceProvider[] {
             CycloCityService.Instance, NextBikeService.Instance, SambaService.Instance, 
             ClearChannelService.Instance, SmartBikeService.Instance, BCycleService.Instance,
-            BixiService.Instance, PubliBikeService.Instance
+            BixiService.Instance, PubliBikeService.Instance, HourBikeService.Instance
         };
 
         public static City FindByCityName(string cityName)

@@ -212,6 +212,7 @@
   </country>
   <country name="United Kingdom">
     <city name="London" lat="51.498445255" lng="-0.11952246799999999" radius="9467" />
+    <city name="Liverpool" lat="53.398367500000006" lng="-2.96551486665" radius="4121" />
   </country>
   <country name="United States">
     <city name="Austin" lat="30.267335" lng="-97.749315" radius="2937" />
