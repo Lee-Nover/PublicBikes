@@ -426,7 +426,8 @@ namespace Bicikelj.ViewModels
             lock (cityLoadStates)
             {
                 cityLoadStates[city] = CityLoadState.NotLoaded;
-                city.Stations.Clear();
+                if (city.Stations != null)
+                    city.Stations.Clear();
                 var cityFile = "Cities\\" + city.UrlCityName;
                 using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
                     if (myIsolatedStorage.FileExists(cityFile))
