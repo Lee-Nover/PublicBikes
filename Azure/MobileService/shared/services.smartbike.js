@@ -6,7 +6,7 @@ exports.getUrl = function(cityName) {
         case 'stockholm':
             return 'https://secure.citybikes.se/maps/a/grs';
         case 'antwerpen':
-            return "https://www.velo-antwerpen.be/localizaciones/station_map.php";
+            return "https://www.velo-antwerpen.be/availability_map/getJsonObject";
         case 'mexicocity':
             return "https://www.ecobici.df.gob.mx/availability_map/getJsonObject";
         case "milano":
@@ -21,7 +21,6 @@ exports.extractData = function (data, cityName) {
         case 'stockholm':
             return extractFromXML(data, cityName);
         case 'antwerpen':
-            return extractFromHTMLAntwerp(data, cityName);
         case 'mexicocity':
             return extractFromJsonMX(data, cityName);
         case 'milano':
