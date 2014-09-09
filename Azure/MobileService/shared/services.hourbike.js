@@ -5,6 +5,8 @@ exports.getUrl = function(cityName) {
     switch (cityName) {
         case 'liverpool':
             return 'http://www.citybikeliverpool.co.uk/LocationsMap.aspx';
+        case 'szczecin':
+            return 'https://www.bikes-srm.pl/LocationsMap.aspx';
         default:
             return '';
     }
@@ -13,6 +15,7 @@ exports.getUrl = function(cityName) {
 exports.extractData = function (data, cityName) {
     switch (cityName) {
         case 'liverpool':
+        case 'szczecin':
             return extractFromJson(data, cityName);
         default:
             break;
