@@ -144,6 +144,7 @@
     <city name="Opole" lat="50.6680561514835" lng="17.9236262665119" radius="3451" />
     <city name="Warszawa" lat="52.231784054075959" lng="21.00000679492949" radius="12586" />
     <city name="Sopot" lat="54.443939" lng="18.552759104595182" radius="1892" />
+	<city name="Szczecin" lat="53.431314" lng="14.5475395" radius="1743" />
   </country>
   <country name="Slovenia">
     <city name="Ljubljana" lat="46.0602435" lng="14.504797499999999" radius="3749" />
