@@ -21,14 +21,15 @@ function Stations(settings) {
 
     self.respondResult = function(result) {
         if (result !== null)
-            self.response.send(200, result);
+            self.response.status(200).send(result);
         else
-            self.response.send(404, { message: 'Stations for city ' + self.cityName + ' not found!' });
+            self.response.status(404).send({ message: 'Stations for city ' + self.cityName + ' not found!' });
     };
 
     self.respondError = function(error) {
-        console.error(error);
-        self.response.send(500, error);
+        handleError(error);
+        //console.error(error);
+        self.response.status(500).send(error);
     };
 
     self.updateData = function(data) {
@@ -108,8 +109,9 @@ function Stations(settings) {
         } else return body;
     }
 
-    self.downloadData = function(onProcessData) {
-        console.log('Downloading the ' + self.fullServiceName + ' service data ...');
+    self.downloadData = function (onProcessData) {
+        if (self.loggingLevel > 1)
+            console.log('Downloading the ' + self.fullServiceName + ' service data ...');
         var request = require('../shared/crequest');
         var cityListUrl = self.serviceHandlers.getUrl(self.cityName, self.cityId);
         var retryCount = 1;
@@ -117,13 +119,15 @@ function Stations(settings) {
         var handleResponse = function (error, response, body) {
             if (!error && response && response.statusCode == 200) {
                 var dlTime = (Date.now() - dlStart) / 1000;
-                console.log('Data for ' + self.fullServiceName + ' downloaded in ' + dlTime + 's');
+                if (self.loggingLevel > 1)
+                    console.log('Data for ' + self.fullServiceName + ' downloaded in ' + dlTime + 's');
                 body = decodeBody(response, body);
                 body = self.serviceHandlers.extractData(body, self.cityName, self.cityId);
                 onProcessData(body, self.updateData);
             } else if (retryCount-- > 0) {
                 request(cityListUrl, { encoding: null }, handleResponse);
             } else {
+                cacheCache[self.fullServiceName] = null;
                 var msg = '';
                 if (response)
                     msg += ' Response: ' + response.statusCode;
@@ -187,6 +191,7 @@ function Stations(settings) {
                         try {
                             var stations = self.processData(data, onUpdate);
                         } catch (e) {
+                            cacheCache[fullServiceName] = null;
                             self.respondError(e);
                         }
                         cached.emit('finished', stations);
@@ -218,6 +223,31 @@ exports.get = function (req, res) {
     var config = req.service == null ? null : req.service.config == null ? null : req.service.config.appSettings;
     if (config == null && !process.env.EMULATED)
         config = require('mobileservice-config').appSettings;
+    if (config == null || config.USE_TABLE_STORAGE == null)
+        config = process.env;
     var stations = new Stations(config);
     stations.get(req, res);
 };
+
+handleError = function (err) {
+    if (process.env.SEND_STATUS_EMAIL) {
+        var sgUser = process.env.SENDGRID_USER;
+        var sgPass = process.env.SENDGRID_PASS;
+        var sendgrid = require('sendgrid')(sgUser, sgPass);
+        var payload = {
+            to      : process.env.STATUS_EMAIL_TO,
+            from    : process.env.STATUS_EMAIL_FROM,
+            subject : 'PublicBikes Azure Error',
+            text    : err
+        }
+        sendgrid.send(payload, function (err, res) {
+            if (err)
+                console.error(err);
+        });
+    }
+    console.error(err);
+}
+
+process.on('uncaughtException', function (err) {
+    handleError(err);
+});

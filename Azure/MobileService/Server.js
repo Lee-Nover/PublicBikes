@@ -1,9 +1,13 @@
 var port = process.env.port || 1337;
 var express = require('express');
 var app = module.exports = express();
-//app.use(express.compress());
-//app.use(express.bodyParser());
-process.env.EMULATED = true;
+var compress = require('compression');
+var bodyParser = require('body-parser');
+app.use(compress());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.get('/', function (req, resp) {
     resp.type('text/plain'); // set content-type
@@ -40,9 +44,8 @@ app.get('/:service/:city/:id?', function (req, resp) {
    }
 });
 
-
 process.on('uncaughtException', function (err) {
-  console.error(err);
+  handleError(err);
   //response.send(500, err);
 });
 
