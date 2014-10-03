@@ -184,8 +184,13 @@ namespace Bicikelj.ViewModels
         private void CheckUpdate()
         {
             Version appVer = App.CurrentApp.Version;
+#if DEBUG
+            var dataCenter = AzureService.AzureServices.GetDevCenter();
+            config.AzureDataCenter = dataCenter.Name;
+#else
             if (string.IsNullOrEmpty(config.AzureDataCenter))
                 config.AzureDataCenter = AzureService.AzureServices.GetClosestCenter(null).Name;
+#endif
             var azureCenter = config.AzureDataCenter;
             DownloadUrl.GetAsyncTuple<VersionHistory[]>(string.Format("https://{0}.azure-mobile.net/api/versions/published", azureCenter))
                 .Retry(2)

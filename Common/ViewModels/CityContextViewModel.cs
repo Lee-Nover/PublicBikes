@@ -166,7 +166,12 @@ namespace Bicikelj.ViewModels
             this.city = newCity;
             if (city != null)
             {
+#if DEBUG
+                var dataCenter = AzureService.AzureServices.GetDevCenter();
+#else
                 var dataCenter = AzureService.AzureServices.GetClosestCenter(city.Coordinate);
+#endif
+
                 config.AzureDataCenter = dataCenter.Name;
                 var azureProvider = city.Provider as AzureServiceProxy;
                 if (azureProvider != null)
@@ -410,7 +415,9 @@ namespace Bicikelj.ViewModels
 
         public IObservable<City> GetCurrentCity()
         {
-            return LocationHelper.GetCurrentCity().Select(cityName => { SetCity(cityName.ToLowerInvariant()); return city; });
+            return LocationHelper.GetCurrentCity()
+                .Distinct()
+                .Select(cityName => { SetCity(cityName.ToLowerInvariant()); return city; });
         }
 
         #endregion

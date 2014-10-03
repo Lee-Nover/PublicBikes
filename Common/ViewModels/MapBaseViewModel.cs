@@ -23,6 +23,7 @@ namespace Bicikelj.ViewModels
         protected MapControls.Map map = null;
         private IDisposable currentGeo;
         private IDisposable stationObs;
+        private IDisposable cityObs;
         protected IEventAggregator events;
         protected SystemConfig config;
         protected CityContextViewModel cityContext;
@@ -81,6 +82,7 @@ namespace Bicikelj.ViewModels
             {
                 ReactiveExtensions.Dispose(ref currentGeo);
                 ReactiveExtensions.Dispose(ref stationObs);
+                ReactiveExtensions.Dispose(ref cityObs);
             }
             base.OnDeactivate(close);
         }
@@ -108,6 +110,13 @@ namespace Bicikelj.ViewModels
                     .Where(sl => sl != null)
                     .ObserveOn(syncContext)
                     .Subscribe(OnGotStations, OnGetStationsError);
+
+            if (cityObs == null)
+                cityObs = cityContext.CityObservable
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .Subscribe(city => {
+                        initialZoomDone = false;
+                    });
         }
 
         private void OnLocationChanged(GeoStatusAndPos pos)
@@ -127,7 +136,7 @@ namespace Bicikelj.ViewModels
                     .Select(addr => new GeoAddress(pos, addr))
                     .Subscribe(OnLocationChanged, OnLocationChangeError);
             }
-            ZoomMap();
+            //ZoomMap();
         }
 
         private void OnLocationChanged(GeoAddress location)

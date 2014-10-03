@@ -114,18 +114,26 @@ function Stations(settings) {
             console.log('Downloading the ' + self.fullServiceName + ' service data ...');
         var request = require('../shared/crequest');
         var cityListUrl = self.serviceHandlers.getUrl(self.cityName, self.cityId);
+        var headers = self.serviceHandlers.getHeaders != null ? self.serviceHandlers.getHeaders() : null;
         var retryCount = 1;
         var dlStart = Date.now();
+        var options = {
+            encoding: null
+        }
+        if (headers)
+            options.headers = headers;
         var handleResponse = function (error, response, body) {
             if (!error && response && response.statusCode == 200) {
                 var dlTime = (Date.now() - dlStart) / 1000;
-                if (self.loggingLevel > 1)
+                if (self.loggingLevel > 1 || dlTime > 4)
                     console.log('Data for ' + self.fullServiceName + ' downloaded in ' + dlTime + 's');
                 body = decodeBody(response, body);
                 body = self.serviceHandlers.extractData(body, self.cityName, self.cityId);
+                if (!body)
+                    throw 'Unknown data format for ' + self.fullServiceName;
                 onProcessData(body, self.updateData);
             } else if (retryCount-- > 0) {
-                request(cityListUrl, { encoding: null }, handleResponse);
+                request(cityListUrl, options, handleResponse);
             } else {
                 cacheCache[self.fullServiceName] = null;
                 var msg = '';
@@ -136,7 +144,8 @@ function Stations(settings) {
                 self.respondError('Could not get the ' + self.fullServiceName + ' service data! ' + msg);
             }
         }
-        request(cityListUrl, { encoding: null }, handleResponse);
+        
+        request(cityListUrl, options, handleResponse);
     };
 
     self.get = function (req, res) {
@@ -203,7 +212,8 @@ function Stations(settings) {
                 }
             } else {
                 // subscribe as observer; send response when request is finished
-                console.log('Already getting ' + self.fullServiceName + ' service data ...');
+                if (self.loggingLevel > 1)
+                    console.log('Already getting ' + self.fullServiceName + ' service data ...');
                 cached.once('finished', self.returnData);
             }
         } else {
@@ -230,6 +240,7 @@ exports.get = function (req, res) {
 };
 
 handleError = function (err) {
+    err = err || 'Unknown error';
     if (process.env.SEND_STATUS_EMAIL) {
         var sgUser = process.env.SENDGRID_USER;
         var sgPass = process.env.SENDGRID_PASS;
@@ -240,9 +251,9 @@ handleError = function (err) {
             subject : 'PublicBikes Azure Error',
             text    : err
         }
-        sendgrid.send(payload, function (err, res) {
-            if (err)
-                console.error(err);
+        sendgrid.send(payload, function (err2, res) {
+            if (err2)
+                console.error(err2);
         });
     }
     console.error(err);
