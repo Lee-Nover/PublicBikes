@@ -195,6 +195,7 @@ namespace Bicikelj.ViewModels
             DownloadUrl.GetAsyncTuple<VersionHistory[]>(string.Format("https://{0}.azure-mobile.net/api/versions/published", azureCenter))
                 .Retry(2)
                 .Take(1)
+                .Finally(CheckWhatsNew)
                 .Subscribe(versions =>
                 {
                     if (versions != null && versions.Item1.Length > 0)
@@ -250,6 +251,21 @@ namespace Bicikelj.ViewModels
                     }
                 },
                 error => { App.CurrentApp.LogError(error, "failed to get the latest version info", "CheckUpdate"); });
+        }
+
+        private void CheckWhatsNew()
+        {
+            var appVer = App.CurrentApp.Version;
+            if (config.LastUsedVersion != null && config.LastUsedVersion >= appVer)
+                return;
+            Type initialPage = config.LastUsedVersion != null ? typeof(VersionHistoryViewModel) : typeof(AboutViewModel);
+            config.LastUsedVersion = appVer;
+            var about = IoC.Get<AppInfoViewModel>();
+            about.IsADialog = true;
+            about.InitialPage = initialPage;
+            Execute.BeginOnUIThread(() => {
+                Bicikelj.NavigationExtension.NavigateTo(about);
+            });
         }
 
         private bool isTitleVisible = true;

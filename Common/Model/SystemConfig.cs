@@ -23,6 +23,24 @@ namespace Bicikelj.Model
         public string UpdateAvailable { get; set; }
         public string LastCheckedVersion { get; set; }
         public DateTime LastUpdatedStations { get; set; }
+        [IgnoreDataMember]
+        public Version LastUsedVersion { get; set; }
+        [DataMember(Name="LastUsedVersion")]
+        public string LastUsedVersionStr
+        {
+            get
+            {
+                if (this.LastUsedVersion == null)
+                    return string.Empty;
+                else
+                    return this.LastUsedVersion.ToString();
+            }
+            set
+            {
+                if (!String.IsNullOrEmpty(value))
+                    this.LastUsedVersion = new Version(value);
+            }
+        }
 
         public string AzureDataCenter { get; set; }
 

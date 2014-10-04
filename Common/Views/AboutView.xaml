@@ -22,13 +22,20 @@
                     <Run FontSize="{StaticResource PhoneFontSizeLarge}" Text="{Binding AppTitle}" />
                     <Run Text="   v " Foreground="{StaticResource PhoneSubtleBrush}" /><Run Text="{Binding VersionNumber}" Foreground="{StaticResource PhoneSubtleBrush}" />
                 </TextBlock>
-                <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,12,12,0" 
-                       Text="A simple to use app to get around the city using public bikes. You can find the nearest free bike or dock, map a route using the most appropriate bike stations.
-The application uses many different services to provide bike and station availability information across the world."  />
+                <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,12,12,0">
+                    <Run>A simple to use app to get around the city using public bikes. You can find the nearest free bike or dock, map a route using the most appropriate bike stations.
+The application uses many different services to provide bike and station availability information across the world.</Run>
+                </TextBlock>
                 <!--TextBlock x:Name="SupportedServices" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" />
                 <TextBlock TextWrapping="Wrap" Text="Providing info in these countries:" Style="{StaticResource PhoneTextNormalStyle}" />
                 <TextBlock x:Name="SupportedCountries" TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" /-->
-                
+                <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}">
+                    <Run>Powered by B‐cycle (where available)</Run>
+                    <LineBreak />
+                    <Run>To sign up, go to www.bcycle.com</Run>
+                    <LineBreak />
+                    <Run>This is a 3rd party app not affiliated with B‐cycle.</Run>
+                </TextBlock>
                 <TextBlock Margin="12,12,12,0" TextWrapping="Wrap" Text="Maps and routing are provided by Bing Maps." Style="{StaticResource PhoneTextNormalStyle}" />
                 <TextBlock TextWrapping="Wrap" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,12,12,0">
                     <Run FontSize="{StaticResource PhoneFontSizeLarge}">Usage of Location Services</Run>
@@ -39,6 +46,7 @@ The application uses many different services to provide bike and station availab
                     <Run FontSize="{StaticResource PhoneFontSizeLarge}">Usage of device information</Run>
                     <LineBreak/>
                     <Run>When an error occurs in the application, anonymous device information is collected to help correct the error. The user can choose not to send the data. The information included in the reports is related only to the error that occured and includes: the Application version, OS version, device model, display dimensions, country of usage, locale (formatting), operator name, available data connections (wifi / cellular). No user identifiable data is collected such as user ID, phone number*, emails* or location data. * not supported by the system.</Run>
+                    <LineBreak />
                 </TextBlock>
             </StackPanel>
         </ScrollViewer>
