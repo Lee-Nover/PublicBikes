@@ -56,6 +56,9 @@
     <city name="Toronto" lat="43.653497" lng="-79.389938" radius="3122" />
     <city name="Ottawa" lat="45.419289" lng="-75.713179" radius="3720" />
   </country>
+  <country name="Chile">
+    <city name="Santiago" lat="-33.37567" lng="-70.547955" radius="6095" />
+  </country>
   <country name="Croatia">
     <city name="Zagreb" lat="45.797888872026249" lng="15.9633506834507" radius="4521" />
   </country>
@@ -144,7 +147,7 @@
     <city name="Opole" lat="50.6680561514835" lng="17.9236262665119" radius="3451" />
     <city name="Warszawa" lat="52.231784054075959" lng="21.00000679492949" radius="12586" />
     <city name="Sopot" lat="54.443939" lng="18.552759104595182" radius="1892" />
-	<city name="Szczecin" lat="53.431314" lng="14.5475395" radius="1743" />
+    <city name="Szczecin" lat="53.431314" lng="14.5475395" radius="1743" />
   </country>
   <country name="Slovenia">
     <city name="Ljubljana" lat="46.0602435" lng="14.504797499999999" radius="3749" />
@@ -161,7 +164,7 @@
     <city name="Stockholm" lat="59.33915395" lng="18.037599999999998" radius="6855" />
   </country>
   <country name="Switzerland">
-    <city name="Luzern" lat="47.0417395" lng="8.308845162391659" radius="4410" />
+    <city name="Luzern" lat="47.050345" lng="8.311486" radius="1000" />
     <city name="Delémont" lat="47.36219" lng="7.349579" radius="1000" />
     <city name="Luzern" lat="47.050345" lng="8.311486" radius="1000" />
     <city name="Bern" lat="46.95255" lng="7.450149" radius="1672" />
@@ -216,22 +219,36 @@
     <city name="Liverpool" lat="53.398367500000006" lng="-2.96551486665" radius="4121" />
   </country>
   <country name="United States">
+    <city name="Arbor" lat="42.284385" lng="-83.733229999999992" radius="1699" />
     <city name="Austin" lat="30.267335" lng="-97.749315" radius="2937" />
+    <city name="Battle Creek" lat="42.32208" lng="-85.186299999999989" radius="1000" />
     <city name="Boulder" lat="40.02145" lng="-105.264775" radius="2548" />
     <city name="Broward" lat="26.123399999999997" lng="-80.116109999999992" radius="15607" />
     <city name="Charlotte" lat="35.217475" lng="-80.84787" radius="3559" />
+    <city name="Cincinnati" lat="39.119965" lng="-84.508285" radius="2742" />
+    <city name="Columbia County" lat="33.54338" lng="-82.13133" radius="1000" />
+    <city name="Dallas" lat="32.779671" lng="-96.759816" radius="1000" />
     <city name="Denver" lat="39.721360000000004" lng="-104.98807500000001" radius="6033" />
+    <city name="Denver Federal Center" lat="39.717389999999995" lng="-105.120995" radius="1000" />
     <city name="Des Moines" lat="41.58631" lng="-93.625265" radius="755" />
+    <city name="Fargo" lat="46.879431" lng="-96.790748" radius="2000" />
     <city name="Fort Worth" lat="32.731645" lng="-97.35278" radius="4818" />
     <city name="Greenville" lat="34.846075" lng="-82.408695" radius="1317" />
     <city name="Hawaii" lat="21.3928" lng="-157.742805" radius="195" />
     <city name="Houston" lat="29.747915" lng="-95.373365" radius="4241" />
+    <city name="Indianapolis" lat="39.7671" lng="-86.15769" radius="2230" />
     <city name="Kansas City" lat="39.075109999999995" lng="-94.58372" radius="3977" />
     <city name="Madison" lat="43.069845" lng="-89.40245" radius="5964" />
+    <city name="Milwaukee" lat="43.041925" lng="-87.907085" radius="1174" />
     <city name="Nashville" lat="36.14877" lng="-86.781305" radius="4193" />
     <city name="Omaha" lat="41.253095" lng="-95.97097" radius="4270" />
+    <city name="Rapid City" lat="44.078095000000005" lng="-103.217315" radius="1000" />
+    <city name="Salt Lake City" lat="40.7649" lng="-111.89431" radius="1399" />
     <city name="San Antonio" lat="29.39028" lng="-98.476975" radius="8287" />
+    <city name="San Francisco" lat="37.6025055" lng="-122.259015" radius="26562" />
+    <city name="Savannah" lat="32.079975000000005" lng="-81.097415" radius="1000" />
     <city name="Spartanburg" lat="34.95385" lng="-81.928945" radius="1131" />
+    <city name="Whippany" lat="40.826343" lng="-74.417204" radius="2000" />
     <city name="Washington DC" lat="38.9633185" lng="-77.0671815" radius="21329" />
     <city name="Minneapolis" lat="44.961798" lng="-93.199983" radius="12463" />
     <city name="Boston" lat="42.3569785" lng="-71.0845905" radius="7280" />

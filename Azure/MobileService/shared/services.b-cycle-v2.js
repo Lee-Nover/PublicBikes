@@ -15,7 +15,7 @@ exports.getUrl = function (cityName, cityId) {
         boulder: 54,
         broward: 53,
         charlotte: 61,
-        cincinnatti: 80,
+        cincinnati: 80,
         columbiacounty: 74,
         dallas: 82,         /* n/a */
         denver: 36,
