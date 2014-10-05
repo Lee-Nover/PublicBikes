@@ -11,7 +11,6 @@ exports.getUrl = function (cityName, cityId) {
         arbor: 76,
         austin: 72,
         battlecreek: 71,
-        santiago: 68,
         boulder: 54,
         broward: 53,
         charlotte: 61,
