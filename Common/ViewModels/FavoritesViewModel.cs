@@ -65,18 +65,29 @@ namespace Bicikelj.ViewModels
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Delay(dueTime)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
-                    .Subscribe(favorites =>
-                    {
-                        this.Items.Clear();
-                        HasNoFavorites = favorites == null || favorites.Count == 0;
-                        if (favorites == null)
-                        {
-                            events.Publish(BusyState.NotBusy());
-                            return;
-                        }
-                        var favVMs = favorites.Select(fav => new FavoriteViewModel(fav));
-                        this.Items.AddRange(favVMs);
-                    });
+                    .Subscribe(SetFavorites);
+            }
+        }
+
+        private void SetFavorites(List<FavoriteLocation> favorites)
+        {
+            this.Items.Clear();
+            HasNoFavorites = favorites == null || favorites.Count == 0;
+            if (favorites == null)
+            {
+                events.Publish(BusyState.NotBusy());
+                return;
+            }
+            var favVMs = favorites.Select(fav => new FavoriteViewModel(fav));
+            this.Items.AddRange(favVMs);
+
+            foreach (var fav in favorites)
+            {
+                if (fav.Station != null)
+                    cityContext.GetAvailability(fav.Station)
+                        .Subscribe(a => {
+                            
+                        });
             }
         }
 

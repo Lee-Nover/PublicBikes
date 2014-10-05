@@ -45,7 +45,7 @@ namespace Bicikelj.Model
         public virtual IObservable<StationAvailability> GetAvailability(StationLocation station, bool forceUpdate = false)
         {
             return GetAvailability2(station, forceUpdate)
-                .Select(a => a.Availability);
+                .Select(a => a != null ? a.Availability : null);
         }
 
         protected Dictionary<string, CachedAvailability> AvailabilityCache = new Dictionary<string, CachedAvailability>();

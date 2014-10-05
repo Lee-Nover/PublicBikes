@@ -18,7 +18,7 @@ namespace Bicikelj.Model.Google
     public class Address : IAddress
     {
         public string AddressLine { get; set; }
-        public string CountryRegion { get { return (from ac in AddressComponents where ac.Types.Contains("country") select ac.LongName).FirstOrDefault(); } }
+        public string CountryRegion { get; set; }
         [DataMember(Name = "formatted_address")]
         public string FormattedAddress { get; set; }
         public string AdminDistrict { get; set; }
@@ -43,13 +43,14 @@ namespace Bicikelj.Model.Google
                 AdminDistrict2 = (from ac in AddressComponents where ac.Types.Contains("administrative_area_level_2") select ac.LongName).FirstOrDefault();
                 PostalCode = (from ac in AddressComponents where ac.Types.Contains("postal_code") select ac.LongName).FirstOrDefault();
                 Locality = (from ac in AddressComponents where ac.Types.Contains("locality") select ac.LongName).FirstOrDefault();
+                CountryRegion = (from ac in AddressComponents where ac.Types.Contains("country") select ac.LongName).FirstOrDefault();
             }
         }
     }
 
     public class FindLocationResponse
     {
-        public static string ApiUrl = "http://maps.googleapis.com/maps/api/geocode/json?latlng={0},{1}&sensor=false";
+        public static string ApiUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng={0},{1}&sensor=false";
 
         [DataMember(Name = "results")]
         public Address[] Results { get; set; }
