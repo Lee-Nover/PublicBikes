@@ -128,16 +128,29 @@ namespace Bicikelj.Model
                 if (headers != null)
                     foreach (var item in headers)
                         wr.Headers[item.Key] = item.Value;
-                    
+
+                var analytics = Caliburn.Micro.IoC.Get<Bicikelj.Model.Analytics.IAnalyticsService>();
+                // remove the query parameters to get rid of the "noise" from coordinates and keys
+                var queryPos = url.IndexOf('?');
+                string cleanUrl = "";
+                if (queryPos > 0)
+                    cleanUrl = url.Remove(queryPos);
+                else
+                    cleanUrl = url;
+                analytics.LogTimedEvent("DownloadUrl", new string[] { "URL", cleanUrl });
+
                 wr.BeginGetResponse(ar =>
                 {
                     iar = ar;
                     try
                     {
                         response = wr.EndGetResponse(ar);
+                        analytics.EndTimedEvent("DownloadUrl", new string[] { "URL", cleanUrl });
                     }
                     catch (WebException we)
                     {
+                        analytics.EndTimedEvent("DownloadUrl", new string[] { "URL", cleanUrl, "Error", we.Message });
+
                         if (we.Status == WebExceptionStatus.RequestCanceled)
                             return;
                         response = we.Response;

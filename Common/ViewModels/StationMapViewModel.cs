@@ -270,5 +270,11 @@ namespace Bicikelj.ViewModels
             _ARDisplayModeStr = value;
             NotifyOfPropertyChange(() => ARDisplayModeStr);
         }
+
+        public bool CanDownloadStations { get { return cityContext.IsCitySupported; } }
+        public void DownloadStations()
+        {
+            cityContext.RefreshStations();
+        }
     }
 }

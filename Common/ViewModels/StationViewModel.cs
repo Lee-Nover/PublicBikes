@@ -81,7 +81,7 @@ namespace Bicikelj.ViewModels
                         if (a != null)
                             this.Availability = new StationAvailabilityViewModel(a);
                         else
-                            events.Publish(new ErrorState(null, "Could not get station's availability."));
+                            events.Publish(new ErrorState(new Exception("Station's Availability was not loaded"), "Could not get station's availability."));
                     },
                     e => events.Publish(new ErrorState(e, "Could not get station's availability.")),
                     () => events.Publish(BusyState.NotBusy()));

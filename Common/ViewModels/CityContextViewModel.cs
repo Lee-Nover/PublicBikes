@@ -166,12 +166,20 @@ namespace Bicikelj.ViewModels
             this.city = newCity;
             if (city != null)
             {
+#if DEBUG
+                var dataCenter = AzureService.AzureServices.GetDevCenter();
+#else
                 var dataCenter = AzureService.AzureServices.GetClosestCenter(city.Coordinate);
+#endif
+
                 config.AzureDataCenter = dataCenter.Name;
                 var azureProvider = city.Provider as AzureServiceProxy;
                 if (azureProvider != null)
                     azureProvider.DataCenterName = config.AzureDataCenter;
                 AzureServiceCredentials.Key = dataCenter.ApplicationKey;
+
+                if (city.Coordinate != null && !city.Coordinate.IsUnknown)
+                    IoC.Get<Bicikelj.Model.Analytics.IAnalyticsService>().SetLocation(city.Coordinate);
             }
             subCity.OnNext(this.city);
         }
@@ -273,6 +281,7 @@ namespace Bicikelj.ViewModels
                     if (_city != null)
                     {
                         _city.Stations = sl;
+                        config.LastUpdatedStations = DateTime.Now;
                         if (sl != null && sl.Count > 0)
                             GetFavorites().Take(1).Subscribe(favs => {
                                 if (favs != null)
@@ -406,7 +415,9 @@ namespace Bicikelj.ViewModels
 
         public IObservable<City> GetCurrentCity()
         {
-            return LocationHelper.GetCurrentCity().Select(cityName => { SetCity(cityName.ToLowerInvariant()); return city; });
+            return LocationHelper.GetCurrentCity()
+                .Distinct()
+                .Select(cityName => { SetCity(cityName.ToLowerInvariant()); return city; });
         }
 
         #endregion
@@ -422,7 +433,8 @@ namespace Bicikelj.ViewModels
             lock (cityLoadStates)
             {
                 cityLoadStates[city] = CityLoadState.NotLoaded;
-                city.Stations.Clear();
+                if (city.Stations != null)
+                    city.Stations.Clear();
                 var cityFile = "Cities\\" + city.UrlCityName;
                 using (var myIsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication())
                     if (myIsolatedStorage.FileExists(cityFile))

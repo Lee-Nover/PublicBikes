@@ -51,7 +51,7 @@
                                                     Coordinate="{Binding CurrentCoordinate}"
                                                     Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
                                                     CompassProvider="{StaticResource CompassProvider}" 
-													ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
+                                                    ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
                         </maps:MapOverlay>
                         <!--maps:MapOverlay PositionOrigin="0.5,1">
                             <ContentControl Style="{StaticResource PushpinTemplateNormal8}" CacheMode="BitmapCache"
@@ -98,6 +98,10 @@
             </Border>
         </Grid>
         <bab:BindableAppBar x:Name="AppBar">
+            <bab:BindableAppBarButton x:Name="DownloadStations" 
+                                          IsEnabled="{Binding CanDownloadStations}"
+                                          Text="refresh"
+                                          IconUri="/images/appbar.refresh.png" />
             <bab:BindableAppBarButton x:Name="CenterCurrentLocation" 
                 Text="center me"
                 IconUri="/images/appbar.map-centerme.png" />

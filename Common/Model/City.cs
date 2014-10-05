@@ -2,6 +2,8 @@
 using System.Runtime.Serialization;
 using System;
 using System.Device.Location;
+using Caliburn.Micro;
+using System.Reactive.Linq;
 
 namespace Bicikelj.Model
 {
@@ -33,7 +35,16 @@ namespace Bicikelj.Model
 
         public IObservable<List<StationLocation>> DownloadStations()
         {
-            return Provider.DownloadStations(UrlCityName);
+            var analytics = IoC.Get<Bicikelj.Model.Analytics.IAnalyticsService>();
+            analytics.LogTimedEvent("DownloadStations", new string[] {
+                "City", CityName,
+                "ServiceName", ServiceName,
+                "Provider", Provider.ServiceName
+            });
+            return Provider.DownloadStations(UrlCityName)
+                .Do(sl => {
+                    analytics.EndTimedEvent("DownloadStations");
+                });
         }
     }
 }

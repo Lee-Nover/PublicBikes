@@ -13,6 +13,11 @@
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <ctl:Pivot x:Name="Items" />
+        <Button x:Name="Close" Grid.Row="1" Visibility="{Binding IsADialog, Converter={StaticResource ValueToVisibilityConverter}}">ok - close</Button>
     </Grid>
 </UserControl>

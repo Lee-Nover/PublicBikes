@@ -29,6 +29,8 @@ exports.getUrl = function(cityName) {
             return "https://divvybikes.com/stations/json";
         case "sanfrancisco":
             return "http://bayareabikeshare.com/stations/json";
+        case "aspen":
+            return "https://www.we-cycle.org/pbsc/stations.php";
         // unknown
         default:
             return "http://bixi.com";
@@ -51,6 +53,7 @@ exports.extractData = function (data, cityName) {
         case "newyork":
         case "chicago":
         case "sanfrancisco":
+        case "aspen":
             return extractFromJson(data, cityName);
         // special json
         case "melbourne":
@@ -100,10 +103,11 @@ function extractFromXML(data, cityName) {
             lng: parseFloat($('long', co).text()),
             status: ((installed == 'true' && locked == 'false')) ? 1 : 0,
             bikes: parseInt($('nbBikes', co).text()),
-            emptyDocks: parseInt($('nbEmptyDocks', co).text()),
-            totalDocks: parseInt($('nbDocks', co).text())
+            freeDocks: parseInt($('nbEmptyDocks', co).text()),
+            totalDocks: parseInt('0' + $('nbDocks', co).text())
         }
-        station.totalDocks = station.bikes + station.emptyDocks;
+        if (!station.totalDocks)
+            station.totalDocks = station.bikes + station.freeDocks;
         stations[idxStation++] = station;
     });
 
@@ -114,7 +118,7 @@ function extractFromJson(data, cityName) {
     var stationList = JSON.parse(data);
     var stations = [];
     var idxStation = 0;
-    var useLandmark = cityName == "chattanooga";
+    var useLandmark = cityName == 'chattanooga';
     stationList.stationBeanList.forEach(function visitStation(s) {
         var station = {
             id: s.id,
@@ -128,6 +132,13 @@ function extractFromJson(data, cityName) {
             freeDocks: parseInt(s.availableDocks),
             totalDocks: parseInt(s.totalDocks)
         }
+        if (!station.totalDocks)
+            station.totalDocks = station.bikes + station.freeDocks;
+        if (s.stAddress2 != '')
+            if (s.stAddress1 != s.stationName)
+                station.address += ', ' + s.stAddress2;
+            else
+                station.address = s.stAddress2;
         stations[idxStation++] = station;    
     });
     return JSON.stringify(stations);
@@ -158,6 +169,8 @@ function extractFromJson2(data, cityName) {
             freeDocks: parseInt(s.nbEmptyDocks),
             totalDocks: parseInt(s.nbBikes) + parseInt(s.nbEmptyDocks)
         }
+        if (!station.totalDocks)
+            station.totalDocks = station.bikes + station.freeDocks;
         stations[idxStation++] = station;    
     });
     return JSON.stringify(stations);

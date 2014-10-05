@@ -108,8 +108,8 @@ namespace Bicikelj.Model
                     if (cities != null && cities.Count > 0)
                         allCities.AddRange(cities);
                 }
-                /*ExportCityCoordinates();*/
                 UpdateCityCoordinates();
+                //ExportCityCoordinates();
             }
             return allCities;
         }
@@ -158,7 +158,7 @@ namespace Bicikelj.Model
             foreach (var city in GetAllCities())
             {
                 //if (city.Latitude != 0 && city.Longitude != 0)
-                if (city.Radius > 0)
+                if (city.Radius > 1)
                     continue;
 
                 List<StationLocation> _stations = null;
@@ -193,6 +193,7 @@ namespace Bicikelj.Model
                         + stationsArea.Center.GetDistanceTo(stationsArea.Northwest)
                         + stationsArea.Center.GetDistanceTo(stationsArea.Southeast)
                         + stationsArea.Center.GetDistanceTo(stationsArea.Southwest)) / 4;
+                    city.Radius = Math.Max(city.Radius, 1000);
                 }
             }
             SaveCityCoordinates(allCities);
@@ -240,7 +241,7 @@ namespace Bicikelj.Model
         private static BikeServiceProvider[] providers = new BikeServiceProvider[] {
             CycloCityService.Instance, NextBikeService.Instance, SambaService.Instance, 
             ClearChannelService.Instance, SmartBikeService.Instance, BCycleService.Instance,
-            BixiService.Instance, PubliBikeService.Instance
+            BixiService.Instance, PubliBikeService.Instance, HourBikeService.Instance
         };
 
         public static City FindByCityName(string cityName)

@@ -9,6 +9,7 @@ using System.Net;
 using System.IO.IsolatedStorage;
 using Bicikelj.Model.Analytics;
 using System.Xml.Linq;
+using Bicikelj.Model.Logging;
 
 namespace Bicikelj
 {
@@ -89,6 +90,14 @@ namespace Bicikelj
             if (analyticsService == null)
                 analyticsService = IoC.Get<IAnalyticsService>();
             analyticsService.LogEvent(name);
+        }
+
+        ILoggingService logService = null;
+        public void LogError(Exception e, string comment, string commentKey = null)
+        {
+            if (logService == null)
+                logService = IoC.Get<ILoggingService>();
+            logService.LogError(e, comment, commentKey);
         }
     }
 }

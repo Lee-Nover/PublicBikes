@@ -6,13 +6,14 @@ namespace Bicikelj.Model.Logging
 {
     public class NullLoggingService : ILoggingService
     {
-        public void LogError(Exception e, string comment) { }
+        public void LogError(Exception e, string comment, string commentKey = null) { }
     }
 
     public class LoggingService : ILoggingService
     {
-        public void LogError(Exception e, string comment)
+        public void LogError(Exception e, string comment, string commentKey = null)
         {
+            if (e == null) return;
             BugSenseHandler.Instance.ClearCrashExtraData();
             if (e.Data != null && e.Data.Contains("DetailedStack"))
             {
@@ -21,7 +22,9 @@ namespace Bicikelj.Model.Logging
             }
             if (!string.IsNullOrEmpty(comment))
             {
-                var extraData = new CrashExtraData() { Key = "Description", Value = comment };
+                if (string.IsNullOrEmpty(commentKey))
+                    commentKey = "Description";
+                var extraData = new CrashExtraData() { Key = commentKey, Value = comment };
                 BugSenseHandler.Instance.AddCrashExtraData(extraData);
             }
             var wex = e as WebExceptionEx;

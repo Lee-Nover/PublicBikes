@@ -168,3 +168,4 @@ pip-log.txt
 /images/screenshots
 /PerformanceLogs/
 /Azure/MobileService/node_modules
+/Azure/MobileService/.ntvs_analysis.dat

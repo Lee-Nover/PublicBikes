@@ -235,7 +235,7 @@ namespace Bicikelj.ViewModels
 #else
                         .Select(station => cityContext.GetAvailability2(station).Take(1).Wait())
 #endif
-                        .Where(avail => avail.Availability.Open && avail.Availability.Available > 0)
+                        .Where(avail => avail != null && avail.Availability.Open && avail.Availability.Available > 0)
                         .Do(avail => fromStation = avail.Station)
                         .Take(1);
 
@@ -246,7 +246,7 @@ namespace Bicikelj.ViewModels
 #else
                         .Select(station => cityContext.GetAvailability2(station).Take(1).Wait())
 #endif
-                        .Where(avail => avail.Availability.Open && avail.Availability.Free > 0)
+                        .Where(avail => avail != null && avail.Availability.Open && avail.Availability.Free > 0)
                         .Do(avail => toStation = avail.Station)
                         .Take(1); // add to options how many stations to try
 

@@ -105,7 +105,16 @@ namespace Bicikelj.ViewModels
                     CheckLocationServices();
                     CheckRating();
                     CheckUpdate();
+                    UpdateStations();
                 });
+        }
+
+        private void UpdateStations()
+        {
+            var stationsAgeDays = (DateTime.Now - config.LastUpdatedStations).Days;
+            // update every 8 days
+            if (stationsAgeDays > 7)
+                DownloadStations();
         }
 
         private void CheckRedirect()
@@ -175,12 +184,18 @@ namespace Bicikelj.ViewModels
         private void CheckUpdate()
         {
             Version appVer = App.CurrentApp.Version;
+#if DEBUG
+            var dataCenter = AzureService.AzureServices.GetDevCenter();
+            config.AzureDataCenter = dataCenter.Name;
+#else
             if (string.IsNullOrEmpty(config.AzureDataCenter))
                 config.AzureDataCenter = AzureService.AzureServices.GetClosestCenter(null).Name;
+#endif
             var azureCenter = config.AzureDataCenter;
             DownloadUrl.GetAsyncTuple<VersionHistory[]>(string.Format("https://{0}.azure-mobile.net/api/versions/published", azureCenter))
                 .Retry(2)
                 .Take(1)
+                .Finally(CheckWhatsNew)
                 .Subscribe(versions =>
                 {
                     if (versions != null && versions.Item1.Length > 0)
@@ -235,7 +250,22 @@ namespace Bicikelj.ViewModels
                             config.UpdateAvailable = "";
                     }
                 },
-                error => { BugSense.BugSenseHandler.Instance.SendExceptionAsync(error, "CheckUpdate", "failed to get the latest version info"); });
+                error => { App.CurrentApp.LogError(error, "failed to get the latest version info", "CheckUpdate"); });
+        }
+
+        private void CheckWhatsNew()
+        {
+            var appVer = App.CurrentApp.Version;
+            if (config.LastUsedVersion != null && config.LastUsedVersion >= appVer)
+                return;
+            Type initialPage = config.LastUsedVersion != null ? typeof(VersionHistoryViewModel) : typeof(AboutViewModel);
+            config.LastUsedVersion = appVer;
+            var about = IoC.Get<AppInfoViewModel>();
+            about.IsADialog = true;
+            about.InitialPage = initialPage;
+            Execute.BeginOnUIThread(() => {
+                Bicikelj.NavigationExtension.NavigateTo(about);
+            });
         }
 
         private bool isTitleVisible = true;

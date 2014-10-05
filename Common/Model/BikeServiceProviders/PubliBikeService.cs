@@ -103,6 +103,7 @@ namespace Bicikelj.Model
             var allServices = dataJson.FromJson<List<AboProvider>>();
             foreach (var abo in allServices)
             {
+                if (abo.Abo == null || abo.Abo.Terminals == null) continue;
                 var serviceName = abo.Abo.Name;
                 var grouppedTerminals = from term in abo.Abo.Terminals where !string.IsNullOrEmpty(term.City) group term by term.City into byCity select new { City = byCity.Key, Country = DomainNameToCountry(byCity.First().Country), Terminals = byCity.ToList() };
                 foreach (var xcity in grouppedTerminals)

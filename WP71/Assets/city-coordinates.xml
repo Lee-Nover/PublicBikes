@@ -53,8 +53,11 @@
   </country>
   <country name="Canada">
     <city name="Montreal" lat="45.5051645" lng="-73.58126" radius="10753" />
-    <city name="Toronto" lat="0" lng="0" radius="1" />
+    <city name="Toronto" lat="43.653497" lng="-79.389938" radius="3122" />
     <city name="Ottawa" lat="45.419289" lng="-75.713179" radius="3720" />
+  </country>
+  <country name="Chile">
+    <city name="Santiago" lat="-33.37567" lng="-70.547955" radius="6095" />
   </country>
   <country name="Croatia">
     <city name="Zagreb" lat="45.797888872026249" lng="15.9633506834507" radius="4521" />
@@ -75,7 +78,7 @@
     <city name="Paris" lat="48.860789326367204" lng="2.35082675219493" radius="11197" />
     <city name="Rouen" lat="49.435017197094169" lng="1.0920427137581346" radius="2509" />
     <city name="Toulouse" lat="43.602376847576508" lng="1.4324499218116151" radius="6718" />
-    <city name="Divonne-les-Bains" lat="46.356069" lng="6.137897" radius="1" />
+    <city name="Divonne-les-Bains" lat="46.356069" lng="6.137897" radius="1000" />
   </country>
   <country name="Germany">
     <city name="Leipzig" lat="51.334155794166143" lng="12.365120351314552" radius="3245" />
@@ -108,14 +111,14 @@
     <city name="Herne" lat="51.5324742580381" lng="7.20047157755235" radius="4770" />
     <city name="Mülheim a.d.R." lat="51.42730943989185" lng="6.8902838230133048" radius="5775" />
     <city name="Oberhausen" lat="51.5044383375894" lng="6.8370205163955653" radius="5857" />
-    <city name="Dresden" lat="51.058119190690647" lng="13.747324347496051" radius="9922" />
-    <city name="Bietigheim-Bissingen" lat="48.948378" lng="9.1358295" radius="1" />
+    <city name="Dresden" lat="51.058119190690647" lng="13.74732434749605" radius="9922" />
+    <city name="Bietigheim-Bissingen" lat="48.948378" lng="9.1358295" radius="1000" />
   </country>
   <country name="Ireland">
     <city name="Dublin" lat="53.3448575" lng="-6.2695215" radius="3049" />
   </country>
   <country name="Italy">
-    <city name="Milano" lat="45.467643732143017" lng="9.1933069378137588" radius="4287" />
+    <city name="Milano" lat="45.467643732143017" lng="9.1933069378137589" radius="4287" />
   </country>
   <country name="Japan">
     <city name="Toyama" lat="36.698955999999995" lng="137.21479" radius="1243" />
@@ -144,6 +147,7 @@
     <city name="Opole" lat="50.6680561514835" lng="17.9236262665119" radius="3451" />
     <city name="Warszawa" lat="52.231784054075959" lng="21.00000679492949" radius="12586" />
     <city name="Sopot" lat="54.443939" lng="18.552759104595182" radius="1892" />
+    <city name="Szczecin" lat="53.431314" lng="14.5475395" radius="1743" />
   </country>
   <country name="Slovenia">
     <city name="Ljubljana" lat="46.0602435" lng="14.504797499999999" radius="3749" />
@@ -160,47 +164,47 @@
     <city name="Stockholm" lat="59.33915395" lng="18.037599999999998" radius="6855" />
   </country>
   <country name="Switzerland">
-    <city name="Luzern" lat="47.0417395" lng="8.308845162391659" radius="4410" />
-    <city name="Delémont" lat="47.36219" lng="7.349579" radius="1" />
-    <city name="Luzern" lat="47.050345" lng="8.311486" radius="1" />
+    <city name="Luzern" lat="47.050345" lng="8.311486" radius="1000" />
+    <city name="Delémont" lat="47.36219" lng="7.349579" radius="1000" />
+    <city name="Luzern" lat="47.050345" lng="8.311486" radius="1000" />
     <city name="Bern" lat="46.95255" lng="7.450149" radius="1672" />
-    <city name="Brig" lat="46.319222" lng="7.987844" radius="1" />
-    <city name="Kreuzlingen" lat="47.652917" lng="9.169327" radius="1" />
-    <city name="Frauenfeld" lat="47.557549" lng="8.896415" radius="1" />
-    <city name="Basel" lat="47.546414" lng="7.593275" radius="1" />
-    <city name="Solothurn" lat="47.204433" lng="7.542038" radius="1" />
-    <city name="Winterthur" lat="47.501824" lng="8.72536" radius="1" />
-    <city name="Rapperswil" lat="47.22521" lng="8.8176" radius="1" />
-    <city name="Zürich" lat="47.3759074" lng="8.541013" radius="1" />
+    <city name="Brig" lat="46.319222" lng="7.987844" radius="1000" />
+    <city name="Kreuzlingen" lat="47.652917" lng="9.169327" radius="1000" />
+    <city name="Frauenfeld" lat="47.557549" lng="8.896415" radius="1000" />
+    <city name="Basel" lat="47.546414" lng="7.593275" radius="1000" />
+    <city name="Solothurn" lat="47.204433" lng="7.542038" radius="1000" />
+    <city name="Winterthur" lat="47.501824" lng="8.72536" radius="1000" />
+    <city name="Rapperswil" lat="47.22521" lng="8.8176" radius="1000" />
+    <city name="Zürich" lat="47.3759074" lng="8.541013" radius="1000" />
     <city name="Nyon" lat="46.391206" lng="6.2290595" radius="1478" />
-    <city name="Prangins" lat="46.394083" lng="6.249786" radius="1" />
+    <city name="Prangins" lat="46.394083" lng="6.249786" radius="1000" />
     <city name="Gland" lat="46.420987" lng="6.2730545000000006" radius="1259" />
     <city name="Fribourg" lat="46.8051795" lng="7.1527650000000005" radius="2055" />
-    <city name="Granges-Paccot" lat="46.82317" lng="7.14969" radius="1" />
-    <city name="Marly" lat="46.780511" lng="7.150608" radius="1" />
+    <city name="Granges-Paccot" lat="46.82317" lng="7.14969" radius="1000" />
+    <city name="Marly" lat="46.780511" lng="7.150608" radius="1000" />
     <city name="Villars-sur-Glâne" lat="46.792550500000004" lng="7.115192" radius="293" />
-    <city name="Bulle" lat="46.617802" lng="7.055218" radius="1" />
-    <city name="La Tour-de-Trême" lat="46.608848" lng="7.065818" radius="1" />
+    <city name="Bulle" lat="46.617802" lng="7.055218" radius="1000" />
+    <city name="La Tour-de-Trême" lat="46.608848" lng="7.065818" radius="1000" />
     <city name="Estavayer-le-Lac" lat="46.848145" lng="6.843783" radius="385" />
     <city name="Murten/Morat" lat="46.820042" lng="6.939425" radius="1" />
     <city name="Avenches" lat="46.890025" lng="7.0467499999999994" radius="665" />
-    <city name="Romont" lat="46.694205" lng="6.917915" radius="1" />
+    <city name="Romont" lat="46.694205" lng="6.917915" radius="1000" />
     <city name="Aigle" lat="46.32037" lng="6.9538484999999994" radius="1255" />
     <city name="Monthey" lat="46.255123499999996" lng="6.9529135" radius="806" />
     <city name="Sion" lat="46.230005269483051" lng="7.3536072658386242" radius="1666" />
     <city name="Yverdon-les-Bains" lat="46.775037691432004" lng="6.64689389092407" radius="1419" />
     <city name="Lausanne" lat="46.514946553847452" lng="6.595916748046875" radius="2797" />
     <city name="Renens" lat="46.532753129967645" lng="6.58645391464233" radius="637" />
-    <city name="Prilly" lat="46.5259478163088" lng="6.60282611846924" radius="1" />
+    <city name="Prilly" lat="46.5259478163088" lng="6.60282611846924" radius="1000" />
     <city name="Morges" lat="46.514209349914452" lng="6.4955955456542949" radius="1192" />
-    <city name="Tolochenaz" lat="46.502229" lng="6.481164" radius="1" />
-    <city name="Préverenges" lat="46.5178568507295" lng="6.52772426605225" radius="1" />
+    <city name="Tolochenaz" lat="46.502229" lng="6.481164" radius="1000" />
+    <city name="Préverenges" lat="46.5178568507295" lng="6.52772426605225" radius="1000" />
     <city name="Chavannes-près-Renens" lat="46.5315311116843" lng="6.5778921517334" radius="604" />
     <city name="Vevey" lat="46.462177" lng="6.8442858218479152" radius="970" />
     <city name="Lugano" lat="46.0070799262854" lng="8.9532790138092047" radius="1940" />
-    <city name="Pazzallo" lat="45.9850201673752" lng="8.93197059631348" radius="1" />
-    <city name="Melide" lat="45.953808" lng="8.949631" radius="1" />
-    <city name="Tesserete" lat="46.065999" lng="8.966679" radius="1" />
+    <city name="Pazzallo" lat="45.9850201673752" lng="8.93197059631348" radius="1000" />
+    <city name="Melide" lat="45.953808" lng="8.949631" radius="1000" />
+    <city name="Tesserete" lat="46.065999" lng="8.966679" radius="1000" />
   </country>
   <country name="Turkey">
     <city name="İzmir" lat="38.46179164694275" lng="27.096867710351951" radius="2913" />
@@ -212,30 +216,46 @@
   </country>
   <country name="United Kingdom">
     <city name="London" lat="51.498445255" lng="-0.11952246799999999" radius="9467" />
+    <city name="Liverpool" lat="53.398367500000006" lng="-2.96551486665" radius="4121" />
   </country>
   <country name="United States">
+    <city name="Arbor" lat="42.284385" lng="-83.733229999999992" radius="1699" />
     <city name="Austin" lat="30.267335" lng="-97.749315" radius="2937" />
+    <city name="Battle Creek" lat="42.32208" lng="-85.186299999999989" radius="1000" />
     <city name="Boulder" lat="40.02145" lng="-105.264775" radius="2548" />
     <city name="Broward" lat="26.123399999999997" lng="-80.116109999999992" radius="15607" />
     <city name="Charlotte" lat="35.217475" lng="-80.84787" radius="3559" />
+    <city name="Cincinnati" lat="39.119965" lng="-84.508285" radius="2742" />
+    <city name="Columbia County" lat="33.54338" lng="-82.13133" radius="1000" />
+    <city name="Dallas" lat="32.779671" lng="-96.759816" radius="1000" />
     <city name="Denver" lat="39.721360000000004" lng="-104.98807500000001" radius="6033" />
+    <city name="Denver Federal Center" lat="39.717389999999995" lng="-105.120995" radius="1000" />
     <city name="Des Moines" lat="41.58631" lng="-93.625265" radius="755" />
+    <city name="Fargo" lat="46.879431" lng="-96.790748" radius="2000" />
     <city name="Fort Worth" lat="32.731645" lng="-97.35278" radius="4818" />
     <city name="Greenville" lat="34.846075" lng="-82.408695" radius="1317" />
     <city name="Hawaii" lat="21.3928" lng="-157.742805" radius="195" />
     <city name="Houston" lat="29.747915" lng="-95.373365" radius="4241" />
+    <city name="Indianapolis" lat="39.7671" lng="-86.15769" radius="2230" />
     <city name="Kansas City" lat="39.075109999999995" lng="-94.58372" radius="3977" />
     <city name="Madison" lat="43.069845" lng="-89.40245" radius="5964" />
+    <city name="Milwaukee" lat="43.041925" lng="-87.907085" radius="1174" />
     <city name="Nashville" lat="36.14877" lng="-86.781305" radius="4193" />
     <city name="Omaha" lat="41.253095" lng="-95.97097" radius="4270" />
+    <city name="Rapid City" lat="44.078095000000005" lng="-103.217315" radius="1000" />
+    <city name="Salt Lake City" lat="40.7649" lng="-111.89431" radius="1399" />
     <city name="San Antonio" lat="29.39028" lng="-98.476975" radius="8287" />
+    <city name="San Francisco" lat="37.6025055" lng="-122.259015" radius="26562" />
+    <city name="Savannah" lat="32.079975000000005" lng="-81.097415" radius="1000" />
     <city name="Spartanburg" lat="34.95385" lng="-81.928945" radius="1131" />
+    <city name="Whippany" lat="40.826343" lng="-74.417204" radius="2000" />
     <city name="Washington DC" lat="38.9633185" lng="-77.0671815" radius="21329" />
     <city name="Minneapolis" lat="44.961798" lng="-93.199983" radius="12463" />
     <city name="Boston" lat="42.3569785" lng="-71.0845905" radius="7280" />
     <city name="Chattanooga" lat="35.065610000000007" lng="-85.2873565" radius="4516" />
     <city name="Chicago" lat="41.8835495" lng="-87.644286" radius="11792" />
     <city name="New York" lat="40.725932211499995" lng="-73.98359121295" radius="5809" />
+    <city name="Aspen" lat="39.19301445" lng="-106.8236933" radius="1515" />
     <city name="San Francisco" lat="37.6025055" lng="-122.259015" radius="26562" />
   </country>
 </countries>

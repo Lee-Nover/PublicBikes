@@ -1,14 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicBikes.WP71", "WP71\PublicBikes.WP71.csproj", "{861DFD39-1E15-47E0-9C19-0D55B8C9D568}"
-EndProject
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0DB0B83C-523F-4817-B02E-38C8AD2AA89C}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicBikes.WP71", "WP71\PublicBikes.WP71.csproj", "{861DFD39-1E15-47E0-9C19-0D55B8C9D568}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicBikes.WP8", "WP8\PublicBikes.WP8.csproj", "{82900F95-6E05-4457-8D4A-B8257F722425}"
 EndProject
