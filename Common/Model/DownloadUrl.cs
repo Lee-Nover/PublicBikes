@@ -132,6 +132,10 @@ namespace Bicikelj.Model
                 var analytics = Caliburn.Micro.IoC.Get<Bicikelj.Model.Analytics.IAnalyticsService>();
                 // remove the query parameters to get rid of the "noise" from coordinates and keys
                 var queryPos = url.IndexOf('?');
+                var paramPos = url.LastIndexOf(',');
+                var pathPos = url.LastIndexOf('/');
+                if (paramPos > pathPos)
+                    queryPos = pathPos;
                 string cleanUrl = "";
                 if (queryPos > 0)
                     cleanUrl = url.Remove(queryPos);
