@@ -38,6 +38,8 @@ namespace Bicikelj.Model
                 case "ob":
                 case "kp":
                 case "vp":
+                case "ln":
+                case "gp":
                 case "tp": return "Poland";
                 // turkey
                 case "nk":
@@ -81,7 +83,6 @@ namespace Bicikelj.Model
         protected override IList<City> GetCities()
         {
             var result = new List<City>();
-            // todo: get the list of cities from the xml file
             
             var doc = XDocument.Load("Assets/nextbike-cities.xml");
             foreach (var xctry in doc.Descendants("country"))

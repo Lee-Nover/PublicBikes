@@ -39,7 +39,7 @@ function extractFromXML(data, cityName, cityId) {
             places.each(function(i, item) {
                 var co = $(item);
                 var station = {
-                    id: parseInt(co.attr('number')),
+                    id: parseInt(co.attr('uid')),
                     name: co.attr('name'),
                     //address: address,
                     city: cityName,

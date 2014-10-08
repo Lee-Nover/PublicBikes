@@ -244,6 +244,11 @@ namespace Bicikelj.Model
             BixiService.Instance, PubliBikeService.Instance, HourBikeService.Instance
         };
 
+        public static BikeServiceProvider[] GetAllProviders()
+        {
+            return providers;
+        }
+
         public static City FindByCityName(string cityName)
         {
             City result = null;

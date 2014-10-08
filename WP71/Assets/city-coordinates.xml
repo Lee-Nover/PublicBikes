@@ -30,9 +30,7 @@
     <city name="Südheide" lat="48.121394358634149" lng="16.4775341749191" radius="6884" />
     <city name="Tullnerfeld West" lat="48.295885183851951" lng="15.9449815750122" radius="3829" />
     <city name="Hollabrunn" lat="48.5659434212469" lng="16.076352462615951" radius="406" />
-  </country>
-  <country name="Azerbaijan">
-    <city name="Baku" lat="40.355145643804704" lng="49.83606576919555" radius="1000" />
+    <city name="Innsbruck" lat="47.266249" lng="11.4075922" radius="2838" />
   </country>
   <country name="Belgium">
     <city name="Bruxelles" lat="50.844551" lng="4.3699545" radius="8642" />
@@ -46,7 +44,7 @@
     <city name="Rio de Janeiro" lat="-22.927393000000002" lng="-43.255974" radius="11813" />
     <city name="São Paulo" lat="-23.573453999999998" lng="-46.6471455" radius="8293" />
     <city name="Santos" lat="-23.9608535" lng="-46.3404405" radius="5652" />
-    <city name="Sorocaba" lat="0" lng="0" radius="1" />
+    <city name="Sorocaba" lat="-23.4809475" lng="-47.458034999999995" radius="4672" />
   </country>
   <country name="Bulgaria">
     <city name="Dobrich" lat="43.566115658575754" lng="27.829605638980851" radius="1000" />
@@ -61,6 +59,7 @@
   </country>
   <country name="Croatia">
     <city name="Zagreb" lat="45.797888872026249" lng="15.9633506834507" radius="4521" />
+    <city name="Šibenik" lat="43.727977677099922" lng="15.901390314102173" radius="1843" />
   </country>
   <country name="Cyprus">
     <city name="Limassol" lat="34.683584570226692" lng="33.080056607723222" radius="8309" />
@@ -98,8 +97,9 @@
     <city name="Gütersloh" lat="51.907145814719854" lng="8.3975887298584" radius="1399" />
     <city name="Norderstedt" lat="53.708268859580954" lng="10.010964263159199" radius="3337" />
     <city name="Augsburg" lat="48.3563169896061" lng="10.90147376060488" radius="6932" />
-    <city name="Halensee KuDamm" lat="52.498455316797944" lng="13.297319412231449" radius="1046" />
     <city name="Burghausen" lat="48.166863" lng="12.830634" radius="837" />
+    <city name="Quickborn" lat="53.751384261857794" lng="9.9458456039428711" radius="1000" />
+    <city name="Usedom" lat="53.9416026416113" lng="13.902618984832763" radius="32958" />
     <city name="Nürnberg" lat="49.458384396618" lng="11.146929413080201" radius="11731" />
     <city name="Dortmund" lat="51.5060569845466" lng="7.44076430797577" radius="7614" />
     <city name="Bochum" lat="51.458321420668049" lng="7.2293579578399649" radius="7989" />
@@ -113,6 +113,8 @@
     <city name="Oberhausen" lat="51.5044383375894" lng="6.8370205163955653" radius="5857" />
     <city name="Dresden" lat="51.058119190690647" lng="13.74732434749605" radius="9922" />
     <city name="Bietigheim-Bissingen" lat="48.948378" lng="9.1358295" radius="1000" />
+    <city name="Schwieberdingen" lat="48.870777086785893" lng="9.0708768367767334" radius="1000" />
+    <city name="Karlsruhe" lat="49.0148925" lng="8.40744862248993" radius="5322" />
   </country>
   <country name="Ireland">
     <city name="Dublin" lat="53.3448575" lng="-6.2695215" radius="3049" />
@@ -125,6 +127,7 @@
   </country>
   <country name="Latvia">
     <city name="Riga" lat="56.955229804968944" lng="24.128572940826402" radius="4336" />
+    <city name="Jurmala" lat="56.978749064366056" lng="23.829458355903625" radius="2063" />
   </country>
   <country name="Luxembourg">
     <city name="Luxembourg" lat="49.60525" lng="6.1231849999999994" radius="5106" />
@@ -134,7 +137,7 @@
   </country>
   <country name="New Zealand">
     <city name="Auckland" lat="-36.816744352339995" lng="174.714299440384" radius="5600" />
-    <city name="Christchurch" lat="-43.5341" lng="172.621" radius="1" />
+    <city name="Christchurch" lat="-43.52267121975305" lng="172.57415487815848" radius="1000" />
   </country>
   <country name="Norway">
     <city name="Lillestrøm" lat="59.956745" lng="11.053094999999999" radius="1000" />
@@ -147,6 +150,11 @@
     <city name="Opole" lat="50.6680561514835" lng="17.9236262665119" radius="3451" />
     <city name="Warszawa" lat="52.231784054075959" lng="21.00000679492949" radius="12586" />
     <city name="Sopot" lat="54.443939" lng="18.552759104595182" radius="1892" />
+    <city name="Kraków" lat="50.06686855671397" lng="19.931108951568604" radius="3278" />
+    <city name="Białystok" lat="53.128947499999995" lng="23.148558" radius="5482" />
+    <city name="Konstancin Jeziorna" lat="52.090197701473137" lng="21.117544642883303" radius="1829" />
+    <city name="Lublin" lat="51.232974657566331" lng="22.558997869491577" radius="6867" />
+    <city name="Grodzisk Mazowiecki" lat="52.10785575912854" lng="20.627601744987487" radius="1399" />
     <city name="Szczecin" lat="53.431314" lng="14.5475395" radius="1743" />
   </country>
   <country name="Slovenia">
@@ -164,6 +172,7 @@
     <city name="Stockholm" lat="59.33915395" lng="18.037599999999998" radius="6855" />
   </country>
   <country name="Switzerland">
+    <city name="Sursee" lat="47.174587" lng="8.1111355" radius="1132" />
     <city name="Luzern" lat="47.050345" lng="8.311486" radius="1000" />
     <city name="Delémont" lat="47.36219" lng="7.349579" radius="1000" />
     <city name="Luzern" lat="47.050345" lng="8.311486" radius="1000" />
@@ -207,7 +216,7 @@
     <city name="Tesserete" lat="46.065999" lng="8.966679" radius="1000" />
   </country>
   <country name="Turkey">
-    <city name="İzmir" lat="38.46179164694275" lng="27.096867710351951" radius="2913" />
+    <city name="Seferihisar" lat="38.4613387429588" lng="27.101151198148749" radius="2317" />
     <city name="Konya" lat="37.924326018427806" lng="32.482853382825851" radius="11868" />
   </country>
   <country name="United Arab Emirates">
@@ -215,6 +224,9 @@
     <city name="Al Sharjah" lat="25.3257785" lng="55.3817555" radius="1151" />
   </country>
   <country name="United Kingdom">
+    <city name="Bath" lat="51.384016360067079" lng="-2.3942494241828918" radius="3097" />
+    <city name="Glasgow" lat="55.862322503132063" lng="-4.2582165" radius="3604" />
+    <city name="Stirling" lat="56.1322735" lng="-3.9341445" radius="2540" />
     <city name="London" lat="51.498445255" lng="-0.11952246799999999" radius="9467" />
     <city name="Liverpool" lat="53.398367500000006" lng="-2.96551486665" radius="4121" />
   </country>

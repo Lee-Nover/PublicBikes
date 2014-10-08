@@ -108,6 +108,25 @@ namespace Bicikelj.ViewModels
                 });
         }
 
+        public void UpdateNearestAzureCenter(GeoCoordinate coordinate)
+        {
+#if DEBUG
+            var dataCenter = AzureService.AzureServices.GetDevCenter();
+#else
+            if (coordinate == null) return;
+            var dataCenter = AzureService.AzureServices.GetClosestCenter(coordinate);
+#endif
+            config.AzureDataCenter = dataCenter.Name;
+            AzureServiceCredentials.Key = dataCenter.ApplicationKey;
+
+            foreach (var provider in BikeServiceProvider.GetAllProviders())
+            {
+                var azureProvider = provider as AzureServiceProxy;
+                if (azureProvider != null)
+                    azureProvider.DataCenterName = config.AzureDataCenter;
+            }
+        }
+
         public void SetCity(string cityName)
         {
             if (this.city != null && string.Equals(cityName, this.city.UrlCityName))
@@ -130,7 +149,10 @@ namespace Bicikelj.ViewModels
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .Select(addr => addr.Coordinate)
                     .DistinctUntilChanged()
-                    .Do(coord => lastPos = coord)
+                    .Do(coord => {
+                        lastPos = coord;
+                        UpdateNearestAzureCenter(coord);
+                     })
                     .Where(coord => coord != null && !coord.IsUnknown)
                     .SelectMany(coord => Observable.Return<City>(BikeServiceProvider.FindNearestCity(coord, 3)))
                     .SelectMany(_city =>
@@ -166,18 +188,6 @@ namespace Bicikelj.ViewModels
             this.city = newCity;
             if (city != null)
             {
-#if DEBUG
-                var dataCenter = AzureService.AzureServices.GetDevCenter();
-#else
-                var dataCenter = AzureService.AzureServices.GetClosestCenter(city.Coordinate);
-#endif
-
-                config.AzureDataCenter = dataCenter.Name;
-                var azureProvider = city.Provider as AzureServiceProxy;
-                if (azureProvider != null)
-                    azureProvider.DataCenterName = config.AzureDataCenter;
-                AzureServiceCredentials.Key = dataCenter.ApplicationKey;
-
                 if (city.Coordinate != null && !city.Coordinate.IsUnknown)
                     IoC.Get<Bicikelj.Model.Analytics.IAnalyticsService>().SetLocation(city.Coordinate);
             }
