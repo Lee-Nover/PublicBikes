@@ -41,7 +41,7 @@ namespace Bicikelj.ViewModels
 
         public override void ActivateItem(object item)
         {
-            if (phoneService.State.ContainsKey(TARGET_VM_CTX))
+            if (phoneService != null && phoneService.State.ContainsKey(TARGET_VM_CTX))
             {
                 var targetCtx = phoneService.State[TARGET_VM_CTX];
                 phoneService.State.Remove(TARGET_VM_CTX);
@@ -73,7 +73,7 @@ namespace Bicikelj.ViewModels
 
         private void ActivateVM()
         {
-            if (!phoneService.State.ContainsKey(TARGET_VM_KEY)) return;
+            if (phoneService == null || !phoneService.State.ContainsKey(TARGET_VM_KEY)) return;
 
             var targetVM = phoneService.State[TARGET_VM_KEY];
             phoneService.State.Remove(TARGET_VM_KEY);
