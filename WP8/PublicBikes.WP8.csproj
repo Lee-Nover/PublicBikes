@@ -238,6 +238,9 @@
     <Compile Include="..\Common\Model\BikeServiceProviders\BCycleService.cs">
       <Link>Model\BikeServiceProviders\BCycleService.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Model\BikeServiceProviders\BikeNetworkProvider.cs">
+      <Link>Model\BikeServiceProviders\BikeNetworkProvider.cs</Link>
+    </Compile>
     <Compile Include="..\Common\Model\BikeServiceProviders\BixiService.cs">
       <Link>Model\BikeServiceProviders\BixiService.cs</Link>
     </Compile>

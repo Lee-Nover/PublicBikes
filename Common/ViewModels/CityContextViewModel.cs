@@ -113,7 +113,7 @@ namespace Bicikelj.ViewModels
 #if DEBUG
             var dataCenter = AzureService.AzureServices.GetDevCenter();
 #else
-            if (coordinate == null) return;
+            if (coordinate == null || coordinate.IsUnknown) return;
             var dataCenter = AzureService.AzureServices.GetClosestCenter(coordinate);
 #endif
             config.AzureDataCenter = dataCenter.Name;
@@ -199,6 +199,13 @@ namespace Bicikelj.ViewModels
             if (saveCity == null || string.IsNullOrEmpty(saveCity.UrlCityName) || saveCity.Favorites == null || saveCity.Stations == null)
                 return;
             
+            if (saveCity is CityNetwork)
+            {
+                foreach (var nCity in (saveCity as CityNetwork).Cities)
+                    SaveToDB(nCity);
+                return;
+            }
+
             saveCity.Favorites.Apply(f =>
             {
                 if (f != null)

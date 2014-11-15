@@ -134,7 +134,7 @@ namespace Bicikelj.Model
                 var queryPos = url.IndexOf('?');
                 var paramPos = url.LastIndexOf(',');
                 var pathPos = url.LastIndexOf('/');
-                if (paramPos > pathPos)
+                if (paramPos > pathPos && paramPos > queryPos)
                     queryPos = pathPos;
                 string cleanUrl = "";
                 if (queryPos > 0)

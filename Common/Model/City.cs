@@ -47,4 +47,9 @@ namespace Bicikelj.Model
                 });
         }
     }
+
+    public class CityNetwork : City
+    {
+        public List<City> Cities { get; set; }
+    }
 }
