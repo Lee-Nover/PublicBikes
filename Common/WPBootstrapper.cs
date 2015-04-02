@@ -28,6 +28,11 @@ namespace Bicikelj
         DateTime timeActivated;
         SystemConfig config;
 
+        public WPBootstrapper()
+        {
+            Initialize();
+        }
+
         protected override void Configure()
         {
             container = new PhoneContainer();

@@ -10,7 +10,7 @@ namespace Caliburn.Micro
     {
         public static void Publish(this IEventAggregator agg, object message)
         {
-            agg.Publish(message, null);
+            agg.PublishOnUIThread(message);
         }
     }
 }

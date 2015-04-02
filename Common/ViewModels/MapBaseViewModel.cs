@@ -127,7 +127,7 @@ namespace Bicikelj.ViewModels
         {
             if (compassObs == null && MapFollowsHeading)
             {
-                map.Pitch = 20;
+                map.Pitch = 60;
                 compassObs = Sensors.GetCurrentCompassSmooth(0.2)
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
@@ -159,6 +159,10 @@ namespace Bicikelj.ViewModels
             }
         }
         
+        public void ToggleMapHeading()
+        {
+            MapFollowsHeading = !MapFollowsHeading;
+        }
 
         private void OnLocationChanged(GeoStatusAndPos pos)
         {

@@ -105,7 +105,7 @@
             <bab:BindableAppBarButton x:Name="CenterCurrentLocation" 
                 Text="center me"
                 IconUri="/images/appbar.map-centerme.png" />
-            <bab:BindableAppBarButton x:Name="MapFollowsHeading" 
+            <bab:BindableAppBarButton x:Name="ToggleMapHeading" 
                 Text="follow heading"
                 IconUri="/images/appbar.map.png" />
             <bab:BindableAppBarButton x:Name="ToggleDisplayMode" 
