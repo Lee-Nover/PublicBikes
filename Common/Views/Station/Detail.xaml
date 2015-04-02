@@ -9,7 +9,7 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     xmlns:b="clr-namespace:Bicikelj" 
     xmlns:vsl="clr-namespace:Bicikelj.Views.StationLocation"
-    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
     xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">

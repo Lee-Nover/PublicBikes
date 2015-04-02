@@ -25,7 +25,7 @@ namespace Caliburn.Micro.Contrib.Dialogs
 
 		public event EventHandler<ResultCompletionEventArgs> Completed;
 
-		public void Execute(ActionExecutionContext context)
+		public void Execute(CoroutineExecutionContext context)
 		{
 			IDialogViewModel<TResponse> vm = _locateVM();
 			vm.Dialog = Dialog;

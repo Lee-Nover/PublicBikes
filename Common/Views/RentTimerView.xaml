@@ -15,7 +15,7 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent" >
         <StackPanel>
-            <c4fctl:TimeSpanPicker x:Name="RentTime" Header="free rent duration" Step="00:01:00" ValueStringFormat="{}{0:hh:mm}" DialogTitle="free rent duration" />
+            <c4fctl:TimeSpanPicker x:Name="RentTime" Header="free rent duration" StepFrequency="00:01:00" ValueStringFormat="{}{0:hh:mm}" DialogTitle="free rent duration" />
             <tkit:ListPicker x:Name="ReminderTimes" DisplayMemberPath="Value" ExpansionMode="ExpansionAllowed" Header="set a reminder before expiration" SelectionMode="Single">
                 <tkit:ListPicker.FullModeItemTemplate>
                     <DataTemplate>

@@ -436,7 +436,7 @@ namespace Bicikelj.ViewModels
                 localAddress = localAddress + ", " + config.City;
             LocationHelper.FindLocation(localAddress, CurrentCoordinate).Subscribe(r =>
             {
-                if (r == null || r.Location == null)
+                if (r == null || r.Location == null || r.Location.Point == null)
                 {
                     string errorStr = "";
                     if (r.HasErrors)

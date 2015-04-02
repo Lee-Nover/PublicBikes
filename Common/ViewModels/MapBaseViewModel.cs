@@ -24,6 +24,7 @@ namespace Bicikelj.ViewModels
         private IDisposable currentGeo;
         private IDisposable stationObs;
         private IDisposable cityObs;
+        private IDisposable compassObs;
         protected IEventAggregator events;
         protected SystemConfig config;
         protected CityContextViewModel cityContext;
@@ -83,6 +84,7 @@ namespace Bicikelj.ViewModels
                 ReactiveExtensions.Dispose(ref currentGeo);
                 ReactiveExtensions.Dispose(ref stationObs);
                 ReactiveExtensions.Dispose(ref cityObs);
+                ReactiveExtensions.Dispose(ref compassObs);
             }
             base.OnDeactivate(close);
         }
@@ -117,7 +119,46 @@ namespace Bicikelj.ViewModels
                     .Subscribe(city => {
                         initialZoomDone = false;
                     });
+
+            CheckMapHeading();
         }
+
+        private void CheckMapHeading()
+        {
+            if (compassObs == null && MapFollowsHeading)
+            {
+                map.Pitch = 20;
+                compassObs = Sensors.GetCurrentCompassSmooth(0.2)
+                    .SubscribeOn(ThreadPoolScheduler.Instance)
+                    .ObserveOn(ReactiveExtensions.SyncScheduler)
+                    .Subscribe(cd =>
+                    {
+                        if (cd.IsValid && cd.IsSupported && cd.Reading.HasValue)
+                        {
+                            var reading = cd.Reading.Value;
+                            map.Heading = reading.TrueHeading;
+                        }
+                    });
+            }
+            else if (!MapFollowsHeading)
+            {
+                ReactiveExtensions.Dispose(ref compassObs);
+                map.Heading = 0;
+                map.Pitch = 0;
+            }
+        }
+
+        private bool mapFollowsHeading;
+
+        public bool MapFollowsHeading
+        {
+            get { return mapFollowsHeading; }
+            set { 
+                mapFollowsHeading = value;
+                CheckMapHeading();
+            }
+        }
+        
 
         private void OnLocationChanged(GeoStatusAndPos pos)
         {

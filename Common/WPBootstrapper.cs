@@ -22,7 +22,7 @@ using System.Windows.Controls;
 
 namespace Bicikelj
 {
-    public class WPBootstrapper : PhoneBootstrapper
+    public class WPBootstrapper : PhoneBootstrapperBase
     {
         PhoneContainer container;
         DateTime timeActivated;

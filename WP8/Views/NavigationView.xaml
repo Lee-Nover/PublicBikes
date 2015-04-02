@@ -8,7 +8,7 @@
     xmlns:bctl="clr-namespace:Bicikelj.Controls"
     xmlns:bab="clr-namespace:Caliburn.Micro.BindableAppBar;assembly=Caliburn.Micro.BindableAppBar"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
-    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+    xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
     x:Class="Bicikelj.Views.NavigationView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -62,7 +62,7 @@
                                                     Coordinate="{Binding CurrentCoordinate}"
                                                     Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
                                                     CompassProvider="{StaticResource CompassProvider}" 
-													ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
+                                                    ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
                         </maps:MapOverlay>
                     </maps:MapLayer>
                     
