@@ -51,7 +51,8 @@
                                                     Coordinate="{Binding CurrentCoordinate}"
                                                     Visibility="{Binding IsLocationAvailable, Converter={StaticResource ValueToVisibilityConverter}}"
                                                     CompassProvider="{StaticResource CompassProvider}" 
-                                                    ZoomLevel="{Binding ZoomLevel, ElementName=Map}" />
+                                                    ZoomLevel="{Binding ZoomLevel, ElementName=Map}"
+                                                    FixedHeading="{Binding FixedHeading}"/>
                         </maps:MapOverlay>
                         <!--maps:MapOverlay PositionOrigin="0.5,1">
                             <ContentControl Style="{StaticResource PushpinTemplateNormal8}" CacheMode="BitmapCache"

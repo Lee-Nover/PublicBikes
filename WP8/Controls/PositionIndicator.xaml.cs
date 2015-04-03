@@ -21,6 +21,29 @@ namespace Bicikelj.Controls
         }
 
 
+        public double? FixedHeading
+        {
+            get { return (double?)GetValue(FixedHeadingProperty); }
+            set { SetValue(FixedHeadingProperty, value); }
+        }
+
+        public static readonly DependencyProperty FixedHeadingProperty =
+            DependencyProperty.Register("FixedHeading", typeof(double?), typeof(PositionIndicator), new PropertyMetadata(null, FixedHeadingChanged));
+
+        private static void FixedHeadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var indicator = d as PositionIndicator;
+            if (indicator == null)
+                return;
+
+            var oldHeading = (double?)e.OldValue;
+            var newHeading = (double?)e.NewValue;
+            if (newHeading.HasValue)
+                SetNewHeading(indicator, oldHeading.GetValueOrDefault(), newHeading.Value);
+            else
+                SetNewHeading(indicator, oldHeading.GetValueOrDefault(), indicator.Heading);
+        }
+
         public double Heading
         {
             get { return (double)GetValue(HeadingProperty); }
@@ -32,20 +55,26 @@ namespace Bicikelj.Controls
         private static void HeadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var indicator = d as PositionIndicator;
-            if (indicator == null)
+            if (indicator == null || indicator.FixedHeading != null)
                 return;
-            
+
             var oldHeading = (double)e.OldValue;
             var newHeading = (double)e.NewValue;
+            SetNewHeading(indicator, oldHeading, newHeading);
+        }
+
+        private static double SetNewHeading(PositionIndicator indicator, double oldHeading, double newHeading)
+        {
             var delta = newHeading - oldHeading;
             if (Math.Abs(delta) > 180)
                 oldHeading += delta < 0 ? -360 : 360;
-             
+
             indicator.AnimateHeadingAnimation.From = oldHeading;
             indicator.AnimateHeadingAnimation.To = newHeading;
             if (indicator.AnimateHeadingStoryboard.GetCurrentState() == ClockState.Stopped)
                 indicator.AnimateHeadingStoryboard.Stop();
             indicator.AnimateHeadingStoryboard.Begin();
+            return oldHeading;
         }
 
         public double HeadingAccuracy

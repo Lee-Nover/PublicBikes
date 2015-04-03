@@ -17,6 +17,30 @@ namespace Bicikelj.Controls
         }
 
 
+
+        public double? FixedHeading
+        {
+            get { return (double?)GetValue(FixedHeadingProperty); }
+            set { SetValue(FixedHeadingProperty, value); }
+        }
+
+        public static readonly DependencyProperty FixedHeadingProperty =
+            DependencyProperty.Register("FixedHeading", typeof(double?), typeof(Compass), new PropertyMetadata(null, FixedHeadingChanged));
+
+        private static void FixedHeadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var compass = d as Compass;
+            if (compass == null)
+                return;
+
+            var oldHeading = (double?)e.OldValue;
+            var newHeading = (double?)e.NewValue;
+            if (newHeading.HasValue)
+                SetNewHeading(compass, oldHeading.GetValueOrDefault(), newHeading.Value);
+            else
+                SetNewHeading(compass, oldHeading.GetValueOrDefault(), compass.Heading);
+        }
+
         public double Heading
         {
             get { return (double)GetValue(HeadingProperty); }
@@ -28,11 +52,16 @@ namespace Bicikelj.Controls
         private static void HeadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var compass = d as Compass;
-            if (d == null)
+            if (compass == null || compass.FixedHeading != null)
                 return;
             
             var oldHeading = (double)e.OldValue;
             var newHeading = (double)e.NewValue;
+            SetNewHeading(compass, oldHeading, newHeading);
+        }
+
+        private static double SetNewHeading(Compass compass, double oldHeading, double newHeading)
+        {
             var delta = newHeading - oldHeading;
             if (Math.Abs(delta) > 180)
                 oldHeading += delta < 0 ? -360 : 360;
@@ -42,6 +71,7 @@ namespace Bicikelj.Controls
             if (compass.AnimateHeadingStoryboard.GetCurrentState() == ClockState.Stopped)
                 compass.AnimateHeadingStoryboard.Stop();
             compass.AnimateHeadingStoryboard.Begin();
+            return oldHeading;
         }
 
         public double HeadingAccuracy

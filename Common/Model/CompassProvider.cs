@@ -40,6 +40,7 @@ namespace Bicikelj.Model
                 //compassObs = Sensors.GetCurrentMotionAsCompass()
                     .SubscribeOn(ThreadPoolScheduler.Instance)
                     .ObserveOn(ReactiveExtensions.SyncScheduler)
+                    
                     .Subscribe(cd =>
                     {
                         if (cd.IsValid && cd.IsSupported && cd.Reading.HasValue)

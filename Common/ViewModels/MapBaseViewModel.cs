@@ -12,6 +12,7 @@ using System.Reactive.Linq;
 #if !WP7
 using PublicBikes.Tools;
 using MapControls = Microsoft.Phone.Maps.Controls;
+using Microsoft.Phone.Maps.Controls;
 #else
 using MapControls = Microsoft.Phone.Controls.Maps;
 #endif
@@ -24,7 +25,7 @@ namespace Bicikelj.ViewModels
         private IDisposable currentGeo;
         private IDisposable stationObs;
         private IDisposable cityObs;
-        private IDisposable compassObs;
+        private ICompassProvider compassProvider;
         protected IEventAggregator events;
         protected SystemConfig config;
         protected CityContextViewModel cityContext;
@@ -84,7 +85,9 @@ namespace Bicikelj.ViewModels
                 ReactiveExtensions.Dispose(ref currentGeo);
                 ReactiveExtensions.Dispose(ref stationObs);
                 ReactiveExtensions.Dispose(ref cityObs);
-                ReactiveExtensions.Dispose(ref compassObs);
+                if (compassProvider != null)
+                    compassProvider.HeadingChanged -= compassProvider_HeadingChanged;
+                compassProvider = null;
             }
             base.OnDeactivate(close);
         }
@@ -120,31 +123,26 @@ namespace Bicikelj.ViewModels
                         initialZoomDone = false;
                     });
 
-            CheckMapHeading();
+            if (compassProvider == null)
+            {
+                if (App.Current.Resources.Contains("CompassProvider"))
+                    compassProvider = App.Current.Resources["CompassProvider"] as ICompassProvider;
+                else
+                    compassProvider = new CompassProvider();
+
+                compassProvider.HeadingChanged += compassProvider_HeadingChanged;
+            }
         }
 
-        private void CheckMapHeading()
+        private double lastHeading = 0;
+        void compassProvider_HeadingChanged(object sender, HeadingAndAccuracy e)
         {
-            if (compassObs == null && MapFollowsHeading)
+            var headingDelta = Math.Abs(lastHeading - e.Heading);
+            if (headingDelta >= 2)
             {
-                map.Pitch = 60;
-                compassObs = Sensors.GetCurrentCompassSmooth(0.2)
-                    .SubscribeOn(ThreadPoolScheduler.Instance)
-                    .ObserveOn(ReactiveExtensions.SyncScheduler)
-                    .Subscribe(cd =>
-                    {
-                        if (cd.IsValid && cd.IsSupported && cd.Reading.HasValue)
-                        {
-                            var reading = cd.Reading.Value;
-                            map.Heading = reading.TrueHeading;
-                        }
-                    });
-            }
-            else if (!MapFollowsHeading)
-            {
-                ReactiveExtensions.Dispose(ref compassObs);
-                map.Heading = 0;
-                map.Pitch = 0;
+                lastHeading = e.Heading;
+                if (!isCentering && MapFollowsHeading)
+                    map.SetView(map.Center, map.ZoomLevel, lastHeading, 60, MapAnimationKind.Parabolic);
             }
         }
 
@@ -158,11 +156,45 @@ namespace Bicikelj.ViewModels
                 CheckMapHeading();
             }
         }
-        
+
+
+        private void CheckMapHeading()
+        {
+            if (MapFollowsHeading)
+            {
+                isCentering = true;
+                var newCenter = CanCenterCurrentLocation ? CurrentCoordinate : map.Center;
+                map.TransformCenter = new System.Windows.Point(0.5, 0.75);
+                map.SetView(newCenter, Math.Max(16, map.ZoomLevel), lastHeading, 60, MapAnimationKind.Parabolic);
+                compassProvider.HeadingChanged += compassProvider_HeadingChanged;
+            }
+            else if (!MapFollowsHeading)
+            {
+                map.TransformCenter = new System.Windows.Point(0.5, 0.5);
+                map.SetView(map.Center, map.ZoomLevel, 0, 0, MapAnimationKind.Parabolic);
+            }
+        }
+
         public void ToggleMapHeading()
         {
             MapFollowsHeading = !MapFollowsHeading;
+            if (MapFollowsHeading)
+                FixedHeading = 0;
+            else
+                FixedHeading = null;
         }
+
+        private double? fixedHeading;
+
+        public double? FixedHeading
+        {
+            get { return fixedHeading; }
+            set { 
+                fixedHeading = value;
+                NotifyOfPropertyChange(() => FixedHeading);
+            }
+        }
+        
 
         private void OnLocationChanged(GeoStatusAndPos pos)
         {
@@ -287,6 +319,7 @@ namespace Bicikelj.ViewModels
             {
                 tilesLoaded = true;
                 zoomDone = true;
+                isCentering = false;
                 OnMapUpdated();
             };
 #endif
@@ -294,11 +327,13 @@ namespace Bicikelj.ViewModels
 
         protected virtual void OnMapUpdated() { }
 
+        private bool isCentering = false;
         public bool CanCenterCurrentLocation { get { return (map != null && IsLocationAvailable); } }
 
         public void CenterCurrentLocation()
         {
             if (!CanCenterCurrentLocation) return;
+            isCentering = true;
 #if WP7
             map.SetView(CurrentCoordinate, Math.Max(15, map.ZoomLevel));
 #else
