@@ -153,6 +153,12 @@ namespace Bicikelj.Model
         private static CompassData lastCompassData = new CompassData();
         private static Compass compass = new Compass();
         private static IObservable<CompassData> observableCompass = null;
+        
+        public static bool IsCompassSupported() 
+        {
+            return Compass.IsSupported;
+        }
+
         public static IObservable<CompassData> GetCurrentCompass()
         {
             if (observableCompass == null)

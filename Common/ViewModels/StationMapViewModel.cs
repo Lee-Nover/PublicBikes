@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 #if !WP7
 using PublicBikes.Tools;
 using MapControls = Microsoft.Phone.Maps.Controls;
+using Microsoft.Phone.Maps.Controls;
+using Bicikelj.Model.Bing;
+using System.Windows.Media;
 #else
 using MapControls = Microsoft.Phone.Controls.Maps;
 #endif
@@ -80,8 +83,9 @@ namespace Bicikelj.ViewModels
         private void BindMapItems()
         {
             if (view == null || map == null) return;
-            view.StationsLayer = map.Layers[1];
-            view.CurrentLocationLayer = map.Layers[0];
+            view.RouteLayer = map.Layers[0];
+            view.StationsLayer = map.Layers[2];
+            view.CurrentLocationLayer = map.Layers[1];
             foreach (var overlay in view.CurrentLocationLayer)
                 overlay.BindCoordinate("CurrentCoordinate", this);
             view.StationsLayer.SetItemsCollection(this.Items, view.Resources["mapItemTemplate"] as DataTemplate);
@@ -217,6 +221,34 @@ namespace Bicikelj.ViewModels
             Stations = sl.Select(s => new StationViewModel(new StationLocationViewModel(s))).ToList();
         }
 
+        private MapPolyline mapLine = null;
+
+        private void HandleRouteCalculated(IEnumerable<GeoCoordinate> points, StationLocationViewModel station)
+        {
+            try
+            {
+                Execute.OnUIThread(() =>
+                {
+                    if (mapLine == null)
+                    {
+                        mapLine = new MapPolyline();
+                        mapLine.StrokeColor = Color.FromArgb(178, 0, 0, 255);
+                        mapLine.StrokeThickness = 5;
+                        view.Map.MapElements.Add(mapLine);
+                    }
+
+                    mapLine.Path.Clear();
+                    foreach (var point in points)
+                        mapLine.Path.Add(point);
+                });
+            }
+            finally
+            {
+                station.OnRouteCalculated -= HandleRouteCalculated;
+                events.Publish(BusyState.NotBusy());
+            }
+        }
+
         public void TapPin(StationViewModel sender, System.Windows.Input.GestureEventArgs e)
         {
             if (e == null) return;
@@ -228,6 +260,9 @@ namespace Bicikelj.ViewModels
                 Items.Remove(sender);
                 Items.Add(sender);
                 ActiveItem = sender;
+
+                sender.Location.OnRouteCalculated += HandleRouteCalculated;
+                sender.Location.RefreshRoute();
             }
             else
                 ActiveItem = null;

@@ -622,6 +622,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Images\appbar.compass.png" />
     <Content Include="Images\appbar.download.png" />
     <Content Include="Images\appbar.mail.png" />
     <Content Include="Images\appbar.map-centerme.png" />

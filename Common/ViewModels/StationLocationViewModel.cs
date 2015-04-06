@@ -15,10 +15,13 @@ using Microsoft.Phone.Controls.Maps;
 using Microsoft.Phone.Maps.Controls;
 using PublicBikes.Tools;
 using Microsoft.Phone.Maps.Services;
+using System.Collections.Generic;
 #endif
 
 namespace Bicikelj.ViewModels
 {
+    public delegate void RouteCalculatedEventHandler(IEnumerable<GeoCoordinate> points, StationLocationViewModel station);
+
     public class StationLocationViewModel : Screen
     {
         private StationLocation stationLocation;
@@ -26,6 +29,7 @@ namespace Bicikelj.ViewModels
         private IEventAggregator events;
         private SystemConfig config;
         private CityContextViewModel cityCtx;
+        public event RouteCalculatedEventHandler OnRouteCalculated;
 
         public StationLocationViewModel(StationLocation stationLocation)
         {
@@ -67,9 +71,11 @@ namespace Bicikelj.ViewModels
 
         public GeoCoordinate GeoLocation { get; private set; }
         private GeoCoordinate currentCoordinate;
-        public GeoCoordinate CurrentCoordinate {
+        public GeoCoordinate CurrentCoordinate
+        {
             get { return currentCoordinate; }
-            set {
+            set
+            {
                 if (value == currentCoordinate) return;
                 currentCoordinate = value;
                 NotifyOfPropertyChange(() => DistanceValueString);
@@ -87,7 +93,8 @@ namespace Bicikelj.ViewModels
         private GeoCoordinate startLocation = null;
         private double travelDistance = double.NaN;
         private double travelDuration = double.NaN;
-        public double Distance {
+        public double Distance
+        {
             get
             {
                 if (!double.IsNaN(travelDistance) && IsNearStartLocation())
@@ -174,6 +181,13 @@ namespace Bicikelj.ViewModels
         private IDisposable dispCurrentAddr = null;
         private bool routeCalculated = false;
 
+        public bool HasMap
+        {
+            get
+            {
+                return (view != null && view.Map != null);
+            }
+        }
 
         protected override void OnViewLoaded(object view)
         {
@@ -187,7 +201,7 @@ namespace Bicikelj.ViewModels
 #if !WP7
         private void BindMapItems()
         {
-            if (view.Map == null) return;
+            if (!HasMap) return;
             view.RouteLayer = view.Map.Layers[0];
             view.CurrentLocationLayer = view.Map.Layers[1];
             foreach (var overlay in view.CurrentLocationLayer)
@@ -204,12 +218,12 @@ namespace Bicikelj.ViewModels
             view = ov;
             if (view != null)
             {
-                if (ViewRect != null) 
+                if (ViewRect != null)
                     view.Map.SetView(ViewRect);
 
                 if (!config.LocationEnabled.GetValueOrDefault())
                 {
-                    
+
                 }
                 else if (dispCurrentAddr == null)
                     dispCurrentAddr = LocationHelper.GetCurrentLocation()
@@ -261,6 +275,15 @@ namespace Bicikelj.ViewModels
                                  Latitude = pt.Latitude,
                                  Longitude = pt.Longitude
                              };
+                if (OnRouteCalculated != null)
+                    OnRouteCalculated(points, this);
+                if (!HasMap)
+                {
+                    NotifyOfPropertyChange(() => DistanceString);
+                    NotifyOfPropertyChange(() => DurationString);
+                    NotifyOfPropertyChange(() => DistanceValueString);
+                    return;
+                }
 #if WP7
                 LocationCollection locCol = new LocationCollection();
                 foreach (var loc in points)
@@ -292,7 +315,7 @@ namespace Bicikelj.ViewModels
                     mapLine.Path.Clear();
                     foreach (var point in points)
                         mapLine.Path.Add(point);
-                    
+
                     view.Map.SetView(LocationRectangle.CreateBoundingRectangle(points));
 #endif
 

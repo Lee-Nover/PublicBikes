@@ -17,6 +17,8 @@
         <conv:StationStyleConverter x:Name="stationStyleConverter" SingleStyle="{StaticResource PushpinTemplateNormal8}" ClusterStyle="{StaticResource PushpinClusterTemplateNormal8}" />
         <conv:BoolToStringValuesConverter x:Name="displayModeTextConv" TrueValue="map" FalseValue="livesight" />
         <conv:BoolToStringValuesConverter x:Name="displayModeIconConv" TrueValue="/images/appbar.map.png" FalseValue="/images/appbar.view.png" />
+        <conv:BoolToStringValuesConverter x:Name="headingModeTextConv" TrueValue="map" FalseValue="follow heading" />
+        <conv:BoolToStringValuesConverter x:Name="headingModeIconConv" TrueValue="/images/appbar.map.png" FalseValue="/images/appbar.compass.png" />
         <DataTemplate x:Name="mapItemTemplate">
             <ContentControl x:Name="Pin" Style="{Binding ., Converter={StaticResource stationStyleConverter}}" Opacity="0"
                             cal:View.Context="Pushpin" cal:Message.Attach="[Event Tap] = [Action TapPin($dataContext, $eventArgs)]">
@@ -44,6 +46,7 @@
             <maps:Map Grid.Row="1" x:Name="Map" Margin="12,12,12,0" CartographicMode="Road" ZoomLevel="15"
                       cal:Message.Attach="[Event Tap] = [Action TapPin(null, $eventArgs)]">
                 <maps:Map.Layers>
+                    <maps:MapLayer x:Name="RouteLayer" />
                     <maps:MapLayer x:Name="CurrentLocationLayer">
                         <!-- bindings must be done in code (BindMapItems) because Layers don't have a DataContext -->
                         <maps:MapOverlay PositionOrigin="0.5,0.5">
@@ -107,8 +110,9 @@
                 Text="center me"
                 IconUri="/images/appbar.map-centerme.png" />
             <bab:BindableAppBarButton x:Name="ToggleMapHeading" 
-                Text="follow heading"
-                IconUri="/images/appbar.map.png" />
+                Visibility="{Binding CanFollowHeading, Converter={StaticResource ValueToVisibilityConverter}}"
+                Text="{Binding MapFollowsHeading, Converter={StaticResource headingModeTextConv}}"
+                IconUri="{Binding MapFollowsHeading, Converter={StaticResource headingModeIconConv}}" />
             <bab:BindableAppBarButton x:Name="ToggleDisplayMode" 
                 Visibility="{Binding IsARVisible, Converter={StaticResource ValueToVisibilityConverter}}"
                 Text="{Binding DisplayingAR, Converter={StaticResource displayModeTextConv}}"

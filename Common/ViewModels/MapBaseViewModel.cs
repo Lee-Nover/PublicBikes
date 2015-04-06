@@ -154,9 +154,11 @@ namespace Bicikelj.ViewModels
             set { 
                 mapFollowsHeading = value;
                 CheckMapHeading();
+                NotifyOfPropertyChange(() => MapFollowsHeading);
             }
         }
 
+        public bool CanFollowHeading { get { return Sensors.IsCompassSupported(); } }
 
         private void CheckMapHeading()
         {
