@@ -91,11 +91,11 @@ function extractFromJsonMilano(data, cityName) {
         var available = parseInt(rxGetNum.exec($($(avail)[0]).text()));
         var free = parseInt(rxGetNum.exec($($(avail)[1]).text()));
         var title = marker.title;
-        var idxTitle = title.indexOf('-');
+        /*var idxTitle = title.indexOf('-');
         if (idxTitle > 0) {
             index = parseInt(title.substr(0, idxTitle-1).trim());
             title = title.substr(idxTitle+1).trim();
-        }
+        }*/
         var station = {
             id: index++,
             name: title,

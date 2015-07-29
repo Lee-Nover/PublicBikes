@@ -141,6 +141,14 @@ function Stations(settings) {
                     msg += ' Response: ' + response.statusCode;
                 if (error)
                     msg += ' Error: ' + error;
+                if (body && response && response.headers && response.headers['content-type']) {
+                    var contentType = response.headers['content-type'];
+                    if (contentType == 'text/html') {
+                        var cheerio = require('cheerio');
+                        $ = cheerio.load(body.toString()); // load the html nodes
+                        msg += $.text();
+                    }
+                }
                 self.respondError('Could not get the ' + self.fullServiceName + ' service data! ' + msg);
             }
         }
